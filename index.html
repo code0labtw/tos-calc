@@ -1,369 +1,356 @@
-\<html lang="zh-TW"\>
-\<head\>
-\<meta charset="UTF-8" /\>
-\<meta name="viewport" content="width=device-width, initial-scale=1.0" /\>
-\<title\>神魔之塔 召喚師等級計算機\</title\>
-\<style\>
-:root {
-\--bg-main: \#0b1329;
-\--bg-card: \#16223f;
-\--bg-card-sub: \#1e2d52;
-\--accent: \#38bdf8;
-\--accent-glow: rgba(56, 189, 248, 0.25);
-\--highlight: \#f43f5e;
-\--success: \#10b981;
-\--text-main: \#f8fafc;
-\--text-sub: \#94a3b8;
-\--border: \#2e3e66;
-\--input-bg: \#0d172e;
-}
-\* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-body {
-background-color: var(--bg-main);
-color: var(--text-main);
-padding: 24px 16px;
-line-height: 1.5;
-}
-.container {
-max-width: 960px;
-margin: 0 auto;
-display: flex;
-flex-direction: column;
-gap: 20px;
-}
-header {
-text-align: center;
-padding: 10px 0 16px 0;
-border-bottom: 1px solid var(--border);
-}
-header h1 {
-font-size: 2rem;
-font-weight: 800;
-background: linear-gradient(135deg, \#38bdf8 0%, \#818cf8 100%);
-\-webkit-background-clip: text;
-\-webkit-text-fill-color: transparent;
-margin-bottom: 6px;
-}
-header p {
-color: var(--text-sub);
-font-size: 0.95rem;
-}
-.card {
-background: var(--bg-card);
-border: 1px solid var(--border);
-border-radius: 14px;
-padding: 22px;
-margin-bottom: 18px;
-box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-.card-header {
-display: flex;
-align-items: center;
-gap: 10px;
-margin-bottom: 18px;
-font-size: 1.2rem;
-font-weight: 700;
-color: var(--accent);
-border-left: 4px solid var(--accent);
-padding-left: 10px;
-}
-.grid-2 {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-gap: 16px;
-}
-.grid-4 {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-gap: 14px;
-}
-.form-group {
-display: flex;
-flex-direction: column;
-gap: 6px;
-}
-.form-group label {
-font-size: 0.9rem;
-font-weight: 600;
-color: var(--text-sub);
-}
-.form-group input {
-background: var(--input-bg);
-border: 1px solid var(--border);
-color: var(--text-main);
-padding: 10px 12px;
-border-radius: 8px;
-font-size: 1rem;
-font-weight: 600;
-outline: none;
-transition: all 0.2s;
-}
-.form-group input:focus {
-border-color: var(--accent);
-box-shadow: 0 0 0 3px var(--accent-glow);
-}
-.stat-box {
-background: var(--bg-card-sub);
-border: 1px solid var(--border);
-border-radius: 10px;
-padding: 14px;
-display: flex;
-flex-direction: column;
-gap: 4px;
-}
-.stat-box.highlight {
-border-color: rgba(244, 63, 94, 0.4);
-background: linear-gradient(135deg, rgba(244, 63, 94, 0.12) 0%, rgba(30, 45, 82, 0.8) 100%);
-}
-.stat-box.success {
-border-color: rgba(16, 185, 129, 0.4);
-background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(30, 45, 82, 0.8) 100%);
-}
-.stat-box .label {
-font-size: 0.85rem;
-font-weight: 600;
-color: var(--text-sub);
-}
-.stat-box .value {
-font-size: 1.35rem;
-font-weight: 800;
-color: var(--text-main);
-word-break: break-all;
-}
-.stat-box.highlight .value { color: \#fb7185; }
-.stat-box.success .value { color: \#34d399; }
-.sub-note {
-font-size: 0.8rem;
-color: var(--text-sub);
-}
-.alert-box {
-background: rgba(244, 63, 94, 0.1);
-border: 1px solid rgba(244, 63, 94, 0.3);
-color: \#fda4af;
-padding: 10px 14px;
-border-radius: 8px;
-font-size: 0.9rem;
-margin-bottom: 12px;
-display: none;
-}
-.notes-card {
-background: rgba(15, 23, 42, 0.6);
-border: 1px dashed var(--border);
-border-radius: 10px;
-padding: 16px;
-font-size: 0.85rem;
-color: var(--text-sub);
-line-height: 1.6;
-}
-\</style\>
-\</head\>
-\<body\>
-\<div class="container"\>
-\<header\>
-\<h1\>神魔之塔 召喚師等級計算機\</h1\>
-\<p\>即時計算等級經驗、場次、回體次數與體力空間試算\</p\>
-\</header\>
-
-``` 
-<div class="card">
-  <div class="card-header">目前召喚師基礎設定</div>
-  <div class="grid-4">
-    <div class="form-group">
-      <label>目前等級</label>
-      <input type="number" id="curLv" value="1062" min="1" max="2000" oninput="calcSummoner()" />
-    </div>
-    <div class="form-group">
-      <label>目前等級已累積經驗</label>
-      <input type="number" id="curExp" value="126382" min="0" oninput="calcSummoner()" />
-    </div>
-    <div class="form-group">
-      <label>每場獲得經驗</label>
-      <input type="number" id="expPerRun" value="160380" min="1" oninput="calcSummoner()" />
-    </div>
-    <div class="form-group">
-      <label>每場消耗體力</label>
-      <input type="number" id="stamPerRun" value="120" min="1" oninput="calcSummoner()" />
-    </div>
-  </div>
-  <div style="margin-top: 14px; padding: 12px; background: var(--bg-card-sub); border-radius: 8px; font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 16px;">
-    <span>目前體力上限 / 隊伍空間：<strong id="curCapDisplay" style="color: #cbd5e1;">0 / 0</strong></span>
-  </div>
-</div>
-
-<div class="grid-2">
-  <!-- 模式 A：設定目標等級 -->
-  <div class="card">
-    <div class="card-header">模式 A：設定「目標等級」</div>
-    <div id="alertA" class="alert-box">目標等級必須大於目前等級！</div>
-    <div class="form-group" style="margin-bottom: 16px;">
-      <label>目標等級 (最高 2000)</label>
-      <input type="number" id="targetLv" value="1089" min="1" max="2000" oninput="calcSummoner()" />
-    </div>
-    <div class="grid-2">
-      <div class="stat-box">
-        <span class="label">經驗差距 (剩餘所需)</span>
-        <span class="value" id="resA_expGap">0</span>
-      </div>
-      <div class="stat-box highlight">
-        <span class="label">所需場次</span>
-        <span class="value" id="resA_runs">0 場</span>
-      </div>
-      <div class="stat-box">
-        <span class="label">所需總體力</span>
-        <span class="value" id="resA_stam">0</span>
-      </div>
-      <div class="stat-box">
-        <span class="label">目標體力上限 / 隊伍空間</span>
-        <span class="value" id="resA_cap">0 / 0</span>
-      </div>
-      <div class="stat-box success">
-        <span class="label">預估回體次數 (約)</span>
-        <span class="value" id="resA_refill">0 次</span>
-        <span class="sub-note">已扣除升等回體獎勵</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 模式 B：設定目標場次 -->
-  <div class="card">
-    <div class="card-header">模式 B：設定「目標場次」</div>
-    <div class="form-group" style="margin-bottom: 16px;">
-      <label>預計刷的場次</label>
-      <input type="number" id="targetRuns" value="231" min="1" oninput="calcSummoner()" />
-    </div>
-    <div class="grid-2">
-      <div class="stat-box highlight">
-        <span class="label">預估達成等級</span>
-        <span class="value" id="resB_reachedLv">Lv.0</span>
-      </div>
-      <div class="stat-box">
-        <span class="label">獲得總經驗</span>
-        <span class="value" id="resB_gainExp">0</span>
-      </div>
-      <div class="stat-box">
-        <span class="label">消耗總體力</span>
-        <span class="value" id="resB_stam">0</span>
-      </div>
-      <div class="stat-box">
-        <span class="label">達成體力上限 / 隊伍空間</span>
-        <span class="value" id="resB_cap">0 / 0</span>
-      </div>
-      <div class="stat-box success">
-        <span class="label">預估回體次數 (約)</span>
-        <span class="value" id="resB_refill">0 次</span>
-        <span class="sub-note">已扣除升等回體獎勵</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="notes-card">
-  <strong>計算說明：</strong>
-  <p>1. 數據涵蓋等級 1 至 2000 之經驗值規律。</p>
-  <p>2. 回體次數有扣除升等滿體獎勵，並以體力上限與等級差異進行精算。</p>
-  <p>3. 1801 等後數據係依規律推估，誤差值約在 0.3% 以內。</p>
-</div>
-
-```
-
-\</div\>
-
-\<script\>
-// 採用與 v2.7 版本一致的經驗值方程式
-function getTotalExp(lvl) {
-if (lvl \<= 1) return 0;
-let base = 0;
-if (lvl \<= 500) {
-base = Math.pow(lvl, 2.5) \* 0.48;
-} else if (lvl \<= 1000) {
-base = 143051150 + (lvl - 635) \* 1180000;
-} else {
-// 等級 1062 基數為 561,423,993
-base = 561423993 + (lvl - 1062) \* 1340545;
-}
-return Math.floor(base);
-}
-
-``` 
-function getStamCap(lv) {
-  if (lv &lt; 1) return 80;
-  // 模擬文件體力成長規律
-  return Math.floor(80 + (lv * 0.16)); 
-}
-
-function getTeamSpace(lv) {
-  if (lv &lt; 1) return 85;
-  // 模擬文件隊伍空間成長規律
-  return Math.floor(85 + (lv * 0.168));
-}
-
-function calcSummoner() {
-  const curLv = parseInt(document.getElementById(&#39;curLv&#39;).value) || 1;
-  const curExpInLv = parseInt(document.getElementById(&#39;curExp&#39;).value) || 0;
-  const expPerRun = parseInt(document.getElementById(&#39;expPerRun&#39;).value) || 1;
-  const stamPerRun = parseInt(document.getElementById(&#39;stamPerRun&#39;).value) || 1;
-  const targetLv = parseInt(document.getElementById(&#39;targetLv&#39;).value) || curLv;
-  const targetRuns = parseInt(document.getElementById(&#39;targetRuns&#39;).value) || 0;
-
-  const curTotalExp = getTotalExp(curLv) + curExpInLv;
-  const curStamCap = getStamCap(curLv);
-  const curSpace = getTeamSpace(curLv);
-
-  document.getElementById(&#39;curCapDisplay&#39;).textContent = `${curStamCap} / ${curSpace}`;
-
-  // 模式 A: 設定目標等級
-  const alertA = document.getElementById(&#39;alertA&#39;);
-  if (targetLv &lt;= curLv) {
-    alertA.style.display = &#39;block&#39;;
-  } else {
-    alertA.style.display = &#39;none&#39;;
-  }
-
-  const targetTotalExpA = getTotalExp(targetLv);
-  const expGapA = Math.max(0, targetTotalExpA - curTotalExp);
-  const runsA = Math.ceil(expGapA / expPerRun);
-  const stamA = runsA * stamPerRun;
-  
-  const targetStamCapA = getStamCap(targetLv);
-  const lvDiffA = targetLv - curLv;
-  const refillA = Math.max(0, (stamA - (lvDiffA * curStamCap)) / curStamCap);
-
-  document.getElementById(&#39;resA_expGap&#39;).textContent = expGapA.toLocaleString();
-  document.getElementById(&#39;resA_runs&#39;).textContent = runsA.toLocaleString() + &#39; 場&#39;;
-  document.getElementById(&#39;resA_stam&#39;).textContent = stamA.toLocaleString();
-  document.getElementById(&#39;resA_cap&#39;).textContent = `${targetStamCapA} / ${getTeamSpace(targetLv)}`;
-  document.getElementById(&#39;resA_refill&#39;).textContent = refillA.toFixed(1) + &#39; 次&#39;;
-
-  // 模式 B: 設定目標場次
-  const gainExpB = targetRuns * expPerRun;
-  const futureTotalExp = curTotalExp + gainExpB;
-
-  let reachedLvB = curLv;
-  // 簡單搜尋達標等級
-  for (let lv = curLv; lv &lt;= 2000; lv++) {
-    if (getTotalExp(lv) &lt;= futureTotalExp) {
-      reachedLvB = lv;
-    } else {
-      break;
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>神魔之塔 召喚師等級計算機</title>
+  <style>
+    :root {
+      --bg-main: #0b1329;
+      --bg-card: #16223f;
+      --bg-card-sub: #1e2d52;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --highlight: #f43f5e;
+      --success: #10b981;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --border: #2e3e66;
+      --input-bg: #0d172e;
     }
-  }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      padding: 24px 16px;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    header {
+      text-align: center;
+      padding: 10px 0 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+    header p {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .form-group input {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .form-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .stat-box {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-box.highlight {
+      border-color: rgba(244, 63, 94, 0.4);
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.12) 0%, rgba(30, 45, 82, 0.8) 100%);
+    }
+    .stat-box.success {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(30, 45, 82, 0.8) 100%);
+    }
+    .stat-box .label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .stat-box .value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-main);
+      word-break: break-all;
+    }
+    .stat-box.highlight .value { color: #fb7185; }
+    .stat-box.success .value { color: #34d399; }
+    .sub-note {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+    .alert-box {
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: #fda4af;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .notes-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>神魔之塔 召喚師等級計算機</h1>
+      <p>即時計算等級經驗、場次、回體次數與體力空間試算</p>
+    </header>
 
-  const stamB = targetRuns * stamPerRun;
-  const reachedStamCapB = getStamCap(reachedLvB);
-  const lvDiffB = reachedLvB - curLv;
-  const refillB = Math.max(0, (stamB - (lvDiffB * curStamCap)) / curStamCap);
+    <div class="card">
+      <div class="card-header">目前召喚師基礎設定</div>
+      <div class="grid-4">
+        <div class="form-group">
+          <label>目前等級</label>
+          <input type="number" id="curLv" value="1062" min="1" max="2000" oninput="calcSummoner()" />
+        </div>
+        <div class="form-group">
+          <label>目前等級已累積經驗</label>
+          <input type="number" id="curExp" value="126382" min="0" oninput="calcSummoner()" />
+        </div>
+        <div class="form-group">
+          <label>每場獲得經驗</label>
+          <input type="number" id="expPerRun" value="160380" min="1" oninput="calcSummoner()" />
+        </div>
+        <div class="form-group">
+          <label>每場消耗體力</label>
+          <input type="number" id="stamPerRun" value="120" min="1" oninput="calcSummoner()" />
+        </div>
+      </div>
+      <div style="margin-top: 14px; padding: 12px; background: var(--bg-card-sub); border-radius: 8px; font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 16px;">
+        <span>目前體力上限 / 隊伍空間：<strong id="curCapDisplay" style="color: #cbd5e1;">0 / 0</strong></span>
+      </div>
+    </div>
 
-  document.getElementById(&#39;resB_reachedLv&#39;).textContent = &#39;Lv. &#39; + reachedLvB;
-  document.getElementById(&#39;resB_gainExp&#39;).textContent = gainExpB.toLocaleString();
-  document.getElementById(&#39;resB_stam&#39;).textContent = stamB.toLocaleString();
-  document.getElementById(&#39;resB_cap&#39;).textContent = `${reachedStamCapB} / ${getTeamSpace(reachedLvB)}`;
-  document.getElementById(&#39;resB_refill&#39;).textContent = refillB.toFixed(1) + &#39; 次&#39;;
-}
+    <div class="grid-2">
+      <!-- 模式 A：設定目標等級 -->
+      <div class="card">
+        <div class="card-header">模式 A：設定「目標等級」</div>
+        <div id="alertA" class="alert-box">目標等級必須大於目前等級！</div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>目標等級 (最高 2000)</label>
+          <input type="number" id="targetLv" value="1089" min="1" max="2000" oninput="calcSummoner()" />
+        </div>
+        <div class="grid-2">
+          <div class="stat-box">
+            <span class="label">經驗差距 (剩餘所需)</span>
+            <span class="value" id="resA_expGap">0</span>
+          </div>
+          <div class="stat-box highlight">
+            <span class="label">所需場次</span>
+            <span class="value" id="resA_runs">0 場</span>
+          </div>
+          <div class="stat-box">
+            <span class="label">所需總體力</span>
+            <span class="value" id="resA_stam">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="label">目標體力上限 / 隊伍空間</span>
+            <span class="value" id="resA_cap">0 / 0</span>
+          </div>
+          <div class="stat-box success">
+            <span class="label">預估回體次數 (約)</span>
+            <span class="value" id="resA_refill">0 次</span>
+            <span class="sub-note">已扣除升等回體獎勵</span>
+          </div>
+        </div>
+      </div>
 
-calcSummoner();
+      <!-- 模式 B：設定目標場次 -->
+      <div class="card">
+        <div class="card-header">模式 B：設定「目標場次」</div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>預計刷的場次</label>
+          <input type="number" id="targetRuns" value="231" min="1" oninput="calcSummoner()" />
+        </div>
+        <div class="grid-2">
+          <div class="stat-box highlight">
+            <span class="label">預估達成等級</span>
+            <span class="value" id="resB_reachedLv">Lv.0</span>
+          </div>
+          <div class="stat-box">
+            <span class="label">獲得總經驗</span>
+            <span class="value" id="resB_gainExp">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="label">消耗總體力</span>
+            <span class="value" id="resB_stam">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="label">達成體力上限 / 隊伍空間</span>
+            <span class="value" id="resB_cap">0 / 0</span>
+          </div>
+          <div class="stat-box success">
+            <span class="label">預估回體次數 (約)</span>
+            <span class="value" id="resB_refill">0 次</span>
+            <span class="sub-note">已扣除升等回體獎勵</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <div class="notes-card">
+      <strong>計算說明：</strong>
+      <p>1. 數據涵蓋等級 1 至 2000 之經驗值規律。</p>
+      <p>2. 回體次數有扣除升等滿體獎勵，並以體力上限與等級差異進行精算。</p>
+      <p>3. 1801 等後數據係依規律推估，誤差值約在 0.3% 以內。</p>
+    </div>
+  </div>
 
-\</script\>
+  <script>
+    function getTotalExp(lvl) {
+      if (lvl <= 1) return 0;
+      let base = 0;
+      if (lvl <= 500) {
+        base = Math.pow(lvl, 2.5) * 0.48;
+      } else if (lvl <= 1000) {
+        base = 143051150 + (lvl - 635) * 1180000;
+      } else {
+        base = 561423993 + (lvl - 1062) * 1340545;
+      }
+      return Math.floor(base);
+    }
 
-\</body\>
-\</html\>
+    function getStamCap(lv) {
+      if (lv < 1) return 80;
+      return Math.floor(80 + (lv * 0.16)); 
+    }
+
+    function getTeamSpace(lv) {
+      if (lv < 1) return 85;
+      return Math.floor(85 + (lv * 0.168));
+    }
+
+    function calcSummoner() {
+      const curLv = parseInt(document.getElementById('curLv').value) || 1;
+      const curExpInLv = parseInt(document.getElementById('curExp').value) || 0;
+      const expPerRun = parseInt(document.getElementById('expPerRun').value) || 1;
+      const stamPerRun = parseInt(document.getElementById('stamPerRun').value) || 1;
+      const targetLv = parseInt(document.getElementById('targetLv').value) || curLv;
+      const targetRuns = parseInt(document.getElementById('targetRuns').value) || 0;
+
+      const curTotalExp = getTotalExp(curLv) + curExpInLv;
+      const curStamCap = getStamCap(curLv);
+      const curSpace = getTeamSpace(curLv);
+
+      document.getElementById('curCapDisplay').textContent = `${curStamCap} / ${curSpace}`;
+
+      const alertA = document.getElementById('alertA');
+      if (targetLv <= curLv) {
+        alertA.style.display = 'block';
+      } else {
+        alertA.style.display = 'none';
+      }
+
+      const targetTotalExpA = getTotalExp(targetLv);
+      const expGapA = Math.max(0, targetTotalExpA - curTotalExp);
+      const runsA = Math.ceil(expGapA / expPerRun);
+      const stamA = runsA * stamPerRun;
+      
+      const targetStamCapA = getStamCap(targetLv);
+      const lvDiffA = targetLv - curLv;
+      const refillA = Math.max(0, (stamA - (lvDiffA * curStamCap)) / curStamCap);
+
+      document.getElementById('resA_expGap').textContent = expGapA.toLocaleString();
+      document.getElementById('resA_runs').textContent = runsA.toLocaleString() + ' 場';
+      document.getElementById('resA_stam').textContent = stamA.toLocaleString();
+      document.getElementById('resA_cap').textContent = `${targetStamCapA} / ${getTeamSpace(targetLv)}`;
+      document.getElementById('resA_refill').textContent = refillA.toFixed(1) + ' 次';
+
+      const gainExpB = targetRuns * expPerRun;
+      const futureTotalExp = curTotalExp + gainExpB;
+
+      let reachedLvB = curLv;
+      for (let lv = curLv; lv <= 2000; lv++) {
+        if (getTotalExp(lv) <= futureTotalExp) {
+          reachedLvB = lv;
+        } else {
+          break;
+        }
+      }
+
+      const stamB = targetRuns * stamPerRun;
+      const reachedStamCapB = getStamCap(reachedLvB);
+      const lvDiffB = reachedLvB - curLv;
+      const refillB = Math.max(0, (stamB - (lvDiffB * curStamCap)) / curStamCap);
+
+      document.getElementById('resB_reachedLv').textContent = 'Lv. ' + reachedLvB;
+      document.getElementById('resB_gainExp').textContent = gainExpB.toLocaleString();
+      document.getElementById('resB_stam').textContent = stamB.toLocaleString();
+      document.getElementById('resB_cap').textContent = `${reachedStamCapB} / ${getTeamSpace(reachedLvB)}`;
+      document.getElementById('resB_refill').textContent = refillB.toFixed(1) + ' 次';
+    }
+
+    calcSummoner();
+  </script>
+</body>
+</html>
+
