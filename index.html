@@ -178,7 +178,7 @@
     <div class="container">
         <header>
             <h1>神魔之塔 等級計算機</h1>
-            <p>召喚師等級升級經驗、體力上限、隊伍空間與刷關場次試算</p>
+            <p>召喚師等級升級經驗、體力上限、隊伍空間與總體力試算</p>
         </header>
 
         <div class="card">
@@ -201,9 +201,14 @@
                     <input type="number" id="targetLv" value="" placeholder="請輸入目標等級" min="1" max="2000" oninput="calculateAll()" />
                 </div>
                 <div class="input-group">
-                    <label for="questExp">單場關卡 EXP (選填)</label>
+                    <label for="questExp">單場關卡 EXP</label>
                     <input type="number" id="questExp" value="" placeholder="例如: 200000" min="1" oninput="calculateAll()" />
                 </div>
+            </div>
+
+            <div class="input-group">
+                <label for="staminaPerRun">單場消耗體力 (選填)</label>
+                <input type="number" id="staminaPerRun" value="" placeholder="例如: 20 或 50" min="1" oninput="calculateAll()" />
             </div>
 
             <div class="result-box">
@@ -226,6 +231,10 @@
                 <div class="result-item">
                     <span class="result-label">預計所需刷關場次</span>
                     <span class="result-val highlight" id="resRuns">--</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">總共消耗體力</span>
+                    <span class="result-val highlight" id="resTotalStamina">--</span>
                 </div>
             </div>
 
@@ -299,12 +308,14 @@
             const curExp = parseInt(document.getElementById('curExp').value) || 0;
             const targetLv = parseInt(document.getElementById('targetLv').value);
             const questExp = parseInt(document.getElementById('questExp').value);
+            const staminaPerRun = parseInt(document.getElementById('staminaPerRun').value);
 
             const resNeededExp = document.getElementById('resNeededExp');
             const resProgress = document.getElementById('resProgress');
             const resMaxStamina = document.getElementById('resMaxStamina');
             const resTeamCost = document.getElementById('resTeamCost');
             const resRuns = document.getElementById('resRuns');
+            const resTotalStamina = document.getElementById('resTotalStamina');
 
             if (isNaN(curLv) || isNaN(targetLv)) {
                 resNeededExp.innerText = '--';
@@ -312,6 +323,7 @@
                 resMaxStamina.innerText = '--';
                 resTeamCost.innerText = '--';
                 resRuns.innerText = '--';
+                resTotalStamina.innerText = '--';
                 return;
             }
 
@@ -321,6 +333,7 @@
                 resMaxStamina.innerText = getMaxStamina(curLv) + ' 點';
                 resTeamCost.innerText = getTeamCost(curLv) + ' 空間';
                 resRuns.innerText = '0 場';
+                resTotalStamina.innerText = '0 點';
                 return;
             }
 
@@ -338,11 +351,18 @@
             if (!isNaN(questExp) && questExp > 0) {
                 const runs = Math.ceil(totalRemaining / questExp);
                 resRuns.innerText = runs.toLocaleString() + ' 場';
+
+                if (!isNaN(staminaPerRun) && staminaPerRun > 0) {
+                    const totalStamina = runs * staminaPerRun;
+                    resTotalStamina.innerText = totalStamina.toLocaleString() + ' 點';
+                } else {
+                    resTotalStamina.innerText = '請輸入單場體力';
+                }
             } else {
                 resRuns.innerText = '請輸入單場 EXP';
+                resTotalStamina.innerText = '--';
             }
         }
     </script>
 </body>
 </html>
-
