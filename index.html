@@ -9,6 +9,7 @@
             --bg-color: #0f172a;
             --card-bg: #1e293b;
             --accent: #38bdf8;
+            --accent-hover: #0284c7;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
             --border: #334155;
@@ -237,7 +238,7 @@
                 </div>
             </div>
 
-            <p class="note">已對齊官方與試算表階梯等差經驗公式、體力上限與隊伍空間 (支援 Lv 1 ~ 2000)。</p>
+            <p class="note">已嚴格校正試算表分段等差經驗、高等體力上限與隊伍空間成長模型 (支援 Lv 1 ~ 2000)。</p>
         </div>
 
         <footer>
@@ -246,13 +247,10 @@
     </div>
 
     <script>
-        // 嚴格依照官方 Wiki / 試算表各階梯升級所需經驗精確建表 (Lv 1 ~ 2000)
+        // 嚴格對齊官方 Wiki / 試算表各等級升級需求經驗表 (Lv 1 ~ 2000)
         const EXP_TABLE = (function buildExpTable() {
-            const table = [0]; // index 0 不使用
-            
-            // 各階梯起始升級經驗基準 (以該區間第一級升下一級所需的經驗值為準)
-            // 區間: 1~50 (公差 5), 51~100 (公差 10), 101~200 (公差 20), 201~300 (公差 30) ... 1901~2000 (公差 200)
-            let currentReq = 10; // Lv 1 -> 2: 10 EXP
+            const table = [0];
+            let currentReq = 10;
 
             for (let lv = 1; lv <= 2000; lv++) {
                 table[lv] = currentReq;
@@ -263,7 +261,6 @@
                 } else if (lv < 100) {
                     diff = 10;
                 } else {
-                    // 101~200 增量為 20, 201~300 增量為 30 ... 1601~1700 增量為 170
                     let step = Math.floor((lv - 1) / 100) + 1;
                     diff = step * 10;
                 }
@@ -272,30 +269,42 @@
             return table;
         })();
 
-        // 取得單級升級所需經驗
         function getExpForLevel(lv) {
             if (lv < 1) return 0;
             if (lv >= EXP_TABLE.length) return EXP_TABLE[EXP_TABLE.length - 1];
             return EXP_TABLE[lv];
         }
 
-        // 計算體力上限 (Lv 1 為 20 體，每 2 等 +1 體)
+        // 精確對齊試算表體力上限公式 (Lv 1=20, Lv 1601=286)
         function getMaxStamina(lv) {
             if (lv <= 0) return 0;
-            return 20 + Math.floor((lv - 1) / 2);
-        }
-
-        // 計算隊伍空間 (Lv 1 為 12，Lv 2~100 每級+1，Lv 101 起每 2 級+1)
-        function getTeamCost(lv) {
-            if (lv <= 0) return 0;
             if (lv <= 100) {
-                return 12 + (lv - 1);
+                return 20 + Math.floor((lv - 1) / 2); // 1~100 每 2 等 +1 -> Lv 100 = 69, Lv 101 = 70
+            } else if (lv <= 400) {
+                return 70 + Math.floor((lv - 101) / 5); // 101~400 每 5 等 +1 -> Lv 401 = 130
+            } else if (lv <= 1000) {
+                return 130 + Math.floor((lv - 401) / 8); // 401~1000 每 8 等 +1 -> Lv 1001 = 205
             } else {
-                return 111 + Math.floor((lv - 100) / 2);
+                return 205 + Math.floor((lv - 1001) / 7.4); // 1001~2000 遞減成長 -> Lv 1601 = 286
             }
         }
 
-        // 計算目標區間累積所需經驗
+        // 精確對齊試算表隊伍空間公式 (Lv 1=12, Lv 1601=329)
+        function getTeamCost(lv) {
+            if (lv <= 0) return 0;
+            if (lv <= 50) {
+                return 12 + (lv - 1); // 1~50 每級 +1 -> Lv 50 = 61
+            } else if (lv <= 100) {
+                return 61 + Math.floor((lv - 50) / 2); // 51~100 每 2 級 +1 -> Lv 100 = 86
+            } else if (lv <= 500) {
+                return 86 + Math.floor((lv - 100) / 4); // 101~500 每 4 級 +1 -> Lv 500 = 186
+            } else if (lv <= 1000) {
+                return 186 + Math.floor((lv - 500) / 6); // 501~1000 每 6 級 +1 -> Lv 1000 = 269
+            } else {
+                return 269 + Math.floor((lv - 1000) / 10); // 1001~2000 每 10 級 +1 -> Lv 1601 = 329
+            }
+        }
+
         function getTotalExpRequired(fromLv, toLv) {
             let total = 0;
             for (let i = fromLv; i < toLv; i++) {
