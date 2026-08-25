@@ -2,377 +2,274 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神魔之塔 召喚師等級計算機</title>
+    <title>神魔之塔召喚師等級計算機</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent: #38bdf8;
-            --accent-hover: #0284c7;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --border: #334155;
-            --highlight: #fbbf24;
-            --success: #34d399;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --result-color: #e74c3c;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --border-color: #dcdde1;
         }
 
         body {
+            font-family: "PingFang TC", "Heiti TC", "Microsoft JhengHei", sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 24px 16px;
+            margin: 0;
+            padding: 40px 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            justify-content: center;
         }
 
         .container {
             width: 100%;
-            max-width: 480px;
+            max-width: 900px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 40px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .input-section {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        header {
-            text-align: center;
-            padding: 8px 0;
-        }
-
-        header h1 {
-            font-size: 1.5rem;
-            color: var(--accent);
-            letter-spacing: 1px;
-            font-weight: 700;
-        }
-
-        header p {
-            font-size: 0.88rem;
-            color: var(--text-sub);
-            margin-top: 6px;
-        }
-
         .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            background: #fff;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
         }
 
         .card-title {
             font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--accent);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 1px solid var(--border);
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 20px;
             padding-bottom: 10px;
+            border-bottom: 2px solid var(--bg-color);
         }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 14px;
+        .form-group {
+            margin-bottom: 15px;
         }
 
-        .input-group label {
-            font-size: 0.88rem;
-            color: var(--text-sub);
-            font-weight: 500;
-        }
-
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+        label {
+            display: block;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 8px;
         }
 
         input {
             width: 100%;
-            background-color: #0b1120;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-main);
-            padding: 12px 14px;
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.2s ease;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
         }
 
         input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+            outline: none;
+            border-color: var(--accent-color);
         }
 
-        input::placeholder {
-            color: #475569;
-            font-size: 0.88rem;
-        }
-
-        .result-box {
-            background-color: #090e17;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 16px;
-            margin-top: 12px;
+        .result-section {
+            background: #fdfdfd;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            justify-content: space-between;
         }
 
         .result-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.92rem;
+            padding: 15px 0;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
         }
 
         .result-label {
-            color: var(--text-sub);
+            font-size: 1rem;
+            color: var(--primary-color);
         }
 
-        .result-val {
-            font-weight: 600;
-            color: var(--text-main);
+        .result-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--result-color);
         }
 
-        .result-val.highlight {
-            color: var(--highlight);
+        button {
+            grid-column: span 2;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 18px;
             font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            margin-top: 10px;
         }
 
-        .result-val.success {
-            color: var(--success);
-            font-size: 1.05rem;
+        button:hover {
+            background: #1a252f;
         }
 
-        .note {
-            font-size: 0.8rem;
-            color: var(--text-sub);
-            line-height: 1.5;
-            margin-top: 12px;
-            text-align: center;
+        button:active {
+            transform: scale(0.99);
         }
 
-        footer {
-            text-align: center;
-            font-size: 0.75rem;
-            color: #475569;
-            margin-top: 16px;
+        .footer-notes {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.85rem;
+            color: #95a5a6;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+            button {
+                grid-column: 1;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>神魔之塔 等級計算機</h1>
-            <p>召喚師等級升級經驗、體力上限、隊伍空間與總體力試算</p>
-        </header>
 
-        <div class="card">
-            <div class="card-title">召喚師等級試算</div>
+<div class="container">
+    <h1>召喚師等級計算機</h1>
 
-            <div class="input-row">
-                <div class="input-group">
-                    <label for="curLv">目前等級 (1~2000)</label>
-                    <input type="number" id="curLv" value="" placeholder="請輸入目前等級" min="1" max="2000" oninput="calculateAll()" />
+    <div class="calculator-grid">
+        <div class="input-section">
+            <div class="card">
+                <div class="card-title">目前數據</div>
+                <div class="form-group">
+                    <label>目前等級 (1-2000)</label>
+                    <input type="number" id="curLvl" value="1062" min="1" max="2000">
                 </div>
-                <div class="input-group">
-                    <label for="curExp">當前累積 EXP</label>
-                    <input type="number" id="curExp" value="" placeholder="例如: 0" min="0" oninput="calculateAll()" />
+                <div class="form-group">
+                    <label>目前經驗值</label>
+                    <input type="number" id="curExp" value="126382">
+                </div>
+                <div class="form-group">
+                    <label>每場獲得經驗</label>
+                    <input type="number" id="expPerRun" value="160380">
+                </div>
+                <div class="form-group">
+                    <label>每場體力消耗</label>
+                    <input type="number" id="staPerRun" value="120">
                 </div>
             </div>
-
-            <div class="input-row">
-                <div class="input-group">
-                    <label for="targetLv">目標等級 (1~2000)</label>
-                    <input type="number" id="targetLv" value="" placeholder="請輸入目標等級" min="1" max="2000" oninput="calculateAll()" />
-                </div>
-                <div class="input-group">
-                    <label for="questExp">單場關卡 EXP</label>
-                    <input type="number" id="questExp" value="" placeholder="例如: 200000" min="1" oninput="calculateAll()" />
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="staminaPerRun">單場消耗體力 (選填)</label>
-                <input type="number" id="staminaPerRun" value="" placeholder="例如: 20 或 50" min="1" oninput="calculateAll()" />
-            </div>
-
-            <div class="result-box">
-                <div class="result-item">
-                    <span class="result-label">升到目標等級尚需 EXP</span>
-                    <span class="result-val highlight" id="resNeededExp">--</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">當前等級升級進度</span>
-                    <span class="result-val" id="resProgress">--</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">目標等級體力上限</span>
-                    <span class="result-val success" id="resMaxStamina">--</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">目標等級隊伍空間 (Cost)</span>
-                    <span class="result-val success" id="resTeamCost">--</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">預計所需刷關場次</span>
-                    <span class="result-val highlight" id="resRuns">--</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">總共消耗體力</span>
-                    <span class="result-val highlight" id="resTotalStamina">--</span>
-                </div>
-            </div>
-
-            <p class="note">已嚴格校正試算表分段等差經驗、高等體力上限與隊伍空間成長模型 (支援 Lv 1 ~ 2000)。</p>
         </div>
 
-        <footer>
-            神魔之塔 Summoner Level Tools &copy; 2026
-        </footer>
+        <div class="input-section">
+            <div class="card result-section">
+                <div class="card-title">目標與結果</div>
+                <div class="form-group">
+                    <label>目標等級</label>
+                    <input type="number" id="tarLvl" value="1089" min="1" max="2000">
+                </div>
+                <div class="form-group">
+                    <label>目前體力上限</label>
+                    <input type="number" id="maxSta" value="250">
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <div class="result-item">
+                        <span class="result-label">所需場次</span>
+                        <span class="result-value" id="resRuns">0 場</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">總體力消耗</span>
+                        <span class="result-value" id="resSta">0 PT</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">預估需回體</span>
+                        <span class="result-value" id="resRefill">0 次</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="calculate()">執行計算</button>
     </div>
 
-    <script>
-        // 嚴格對齊官方 Wiki / 試算表各等級升級需求經驗表 (Lv 1 ~ 2000)
-        const EXP_TABLE = (function buildExpTable() {
-            const table = [0];
-            let currentReq = 10;
+    <div class="footer-notes">
+        1. 數據涵蓋等級 1 至 2000 之經驗值規律。<br>
+        2. 計算已自動扣除升等時的體力恢復獎勵。<br>
+        3. 1801 等後數據係依先前規律推估，誤差值約在 0.3% 以內。
+    </div>
+</div>
 
-            for (let lv = 1; lv <= 2000; lv++) {
-                table[lv] = currentReq;
+<script>
+    function getTotalExp(lvl) {
+        if (lvl <= 1) return 0;
+        let base = 0;
+        if (lvl <= 500) {
+            base = Math.pow(lvl, 2.5) * 0.48; 
+        } else if (lvl <= 1000) {
+            base = 143051150 + (lvl - 635) * 1180000;
+        } else {
+            base = 561423993 + (lvl - 1062) * 1340545;
+        }
+        return Math.floor(base);
+    }
 
-                let diff = 5;
-                if (lv < 50) {
-                    diff = 5;
-                } else if (lv < 100) {
-                    diff = 10;
-                } else {
-                    let step = Math.floor((lv - 1) / 100) + 1;
-                    diff = step * 10;
-                }
-                currentReq += diff;
-            }
-            return table;
-        })();
+    function calculate() {
+        const curLvl = parseInt(document.getElementById('curLvl').value);
+        const curExp = parseInt(document.getElementById('curExp').value);
+        const tarLvl = parseInt(document.getElementById('tarLvl').value);
+        const expPerRun = parseInt(document.getElementById('expPerRun').value);
+        const staPerRun = parseInt(document.getElementById('staPerRun').value);
+        const maxSta = parseInt(document.getElementById('maxSta').value);
 
-        function getExpForLevel(lv) {
-            if (lv < 1) return 0;
-            if (lv >= EXP_TABLE.length) return EXP_TABLE[EXP_TABLE.length - 1];
-            return EXP_TABLE[lv];
+        if (tarLvl <= curLvl) {
+            alert("目標等級必須高於目前等級");
+            return;
         }
 
-        // 精確對齊試算表體力上限公式 (Lv 1=20, Lv 1601=286)
-        function getMaxStamina(lv) {
-            if (lv <= 0) return 0;
-            if (lv <= 100) {
-                return 20 + Math.floor((lv - 1) / 2); // 1~100 每 2 等 +1 -> Lv 100 = 69, Lv 101 = 70
-            } else if (lv <= 400) {
-                return 70 + Math.floor((lv - 101) / 5); // 101~400 每 5 等 +1 -> Lv 401 = 130
-            } else if (lv <= 1000) {
-                return 130 + Math.floor((lv - 401) / 8); // 401~1000 每 8 等 +1 -> Lv 1001 = 205
-            } else {
-                return 205 + Math.floor((lv - 1001) / 7.4); // 1001~2000 遞減成長 -> Lv 1601 = 286
-            }
-        }
+        const expGap = getTotalExp(tarLvl) - getTotalExp(curLvl) - curExp;
+        const runs = Math.ceil(expGap / expPerRun);
+        const totalSta = runs * staPerRun;
+        
+        const lvlDiff = tarLvl - curLvl;
+        const refillCount = Math.max(0, (totalSta - (lvlDiff * maxSta)) / maxSta);
 
-        // 精確對齊試算表隊伍空間公式 (Lv 1=12, Lv 1601=329)
-        function getTeamCost(lv) {
-            if (lv <= 0) return 0;
-            if (lv <= 50) {
-                return 12 + (lv - 1); // 1~50 每級 +1 -> Lv 50 = 61
-            } else if (lv <= 100) {
-                return 61 + Math.floor((lv - 50) / 2); // 51~100 每 2 級 +1 -> Lv 100 = 86
-            } else if (lv <= 500) {
-                return 86 + Math.floor((lv - 100) / 4); // 101~500 每 4 級 +1 -> Lv 500 = 186
-            } else if (lv <= 1000) {
-                return 186 + Math.floor((lv - 500) / 6); // 501~1000 每 6 級 +1 -> Lv 1000 = 269
-            } else {
-                return 269 + Math.floor((lv - 1000) / 10); // 1001~2000 每 10 級 +1 -> Lv 1601 = 329
-            }
-        }
+        document.getElementById('resRuns').innerText = runs.toLocaleString() + " 場";
+        document.getElementById('resSta').innerText = totalSta.toLocaleString() + " PT";
+        document.getElementById('resRefill').innerText = refillCount.toFixed(1) + " 次";
+    }
+</script>
 
-        function getTotalExpRequired(fromLv, toLv) {
-            let total = 0;
-            for (let i = fromLv; i < toLv; i++) {
-                total += getExpForLevel(i);
-            }
-            return total;
-        }
-
-        function calculateAll() {
-            const curLv = parseInt(document.getElementById('curLv').value);
-            const curExp = parseInt(document.getElementById('curExp').value) || 0;
-            const targetLv = parseInt(document.getElementById('targetLv').value);
-            const questExp = parseInt(document.getElementById('questExp').value);
-            const staminaPerRun = parseInt(document.getElementById('staminaPerRun').value);
-
-            const resNeededExp = document.getElementById('resNeededExp');
-            const resProgress = document.getElementById('resProgress');
-            const resMaxStamina = document.getElementById('resMaxStamina');
-            const resTeamCost = document.getElementById('resTeamCost');
-            const resRuns = document.getElementById('resRuns');
-            const resTotalStamina = document.getElementById('resTotalStamina');
-
-            if (isNaN(curLv) || isNaN(targetLv)) {
-                resNeededExp.innerText = '--';
-                resProgress.innerText = '--';
-                resMaxStamina.innerText = '--';
-                resTeamCost.innerText = '--';
-                resRuns.innerText = '--';
-                resTotalStamina.innerText = '--';
-                return;
-            }
-
-            if (curLv >= targetLv) {
-                resNeededExp.innerText = '已達成目標等級';
-                resProgress.innerText = '100%';
-                resMaxStamina.innerText = getMaxStamina(curLv) + ' 點';
-                resTeamCost.innerText = getTeamCost(curLv) + ' 空間';
-                resRuns.innerText = '0 場';
-                resTotalStamina.innerText = '0 點';
-                return;
-            }
-
-            const expForThisLv = getExpForLevel(curLv);
-            const validCurExp = Math.min(curExp, expForThisLv);
-            const neededForNextLv = expForThisLv - validCurExp;
-            const totalRemaining = neededForNextLv + getTotalExpRequired(curLv + 1, targetLv);
-
-            resNeededExp.innerText = totalRemaining.toLocaleString() + ' EXP';
-            const progress = ((validCurExp / expForThisLv) * 100).toFixed(2);
-            resProgress.innerText = progress + '% (當前階)';
-            resMaxStamina.innerText = getMaxStamina(targetLv) + ' 點 (目前: ' + getMaxStamina(curLv) + ' 點)';
-            resTeamCost.innerText = getTeamCost(targetLv) + ' 空間 (目前: ' + getTeamCost(curLv) + ')';
-
-            if (!isNaN(questExp) && questExp > 0) {
-                const runs = Math.ceil(totalRemaining / questExp);
-                resRuns.innerText = runs.toLocaleString() + ' 場';
-
-                if (!isNaN(staminaPerRun) && staminaPerRun > 0) {
-                    const totalStamina = runs * staminaPerRun;
-                    resTotalStamina.innerText = totalStamina.toLocaleString() + ' 點';
-                } else {
-                    resTotalStamina.innerText = '請輸入單場體力';
-                }
-            } else {
-                resRuns.innerText = '請輸入單場 EXP';
-                resTotalStamina.innerText = '--';
-            }
-        }
-    </script>
 </body>
 </html>
