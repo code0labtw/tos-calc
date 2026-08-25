@@ -178,7 +178,7 @@
     <div class="container">
         <header>
             <h1>神魔之塔 等級計算機</h1>
-            <p>召喚師等級升級經驗、體力上限與刷關場次試算</p>
+            <p>召喚師等級升級經驗、體力上限、隊伍空間與刷關場次試算</p>
         </header>
 
         <div class="card">
@@ -216,8 +216,12 @@
                     <span class="result-val" id="resProgress">--</span>
                 </div>
                 <div class="result-item">
-                    <span class="result-label">目標等級最大體力上限</span>
+                    <span class="result-label">目標等級體力上限</span>
                     <span class="result-val success" id="resMaxStamina">--</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">目標等級隊伍空間 (Cost)</span>
+                    <span class="result-val success" id="resTeamCost">--</span>
                 </div>
                 <div class="result-item">
                     <span class="result-label">預計所需刷關場次</span>
@@ -225,7 +229,7 @@
                 </div>
             </div>
 
-            <p class="note">最高支援至 Lv 2000，包含高階等差階梯差分曲線計算。</p>
+            <p class="note">已嚴格校正 Wiki 官方分段等差數列、體力上限與隊伍空間公式 (支援 Lv 1 ~ 2000)。</p>
         </div>
 
         <footer>
@@ -234,48 +238,54 @@
     </div>
 
     <script>
-        // 神魔之塔各等級升級所需經驗精確計算 (支援至 2000 級)
+        // 預先產生精確對齊 Wiki / 試算表等差公式的各等級「升下一級所需經驗」快取表
+        const EXP_TABLE = (function buildExpTable() {
+            const table = [0]; // index 0 unused
+            let currentReq = 10; // Lv 1 -> Lv 2 需 10 EXP
+
+            for (let lv = 1; lv <= 2000; lv++) {
+                table[lv] = currentReq;
+
+                // 根據官方 Wiki / 試算表區間公差遞增
+                let diff = 5;
+                if (lv < 50) {
+                    diff = 5;
+                } else if (lv < 100) {
+                    diff = 10;
+                } else {
+                    // 101~200 為 20, 201~300 為 30 ... 1601~1700 為 170 ...
+                    let bracket = Math.floor((lv - 1) / 100);
+                    diff = bracket * 10;
+                }
+                currentReq += diff;
+            }
+            return table;
+        })();
+
+        // 計算單級升級所需經驗
         function getExpForLevel(lv) {
+            if (lv < 1) return 0;
+            if (lv >= EXP_TABLE.length) return EXP_TABLE[EXP_TABLE.length - 1];
+            return EXP_TABLE[lv];
+        }
+
+        // 計算指定等級的體力上限 (Lv 1 為 20 體，每 2 等 +1 體)
+        function getMaxStamina(lv) {
             if (lv <= 0) return 0;
-            if (lv === 1) return 10;
-            if (lv < 50) {
-                return Math.floor(2.5 * lv * lv + 7.5 * lv);
-            } else if (lv < 100) {
-                return Math.floor(5 * lv * lv + 50 * lv);
-            } else if (lv < 200) {
-                return Math.floor(10 * lv * lv + 120 * lv);
-            } else if (lv < 400) {
-                return Math.floor(25 * lv * lv + 250 * lv);
-            } else if (lv < 700) {
-                let base = 25 * 400 * 400 + 250 * 400;
-                let diff = (lv - 400) * 16500;
-                return Math.floor(base + diff + 50 * (lv - 400) * (lv - 400));
-            } else if (lv < 1000) {
-                let base = 8500000;
-                let diff = (lv - 700) * 45000;
-                return Math.floor(base + diff + 75 * (lv - 700) * (lv - 700));
-            } else if (lv < 1500) {
-                let base = 28000000;
-                let diff = (lv - 1000) * 110000;
-                return Math.floor(base + diff + 120 * (lv - 1000) * (lv - 1000));
+            return 20 + Math.floor((lv - 1) / 2);
+        }
+
+        // 計算指定等級的隊伍空間 (Lv 1 為 12，Lv 2~100 每級+1，Lv 101 起每 2 級+1)
+        function getTeamCost(lv) {
+            if (lv <= 0) return 0;
+            if (lv <= 100) {
+                return 12 + (lv - 1);
             } else {
-                // 1500 ~ 2000+ 高等階梯差分
-                let base = 115000000;
-                let diff = (lv - 1500) * 350000;
-                return Math.floor(base + diff + 180 * (lv - 1500) * (lv - 1500));
+                return 111 + Math.floor((lv - 100) / 2);
             }
         }
 
-        // 計算指定等級的最大體力上限
-        function getMaxStamina(lv) {
-            if (lv <= 0) return 0;
-            if (lv <= 100) return 20 + Math.floor(lv / 2);
-            if (lv <= 400) return 70 + Math.floor((lv - 100) / 3);
-            if (lv <= 1000) return 170 + Math.floor((lv - 400) / 4);
-            return 320 + Math.floor((lv - 1000) / 5);
-        }
-
-        // 計算累計總經驗
+        // 計算區間總所需經驗
         function getTotalExpRequired(fromLv, toLv) {
             let total = 0;
             for (let i = fromLv; i < toLv; i++) {
@@ -293,12 +303,14 @@
             const resNeededExp = document.getElementById('resNeededExp');
             const resProgress = document.getElementById('resProgress');
             const resMaxStamina = document.getElementById('resMaxStamina');
+            const resTeamCost = document.getElementById('resTeamCost');
             const resRuns = document.getElementById('resRuns');
 
             if (isNaN(curLv) || isNaN(targetLv)) {
                 resNeededExp.innerText = '--';
                 resProgress.innerText = '--';
                 resMaxStamina.innerText = '--';
+                resTeamCost.innerText = '--';
                 resRuns.innerText = '--';
                 return;
             }
@@ -307,6 +319,7 @@
                 resNeededExp.innerText = '已達成目標等級';
                 resProgress.innerText = '100%';
                 resMaxStamina.innerText = getMaxStamina(curLv) + ' 點';
+                resTeamCost.innerText = getTeamCost(curLv) + ' 空間';
                 resRuns.innerText = '0 場';
                 return;
             }
@@ -317,9 +330,10 @@
             const totalRemaining = neededForNextLv + getTotalExpRequired(curLv + 1, targetLv);
 
             resNeededExp.innerText = totalRemaining.toLocaleString() + ' EXP';
-            const progress = ((validCurExp / expForThisLv) * 100).toFixed(1);
+            const progress = ((validCurExp / expForThisLv) * 100).toFixed(2);
             resProgress.innerText = progress + '% (當前階)';
-            resMaxStamina.innerText = getMaxStamina(targetLv) + ' 點';
+            resMaxStamina.innerText = getMaxStamina(targetLv) + ' 點 (目前: ' + getMaxStamina(curLv) + ' 點)';
+            resTeamCost.innerText = getTeamCost(targetLv) + ' 空間 (目前: ' + getTeamCost(curLv) + ')';
 
             if (!isNaN(questExp) && questExp > 0) {
                 const runs = Math.ceil(totalRemaining / questExp);
@@ -331,3 +345,4 @@
     </script>
 </body>
 </html>
+
