@@ -221,19 +221,19 @@
         <div class="grid-4">
           <div class="form-group">
             <label>目前等級</label>
-            <input type="number" id="curLv" value="622" min="1" max="1500" oninput="calcSummoner()" />
+            <input type="number" id="curLv" value="" min="1" max="1999" oninput="calcSummoner()" />
           </div>
           <div class="form-group">
             <label>當前等級已累積經驗</label>
-            <input type="number" id="curExp" value="401146" min="0" oninput="calcSummoner()" />
+            <input type="number" id="curExp" value="" min="0" oninput="calcSummoner()" />
           </div>
           <div class="form-group">
             <label>每場獲得經驗</label>
-            <input type="number" id="expPerRun" value="58320" min="1" oninput="calcSummoner()" />
+            <input type="number" id="expPerRun" value="" min="1" oninput="calcSummoner()" />
           </div>
           <div class="form-group">
             <label>每場消耗體力</label>
-            <input type="number" id="stamPerRun" value="60" min="1" oninput="calcSummoner()" />
+            <input type="number" id="stamPerRun" value="" min="1" oninput="calcSummoner()" />
           </div>
         </div>
         <div style="margin-top: 14px; padding: 12px; background: var(--bg-card-sub); border-radius: 8px; font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 16px;">
@@ -250,7 +250,7 @@
           <div id="alertA" class="alert-box">目標等級必須大於目前等級！</div>
           <div class="form-group" style="margin-bottom: 16px;">
             <label>目標等級</label>
-            <input type="number" id="targetLv" value="623" min="1" max="1500" oninput="calcSummoner()" />
+            <input type="number" id="targetLv" value="" min="1" max="2000" oninput="calcSummoner()" />
           </div>
           <div class="grid-2">
             <div class="stat-box">
@@ -286,7 +286,7 @@
           <div class="card-header">模式 B：設定「目標場次」</div>
           <div class="form-group" style="margin-bottom: 16px;">
             <label>預計刷的場次</label>
-            <input type="number" id="targetRuns" value="2000" min="1" oninput="calcSummoner()" />
+            <input type="number" id="targetRuns" value="" min="1" oninput="calcSummoner()" />
           </div>
           <div class="grid-2">
             <div class="stat-box highlight">
