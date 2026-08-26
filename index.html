@@ -51,24 +51,8 @@
       letter-spacing: -0.04em;
     }
 
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.5fr);
-      gap: 24px;
-      align-items: start;
-    }
-
     .card {
       border: 1px solid var(--line);
-      border-radius: 22px;
-      background: #10243b;
-      box-shadow: var(--shadow);
-    }
-
-    .input-card {
-      position: sticky;
-      top: 24px;
-      padding: 28px;
     }
 
     .card-header {
@@ -102,12 +86,6 @@
       color: #c7d9ec;
       font-size: 0.88rem;
       font-weight: 650;
-    }
-
-    .hint {
-      color: var(--muted);
-      font-size: 0.75rem;
-      font-weight: 400;
     }
 
     input, select {
@@ -155,8 +133,6 @@
       background: #103a59;
     }
 
-    .primary-result::after { display: none; }
-
     .result-label {
       color: #bae6fd;
       font-size: 0.9rem;
@@ -182,15 +158,7 @@
 
     [hidden] { display: none !important; }
 
-    .tool-switch {
-      display: flex;
-      gap: 16px;
-      width: min(100%, 840px);
-      margin: 0 auto 24px;
-    }
-
     .tool-tab {
-      flex: 1 1 0;
       min-width: 0;
       min-height: 64px;
       border: 1px solid transparent;
@@ -200,18 +168,10 @@
       color: var(--muted);
       cursor: pointer;
       font: inherit;
-      font-size: 1rem;
       font-weight: 750;
       -webkit-appearance: none;
       appearance: none;
       -webkit-tap-highlight-color: transparent;
-    }
-
-    .tool-tab.active {
-      border-color: transparent;
-      background: #0e7490;
-      color: #e0f2fe;
-      box-shadow: none;
     }
 
     .tool-tab:focus,
@@ -262,24 +222,9 @@
 
     @media (max-width: 840px) {
       .hero { align-items: flex-start; flex-direction: column; }
-      .layout { grid-template-columns: 1fr; }
-      .input-card { position: static; }
-    }
-
-    @media (max-width: 520px) {
-      .shell { width: min(100% - 24px, 1120px); padding-top: 24px; padding-bottom: 48px; }
-      h1 { font-size: clamp(1.8rem, 9vw, 2.35rem); }
-      .input-card, .primary-result { padding: 20px; }
-      .field-grid { grid-template-columns: 1fr; }
-      .tool-switch { gap: 8px; margin-bottom: 18px; }
-      .tool-tab { min-height: 56px; padding: 10px 8px; font-size: 0.82rem; line-height: 1.3; }
-      input, select { min-height: 54px; }
-      .field.full { grid-column: auto; }
-      .card { border-radius: 18px; }
     }
 
     @media (pointer: coarse) {
-      .tool-tab { min-height: 58px; }
       input, select { min-height: 54px; }
     }
 
@@ -320,12 +265,6 @@
     .stamina-result-label { color: #e2e3e6; font-size: 0.86rem; font-weight: 700; }
     .stamina-result-value { min-width: 0; color: var(--text); text-align: right; font-size: clamp(1.1rem, 2.5vw, 1.55rem); font-weight: 820; line-height: 1.25; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 
-    @media (max-width: 900px) {
-      .layout { display: flex; flex-direction: column; }
-      .results { order: 0; width: 100%; }
-      .input-card { position: static; width: 100%; }
-    }
-
     @media (max-width: 600px) {
       .shell { width: calc(100% - 32px); padding: 18px 0 40px; }
       .hero { margin-bottom: 14px; padding-left: 0; gap: 12px; }
@@ -342,9 +281,8 @@
       .field-grid { gap: 12px; }
       .field { gap: 6px; }
       label { font-size: 0.98rem; }
-      .hint { font-size: 0.78rem; }
       input, select { min-height: 54px; padding: 12px 13px; font-size: 16px; }
-      .field-message { min-height: 16px; font-size: 0.76rem; }
+      .field-message { min-height: 0; font-size: 0.76rem; }
       .primary-result { padding: 19px; }
       .result-label { font-size: 0.9rem; }
       .result-value { font-size: clamp(2.1rem, 12vw, 3rem); }
@@ -401,36 +339,286 @@
     html[data-theme="light"] .stamina-result-head { background: #e0f2fe !important; color: #075985; }
     html[data-theme="light"] .stamina-result-label { color: #334155; }
     html[data-theme="light"] .stamina-result-value { color: #0f172a; }
-    .theme-toggle:focus, .theme-toggle:focus-visible, .theme-toggle:active,
-    #warType:focus, #warType:focus-visible, #warType:active { outline: none; box-shadow: none; }
-    #warType { -webkit-tap-highlight-color: transparent; }
-    #warType:hover, #warType:focus, #warType:focus-visible, #warType:active { outline: none; border-color: var(--line); box-shadow: none; }
     html[data-theme="light"] .theme-toggle:focus, html[data-theme="light"] .theme-toggle:focus-visible, html[data-theme="light"] .theme-toggle:active { outline: none; border-color: var(--line) !important; box-shadow: none; }
+
+    .hero {
+      align-items: center;
+      margin-bottom: 16px;
+      gap: 18px;
+    }
+
+    .hero-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    h1 {
+      width: fit-content;
+      max-width: 100%;
+      padding-left: 12px;
+    }
+
+    .theme-toggle {
+      min-height: 48px;
+      padding: 10px 16px;
+      white-space: nowrap;
+    }
+
+    .tool-switch {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      padding: 6px;
+      margin: 0;
+    }
+
+    .tool-tab {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: center;
+      justify-items: center;
+      min-height: 72px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .tab-name {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      font-size: clamp(1rem, 4.5vw, 1.35rem);
+      font-weight: 800;
+      line-height: 1.2;
+      white-space: normal;
+    }
+
+    .reset-switch {
+      margin: 10px 0 16px;
+    }
+
+    .reset-button {
+      min-height: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: none;
+    }
+
+    .tool-panel > .layout {
+      gap: 18px;
+    }
+
+    .tool-panel .input-card {
+      border-top: 3px solid var(--sky);
+    }
+
+    .tool-panel .results {
+      gap: 12px;
+    }
+
+    .result-highlights {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .result-highlights .primary-result {
+      min-width: 0;
+      height: 100%;
+    }
+
+    .result-highlights .result-value {
+      overflow-wrap: anywhere;
+    }
+
+    .war-type-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .war-type-tab {
+      display: grid;
+      gap: 3px;
+      min-height: 64px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #303238;
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      text-align: left;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .war-type-tab:focus,
+    .war-type-tab:focus-visible,
+    .war-type-tab:active {
+      outline: none;
+      border-color: var(--line);
+      box-shadow: none;
+    }
+
+    .war-type-tab.active {
+      border-color: transparent;
+      background: var(--sky);
+      color: #ffffff;
+    }
+
+    .war-type-name {
+      font-size: 0.98rem;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .war-type-meta {
+      color: inherit;
+      font-size: 0.72rem;
+      font-weight: 650;
+      line-height: 1.2;
+      opacity: 0.84;
+    }
+
+    #warType[hidden] {
+      display: none !important;
+    }
+
+    @media (min-width: 960px) {
+      .tool-panel > .layout {
+        display: grid;
+        grid-template-columns: minmax(360px, 0.88fr) minmax(0, 1.12fr);
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 959px) {
+      .tool-panel > .layout {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .theme-toggle {
+        width: 100%;
+      }
+
+      .tool-tab {
+        min-height: 72px;
+        padding: 10px 4px;
+      }
+
+      .tool-panel .field-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #levelToolPanel .field:nth-child(4),
+      #levelToolPanel .field:nth-child(5) {
+        grid-column: 1 / -1;
+      }
+
+      .tool-panel .field.full {
+        grid-column: 1 / -1;
+      }
+
+      .reset-button {
+        min-height: 54px;
+      }
+
+      .result-highlights {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .result-highlights .primary-result {
+        padding: 16px;
+      }
+
+      .result-highlights .result-label {
+        line-height: 1.35;
+      }
+
+      .war-type-tab {
+        min-height: 62px;
+        padding: 10px;
+      }
+
+      .war-type-name {
+        font-size: 0.92rem;
+      }
+
+      .war-type-meta {
+        font-size: 0.68rem;
+      }
+    }
+
+    html[data-theme="light"] .tool-tab {
+      background: #FAF9F6;
+    }
+
+    html[data-theme="light"] .tool-tab.active {
+      background: #6e70df;
+      color: #e0f2fe;
+    }
+
+    html[data-theme="light"] .reset-button {
+      border-color: rgba(2, 132, 199, 0.18);
+      box-shadow: none;
+    }
+
+    html[data-theme="light"] .tool-panel .input-card {
+      border-top-color: #6e70df;
+    }
+
+    html[data-theme="light"] .war-type-tab {
+      border-color: rgba(15, 23, 42, 0.14);
+      background: #FAF9F6;
+      color: #475569;
+    }
+
+    html[data-theme="light"] .war-type-tab.active {
+      border-color: transparent;
+      background: #6e70df;
+      color: #ffffff;
+    }
 
   </style>
 </head>
 <body>
   <main class="shell">
     <header class="hero">
-      <h1>神魔之塔計算工具</h1>
-      <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="切換至淺色模式">切換淺色模式</button>
+      <div class="hero-copy">
+        <h1>神魔之塔計算工具</h1>
+      </div>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="淺色模式">淺色模式</button>
     </header>
 
     <div class="tool-switch" role="tablist" aria-label="選擇計算工具">
-      <button class="tool-tab active" id="levelTab" type="button" role="tab" aria-selected="true" aria-controls="levelToolPanel">召喚師等級</button>
-      <button class="tool-tab" id="staminaTab" type="button" role="tab" aria-selected="false" aria-controls="staminaToolPanel">體力恢復</button>
-      <button class="tool-tab" id="warTab" type="button" role="tab" aria-selected="false" aria-controls="warToolPanel">魔神戰功勳</button>
+      <button class="tool-tab active" id="levelTab" type="button" role="tab" aria-selected="true" aria-controls="levelToolPanel">
+        <span class="tab-name">召喚師等級</span>
+      </button>
+      <button class="tool-tab" id="staminaTab" type="button" role="tab" aria-selected="false" aria-controls="staminaToolPanel">
+        <span class="tab-name">體力恢復</span>
+      </button>
+      <button class="tool-tab" id="warTab" type="button" role="tab" aria-selected="false" aria-controls="warToolPanel">
+        <span class="tab-name">魔神戰功勳</span>
+      </button>
     </div>
 
     <div class="reset-switch" role="group" aria-label="清空目前計算工具欄位">
       <button class="reset-button" id="resetLevel" type="button" aria-label="清空召喚師等級計算欄位">
-        <span>全部重置</span>
+        <span>輸入欄全部清空</span>
       </button>
       <button class="reset-button" id="resetStamina" type="button" aria-label="清空體力恢復計算欄位" hidden>
-        <span>全部重置</span>
+        <span>輸入欄全部清空</span>
       </button>
       <button class="reset-button" id="resetWar" type="button" aria-label="清空魔神戰功勳計算欄位" hidden>
-        <span>全部重置</span>
+        <span>輸入欄全部清空</span>
       </button>
     </div>
 
@@ -443,12 +631,12 @@
 
           <div class="field-grid">
             <div class="field">
-              <label for="currentLevel">目前等級 <span class="hint">1 至 2000</span></label>
+              <label for="currentLevel">目前等級</label>
               <input id="currentLevel" type="number" min="1" max="2000" step="1" inputmode="numeric">
               <div class="field-message" id="currentLevelMessage"></div>
             </div>
             <div class="field">
-              <label for="targetLevel">目標等級 <span class="hint">1 至 2000</span></label>
+              <label for="targetLevel">目標等級</label>
               <input id="targetLevel" type="number" min="1" max="2000" step="1" inputmode="numeric">
               <div class="field-message" id="targetLevelMessage"></div>
             </div>
@@ -471,10 +659,16 @@
         </section>
 
         <section class="results" aria-live="polite">
-          <article class="card primary-result">
-            <div class="result-label">升到目標等級尚需 EXP</div>
-            <div class="result-value" id="requiredExp">—</div>
-          </article>
+          <div class="result-highlights">
+            <article class="card primary-result">
+              <div class="result-label">距離目標等級的總合 EXP</div>
+              <div class="result-value" id="requiredExp">—</div>
+            </article>
+            <article class="card primary-result">
+              <div class="result-label">總共消耗體力</div>
+              <div class="result-value" id="totalStamina">—</div>
+            </article>
+          </div>
 
           <div class="aligned-results-table" role="table" aria-label="召喚師等級計算結果">
             <div class="aligned-result-row aligned-result-head" role="row">
@@ -507,10 +701,6 @@
             </div>
           </div>
 
-          <article class="card primary-result">
-            <div class="result-label">總共消耗體力</div>
-            <div class="result-value" id="totalStamina">—</div>
-          </article>
         </section>
       </section>
     </section>
@@ -564,10 +754,20 @@
 
           <div class="field-grid">
             <div class="field full">
-              <label for="warType">戰鬥類型</label>
-              <select id="warType">
-                <option value="attack">攻擊戰：100 功勳／場・4 點</option>
-                <option value="defense" selected>防守戰：62 功勳／場・2 點</option>
+              <label>戰鬥類型</label>
+              <div class="war-type-tabs" role="tablist" aria-label="選擇魔神戰戰鬥類型">
+                <button class="war-type-tab" id="warAttackTab" type="button" role="tab" aria-selected="false">
+                  <span class="war-type-name">進攻</span>
+                  <span class="war-type-meta">100 功勳／場・4 點</span>
+                </button>
+                <button class="war-type-tab active" id="warDefenseTab" type="button" role="tab" aria-selected="true">
+                  <span class="war-type-name">防守</span>
+                  <span class="war-type-meta">62 功勳／場・2 點</span>
+                </button>
+              </div>
+              <select id="warType" hidden aria-hidden="true" tabindex="-1">
+                <option value="attack">進攻</option>
+                <option value="defense" selected>防守</option>
               </select>
               <div class="field-message" id="warTypeMessage"></div>
             </div>
@@ -614,17 +814,20 @@
             </div>
             <div class="aligned-result-row" role="row">
               <div class="aligned-result-copy" role="rowheader">
-                <div class="aligned-result-label">今日至最後一日免費點數</div>
-                <div class="metric-note">免費點數為依活動天數累積所得，每日 16 點，當日未使用不帶到隔日。</div>
+                <div class="aligned-result-label">預估免費點數</div>
+                <div class="metric-note">依目前倒數時間換算至活動結束的天數，每日 16 點。</div>
               </div>
               <div class="aligned-result-value" id="warFreePoints" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">扣除免費後點數</div>
+              <div class="aligned-result-label" role="rowheader">扣除免費點數後</div>
               <div class="aligned-result-value" id="warNetPoints" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">魔法石使用量</div>
+              <div class="aligned-result-copy" role="rowheader">
+                <div class="aligned-result-label">魔法石使用量</div>
+                <div class="metric-note">扣除免費點數後，還需要使用魔法石恢復的數量</div>
+              </div>
               <div class="aligned-result-value" id="warStoneCount" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
@@ -670,7 +873,7 @@
     });
     const levelFields = ['currentLevel', 'currentExp', 'targetLevel', 'stageExp', 'stageStamina'];
     const staminaFields = ['currentStamina', 'currentStaminaMax'];
-    const warFields = ['warType', 'warBonus', 'warMerit', 'warCountdownHours'];
+    const warFields = ['warBonus', 'warMerit', 'warCountdownHours'];
     const FREE_WAR_POINTS = 16;
     const WAR_STONE_POINTS = 8;
     const metricIds = ['currentProgress', 'stageCount', 'targetStaminaMax', 'levelCurrentStaminaMax', 'targetTeamCost', 'levelCurrentTeamCost'];
@@ -902,10 +1105,19 @@
 
     function resetWarTool() {
       cancelScheduledCalculation();
-      $('warType').value = 'defense';
+      setWarType('defense');
       clearFieldValues(['warBonus', 'warMerit', 'warCountdownHours']);
       clearMessages(warFields);
       resetWarResults();
+    }
+
+    function setWarType(type) {
+      const isAttack = type === 'attack';
+      $('warType').value = isAttack ? 'attack' : 'defense';
+      $('warAttackTab').classList.toggle('active', isAttack);
+      $('warDefenseTab').classList.toggle('active', !isAttack);
+      $('warAttackTab').setAttribute('aria-selected', String(isAttack));
+      $('warDefenseTab').setAttribute('aria-selected', String(!isAttack));
     }
 
     function calculateWar() {
@@ -986,6 +1198,14 @@
     $('levelTab').addEventListener('click', () => switchTool('level'));
     $('staminaTab').addEventListener('click', () => switchTool('stamina'));
     $('warTab').addEventListener('click', () => switchTool('war'));
+    $('warAttackTab').addEventListener('click', () => {
+      setWarType('attack');
+      scheduleCalculation('war');
+    });
+    $('warDefenseTab').addEventListener('click', () => {
+      setWarType('defense');
+      scheduleCalculation('war');
+    });
     const calculateByTool = { level: calculateLevel, stamina: calculateStamina, war: calculateWar };
     let activeTool = '';
     let scheduledTool = '';
@@ -1007,10 +1227,7 @@
     }
     levelFields.forEach(id => $(id).addEventListener('input', () => scheduleCalculation('level')));
     staminaFields.forEach(id => $(id).addEventListener('input', () => scheduleCalculation('stamina')));
-    warFields.forEach(id => {
-      $(id).addEventListener('input', () => scheduleCalculation('war'));
-      $(id).addEventListener('change', () => scheduleCalculation('war'));
-    });
+    warFields.forEach(id => $(id).addEventListener('input', () => scheduleCalculation('war')));
     $('resetLevel').addEventListener('click', resetLevelTool);
     $('resetStamina').addEventListener('click', resetStaminaTool);
     $('resetWar').addEventListener('click', resetWarTool);
@@ -1022,9 +1239,9 @@
       const root = document.documentElement;
       root.classList.add('theme-switching');
       root.dataset.theme = nextTheme;
-      $('themeToggle').textContent = isLight ? '切換深色模式' : '切換淺色模式';
+      $('themeToggle').textContent = isLight ? '深色模式' : '淺色模式';
       $('themeToggle').setAttribute('aria-pressed', String(isLight));
-      $('themeToggle').setAttribute('aria-label', isLight ? '切換至深色模式' : '切換至淺色模式');
+      $('themeToggle').setAttribute('aria-label', isLight ? '深色模式' : '淺色模式');
       if (themeSaveTimer) clearTimeout(themeSaveTimer);
       themeSaveTimer = setTimeout(() => {
         try {
