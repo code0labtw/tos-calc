@@ -415,7 +415,7 @@
       .card { border-radius: 18px; }
     }
   </style>
-<script type="text/javascript" nonce="d7cabd04935a49a0adbcb2ec6cb" src="//local.adguard.org?ts=1787643631133&amp;type=content-script&amp;dmn=private-us-east-1.manuscdn.com&amp;url=https%3A%2F%2Fprivate-us-east-1.manuscdn.com%2FsessionFile%2FqOPNLTIbk16rZdZwmasYAE%2Fsandbox%2FsXFcUm2QvAr5dNS1KLXVv0_1787682070424_na1fn_L2hvbWUvdWJ1bnR1L2luZGV4.html%3FPolicy%3DeyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvcU9QTkxUSWJrMTZyWmRad21hc1lBRS9zYW5kYm94L3NYRmNVbTJRdkFyNWROUzFLTFhWdjBfMTc4NzY4MjA3MDQyNF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJsdVpHVjQuaHRtbCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19%26Key-Pair-Id%3DK2QY5QTL8JSY6C%26Signature%3DMEQCIF2pP87Jij8tq-ofxZUmBFydRV2Vf7fqzDd0sKUZ6ardAiA8EEOS3MvleN3asxgXlHt-rpYDU5aN8DG1zKXtYFS0rQ__&amp;app=com.android.chrome&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=0"></script></head>
+</head>
 <body>
   <main class="shell">
     <header class="hero">
@@ -440,17 +440,17 @@
         <div class="field-grid">
           <div class="field">
             <label for="currentLevel">目前等級 <span class="hint">1 至 2000</span></label>
-            <input id="currentLevel" type="number" min="1" max="2000" step="1" value="1800" inputmode="numeric">
+            <input id="currentLevel" type="number" min="1" max="2000" step="1" inputmode="numeric">
             <div class="field-message" id="currentLevelMessage"></div>
           </div>
           <div class="field">
             <label for="targetLevel">目標等級 <span class="hint">1 至 2000</span></label>
-            <input id="targetLevel" type="number" min="1" max="2000" step="1" value="2000" inputmode="numeric">
+            <input id="targetLevel" type="number" min="1" max="2000" step="1" inputmode="numeric">
             <div class="field-message" id="targetLevelMessage"></div>
           </div>
           <div class="field full">
             <label for="currentExp">目前等級已累積 EXP <span class="hint">預設 0</span></label>
-            <input id="currentExp" type="number" min="0" step="1" value="0" inputmode="numeric">
+            <input id="currentExp" type="number" min="0" step="1" inputmode="numeric">
             <div class="field-message" id="currentExpMessage"></div>
           </div>
         </div>
@@ -459,12 +459,12 @@
         <div class="field-grid">
           <div class="field">
             <label for="stageExp">單場關卡獲得 EXP</label>
-            <input id="stageExp" type="number" min="0" step="1" value="6480" inputmode="numeric">
+            <input id="stageExp" type="number" min="0" step="1" inputmode="numeric">
             <div class="field-message" id="stageExpMessage"></div>
           </div>
           <div class="field">
             <label for="stageStamina">單場關卡消耗體力</label>
-            <input id="stageStamina" type="number" min="0" step="1" value="40" inputmode="numeric">
+            <input id="stageStamina" type="number" min="0" step="1" inputmode="numeric">
             <div class="field-message" id="stageStaminaMessage"></div>
           </div>
         </div>
@@ -526,7 +526,7 @@
       </section>
     </section>
 
-    
+    <div class="footer">純 HTML、CSS、JavaScript 單檔案｜可直接命名為 index.html 部署至 GitHub Pages</div>
   </main>
 
   <script>
@@ -583,6 +583,11 @@
       const targetLevel = readNumber('targetLevel');
       const stageExp = readNumber('stageExp');
       const stageStamina = readNumber('stageStamina');
+      const hasAnyBlank = [currentLevel, currentExp, targetLevel, stageExp, stageStamina].some(value => !Number.isFinite(value));
+      if (hasAnyBlank) {
+        setStatus('請填寫所有欄位後，即時顯示計算結果。', false);
+        return;
+      }
       let hasError = false;
 
       if (!Number.isInteger(currentLevel) || currentLevel < 1 || currentLevel > 2000) {
