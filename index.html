@@ -584,7 +584,7 @@
       const stageStamina = readNumber('stageStamina');
       const hasAnyBlank = [currentLevel, currentExp, targetLevel, stageExp, stageStamina].some(value => !Number.isFinite(value));
       if (hasAnyBlank) {
-        setStatus('請填寫所有欄位後，即時顯示計算結果。', false);
+        setStatus('填寫所有欄位後，即時顯示計算結果。', false);
         return;
       }
       let hasError = false;
