@@ -286,8 +286,8 @@
     html { background: var(--bg); }
     body { background: #34363b; }
     .shell { width: min(1240px, calc(100% - 40px)); padding: 28px 0 56px; }
-    .hero { margin-bottom: 18px; padding-left: 16px; border-left: 3px solid var(--sky); }
-    h1 { margin: 0; font-size: clamp(2rem, 4.5vw, 3.25rem); }
+    .hero { margin-bottom: 18px; }
+    h1 { margin: 0; padding-left: 16px; border-left: 3px solid var(--sky); font-size: clamp(2rem, 4.5vw, 3.25rem); }
     .theme-toggle { flex: 0 0 auto; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; background: var(--panel-strong); color: var(--text); cursor: pointer; font: inherit; font-size: 0.82rem; font-weight: 750; -webkit-tap-highlight-color: transparent; }
     .theme-toggle:focus, .theme-toggle:focus-visible, .theme-toggle:active { outline: none; border-color: var(--line); box-shadow: none; }
     .tool-switch { width: 100%; max-width: none; gap: 6px; margin-bottom: 0; padding: 6px; border: 1px solid var(--line); border-radius: 18px; background: #2f3136; }
@@ -328,9 +328,9 @@
 
     @media (max-width: 600px) {
       .shell { width: calc(100% - 32px); padding: 18px 0 40px; }
-      .hero { margin-bottom: 14px; padding-left: 12px; gap: 12px; }
+      .hero { margin-bottom: 14px; padding-left: 0; gap: 12px; }
       .theme-toggle { width: 100%; font-size: 0.9rem; }
-      h1 { font-size: clamp(2rem, 9vw, 2.5rem); }
+      h1 { padding-left: 12px; font-size: clamp(2rem, 9vw, 2.5rem); }
       .tool-switch { gap: 5px; margin-bottom: 0; padding: 5px; border-radius: 14px; }
       .reset-switch { margin: 8px 0 14px; }
       .tool-tab { min-height: 56px; padding: 9px 5px; border-radius: 10px; font-size: 0.92rem; line-height: 1.3; }
