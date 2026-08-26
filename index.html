@@ -402,23 +402,19 @@
     [hidden] { display: none !important; }
 
     .tool-switch {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
+      display: flex;
+      gap: 12px;
       max-width: 620px;
       margin: 0 auto 20px;
-      padding: 6px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: rgba(10, 25, 43, 0.8);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
     }
 
     .tool-tab {
-      border: 1px solid transparent;
-      border-radius: 11px;
+      flex: 1 1 0;
+      min-width: 0;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 12px;
       padding: 12px 14px;
-      background: transparent;
+      background: rgba(10, 25, 43, 0.72);
       color: var(--muted);
       cursor: pointer;
       font: inherit;
@@ -427,11 +423,11 @@
       transition: background 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
     }
 
-    .tool-tab:hover { color: var(--text); }
+    .tool-tab:hover { border-color: rgba(125, 211, 252, 0.45); color: var(--text); }
 
     .tool-tab.active {
-      border-color: rgba(56, 189, 248, 0.42);
-      background: linear-gradient(135deg, rgba(14, 116, 144, 0.42), rgba(8, 47, 73, 0.72));
+      border-color: rgba(56, 189, 248, 0.72);
+      background: linear-gradient(135deg, rgba(14, 116, 144, 0.62), rgba(8, 47, 73, 0.86));
       color: #e0f2fe;
       box-shadow: 0 0 18px rgba(56, 189, 248, 0.12);
     }
@@ -461,9 +457,14 @@
       transform: translateY(-1px);
     }
 
-    .secondary-button:focus-visible, .tool-tab:focus-visible {
+    .secondary-button:focus-visible {
       outline: 3px solid rgba(103, 232, 249, 0.35);
       outline-offset: 2px;
+    }
+
+    .tool-tab:focus-visible {
+      outline: 1px solid rgba(125, 211, 252, 0.72);
+      outline-offset: 1px;
     }
 
     @media (max-width: 840px) {
@@ -476,12 +477,13 @@
     @media (max-width: 520px) {
       .shell { width: min(100% - 22px, 1120px); padding-top: 28px; }
       .input-card, .primary-result { padding: 20px; }
-      .field-grid, .metric-grid, .tool-switch { grid-template-columns: 1fr; }
+      .field-grid, .metric-grid { grid-template-columns: 1fr; }
+      .tool-switch { display: flex; gap: 8px; }
       .field.full { grid-column: auto; }
       .card { border-radius: 18px; }
     }
   </style>
-</head>
+<script type="text/javascript" nonce="d7cabd04935a49a0adbcb2ec6cb" src="//local.adguard.org?ts=1787643631133&amp;type=content-script&amp;dmn=private-us-east-1.manuscdn.com&amp;url=https%3A%2F%2Fprivate-us-east-1.manuscdn.com%2FsessionFile%2FqOPNLTIbk16rZdZwmasYAE%2Fsandbox%2Fztdm7nnAhGvH0EdKKVsUfD_1787730580845_na1fn_L2hvbWUvdWJ1bnR1L2luZGV4.html%3FPolicy%3DeyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvcU9QTkxUSWJrMTZyWmRad21hc1lBRS9zYW5kYm94L3p0ZG03bm5BaEd2SDBFZEtLVnNVZkRfMTc4NzczMDU4MDg0NV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJsdVpHVjQuaHRtbCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19%26Key-Pair-Id%3DK2QY5QTL8JSY6C%26Signature%3DMEYCIQCqqJSAwRy2QkSyZPPDZ8QCSbUs7MHvgdyRGAoVQhtMSwIhAKn1z6sCCLG62AYe-BpttJR1VYixHg2TpuBXUN-Q6JT4&amp;app=com.android.chrome&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=0"></script></head>
 <body>
   <main class="shell">
     <header class="hero">
