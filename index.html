@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="神魔之塔召喚師等級與體力恢復計算工具。">
-  <title>神魔之塔｜召喚師等級與體力計算</title>
+  <meta name="description" content="神魔之塔召喚師等級、體力恢復與魔神戰功勳計算工具。">
+  <title>神魔之塔｜計算工具</title>
   <style>
     :root {
       color-scheme: dark;
@@ -173,7 +173,7 @@
       font-weight: 400;
     }
 
-    input {
+    input, select {
       width: 100%;
       border: 1px solid rgba(148, 163, 184, 0.24);
       border-radius: 12px;
@@ -186,14 +186,14 @@
       transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
     }
 
-    input:hover { border-color: rgba(125, 211, 252, 0.45); }
-    input:focus {
+    input:hover, select:hover { border-color: rgba(125, 211, 252, 0.45); }
+    input:focus, select:focus {
       border-color: var(--sky);
       background: rgba(7, 24, 43, 0.92);
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.14);
     }
 
-    input.invalid {
+    input.invalid, select.invalid {
       border-color: var(--red);
       box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.13);
     }
@@ -403,8 +403,8 @@
 
     .tool-switch {
       display: flex;
-      gap: 12px;
-      max-width: 620px;
+      gap: 10px;
+      max-width: 760px;
       margin: 0 auto 20px;
     }
 
@@ -485,12 +485,12 @@
       .shell { width: min(100% - 22px, 1120px); padding-top: 28px; }
       .input-card, .primary-result { padding: 20px; }
       .field-grid, .metric-grid { grid-template-columns: 1fr; }
-      .tool-switch { display: flex; gap: 8px; }
+      .tool-switch { display: flex; gap: 6px; }
       .field.full { grid-column: auto; }
       .card { border-radius: 18px; }
     }
   </style>
-<script type="text/javascript" nonce="d7cabd04935a49a0adbcb2ec6cb" src="//local.adguard.org?ts=1787643631133&amp;type=content-script&amp;dmn=private-us-east-1.manuscdn.com&amp;url=https%3A%2F%2Fprivate-us-east-1.manuscdn.com%2FsessionFile%2FqOPNLTIbk16rZdZwmasYAE%2Fsandbox%2FPqHdBftNeKHunSEzDfAsGH_1787731933875_na1fn_L2hvbWUvdWJ1bnR1L2luZGV4.html%3FPolicy%3DeyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvcU9QTkxUSWJrMTZyWmRad21hc1lBRS9zYW5kYm94L1BxSGRCZnROZUtIdW5TRXpEZkFzR0hfMTc4NzczMTkzMzg3NV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJsdVpHVjQuaHRtbCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19%26Key-Pair-Id%3DK2QY5QTL8JSY6C%26Signature%3DMEYCIQDl6dTfCKiI8LK4gP2QfuQFB2cBpNBunMhnc84abI7GKAIhAOwnvxLijK4Zpd-1GTAZpl1LpJbrh0jPo9osWWWl~sWW&amp;app=com.android.chrome&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=0"></script></head>
+</head>
 <body>
   <main class="shell">
     <header class="hero">
@@ -500,6 +500,7 @@
     <div class="tool-switch" role="tablist" aria-label="選擇計算工具">
       <button class="tool-tab active" id="levelTab" type="button" role="tab" aria-selected="true" aria-controls="levelToolPanel">召喚師等級計算</button>
       <button class="tool-tab" id="staminaTab" type="button" role="tab" aria-selected="false" aria-controls="staminaToolPanel">體力恢復計算</button>
+      <button class="tool-tab" id="warTab" type="button" role="tab" aria-selected="false" aria-controls="warToolPanel">魔神戰功勳計算</button>
     </div>
 
     <section class="tool-panel" id="levelToolPanel" role="tabpanel" aria-labelledby="levelTab">
@@ -609,6 +610,81 @@
       </section>
     </section>
 
+    <section class="tool-panel hidden" id="warToolPanel" role="tabpanel" aria-labelledby="warTab" hidden>
+      <section class="layout" aria-label="魔神戰功勳計算">
+        <section class="card input-card">
+          <div class="card-header">
+            <h2 class="card-title">魔神戰功勳計算</h2>
+          </div>
+
+          <div class="field-grid">
+            <div class="field full">
+              <label for="warType">戰鬥類型</label>
+              <select id="warType">
+                <option value="attack">攻擊戰：100 功勳／場・4 點</option>
+                <option value="defense">防守戰：62 功勳／場・2 點</option>
+              </select>
+              <div class="field-message" id="warTypeMessage"></div>
+            </div>
+            <div class="field">
+              <label for="warBonus">加成（%）</label>
+              <input id="warBonus" type="number" min="0" step="0.01" inputmode="decimal">
+              <div class="field-message" id="warBonusMessage"></div>
+            </div>
+            <div class="field">
+              <label for="warMerit">目標功勳值</label>
+              <input id="warMerit" type="number" min="0" step="1" inputmode="numeric">
+              <div class="field-message" id="warMeritMessage"></div>
+            </div>
+            <div class="field full">
+              <label for="warCountdownHours">倒數時間（小時）</label>
+              <input id="warCountdownHours" type="number" min="0" step="0.01" inputmode="decimal">
+              <div class="field-message" id="warCountdownHoursMessage"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="results" aria-live="polite">
+          <article class="card primary-result">
+            <div class="result-label">預計所需場次</div>
+            <div class="result-value" id="warStageCount">—</div>
+          </article>
+
+          <div class="metric-grid">
+            <article class="metric">
+              <div class="metric-label">每場功勳</div>
+              <div class="metric-value" id="warMeritPerBattle">—</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">總消耗點數</div>
+              <div class="metric-value" id="warPointCost">—</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">活動天數</div>
+              <div class="metric-value" id="warDayCount">—</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">今日至最後一日免費點數</div>
+              <div class="metric-value" id="warFreePoints">—</div>
+              <div class="metric-note">免費點數為依活動天數累積所得，每日 16 點，當日未使用不帶到隔日。</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">扣除免費後點數</div>
+              <div class="metric-value" id="warNetPoints">—</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">魔法石使用量</div>
+              <div class="metric-value" id="warStoneCount">—</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">倒數結束時間</div>
+              <div class="metric-value" id="warCountdownEnd">—</div>
+            </article>
+          </div>
+        </section>
+      </section>
+    </section>
+
   </main>
 
   <script>
@@ -616,8 +692,18 @@
     const levels = new Map(levelData.map(record => [record.level, record]));
     const numberFormat = new Intl.NumberFormat('zh-TW');
     const RECOVERY_MINUTES_PER_STAMINA = 8;
+    const TAIWAN_TIME_ZONE = 'Asia/Taipei';
+    const taiwanDateFormatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: TAIWAN_TIME_ZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
     const levelFields = ['currentLevel', 'currentExp', 'targetLevel', 'stageExp', 'stageStamina'];
     const staminaFields = ['currentStamina', 'currentStaminaMax'];
+    const warFields = ['warType', 'warBonus', 'warMerit', 'warCountdownHours'];
+    const FREE_WAR_POINTS = 16;
+    const WAR_STONE_POINTS = 8;
 
     const $ = id => document.getElementById(id);
 
@@ -640,6 +726,44 @@
       if (hours > 0) parts.push(hours + '小時');
       if (minutes > 0 || parts.length === 0) parts.push(minutes + '分鐘');
       return parts.join(' ');
+    }
+
+    function formatNumber(value) {
+      return Number.isFinite(value) ? numberFormat.format(value) : '—';
+    }
+
+    function getTaiwanDateParts(date) {
+      const parts = taiwanDateFormatter.formatToParts(date);
+      return parts.reduce((result, part) => {
+        if (part.type === 'year' || part.type === 'month' || part.type === 'day') result[part.type] = Number(part.value);
+        return result;
+      }, {});
+    }
+
+    function formatDateTime(date) {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: TAIWAN_TIME_ZONE,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        hourCycle: 'h23'
+      }).formatToParts(date);
+      const values = parts.reduce((result, part) => {
+        if (['year', 'month', 'day', 'hour', 'minute'].includes(part.type)) result[part.type] = part.value;
+        return result;
+      }, {});
+      return values.year + '/' + values.month + '/' + values.day + ' ' + values.hour + ':' + values.minute;
+    }
+
+    function calendarDaysInclusive(start, end) {
+      const startParts = getTaiwanDateParts(start);
+      const endParts = getTaiwanDateParts(end);
+      const startDay = Date.UTC(startParts.year, startParts.month - 1, startParts.day);
+      const endDay = Date.UTC(endParts.year, endParts.month - 1, endParts.day);
+      return Math.max(1, Math.floor((endDay - startDay) / 86400000) + 1);
     }
 
     function setMessage(id, message) {
@@ -765,24 +889,97 @@
       $('recoveryTime').textContent = formatRecoveryTime(missingStamina);
     }
 
+    function resetWarResults() {
+      $('warStageCount').textContent = '—';
+      $('warMeritPerBattle').textContent = '—';
+      $('warPointCost').textContent = '—';
+      $('warDayCount').textContent = '—';
+      $('warFreePoints').textContent = '—';
+      $('warNetPoints').textContent = '—';
+      $('warStoneCount').textContent = '—';
+      $('warCountdownEnd').textContent = '—';
+    }
+
+    function calculateWar() {
+      clearMessages(warFields);
+      const warBonus = readNumber('warBonus');
+      const warMerit = readNumber('warMerit');
+      const warCountdownHours = readNumber('warCountdownHours');
+      if ([warBonus, warMerit, warCountdownHours].some(value => !Number.isFinite(value))) {
+        resetWarResults();
+        return;
+      }
+
+      let hasError = false;
+      if (warBonus < 0) {
+        setMessage('warBonus', '加成不可小於 0。');
+        hasError = true;
+      }
+      if (warMerit < 0) {
+        setMessage('warMerit', '目標功勳值不可小於 0。');
+        hasError = true;
+      }
+      if (warCountdownHours < 0) {
+        setMessage('warCountdownHours', '倒數時間不可小於 0。');
+        hasError = true;
+      }
+      if (hasError) {
+        resetWarResults();
+        return;
+      }
+
+      const config = $('warType').value === 'attack'
+        ? { baseMerit: 100, pointCost: 4 }
+        : { baseMerit: 62, pointCost: 2 };
+      const meritPerBattle = config.baseMerit * (2 + warBonus / 100);
+      const stageCount = warMerit === 0 ? 0 : Math.ceil(warMerit / meritPerBattle);
+      const totalPoints = stageCount * config.pointCost;
+      const now = new Date();
+      const countdownEnd = new Date(now.getTime() + warCountdownHours * 60 * 60 * 1000);
+      const dayCount = calendarDaysInclusive(now, countdownEnd);
+      const freePoints = dayCount * FREE_WAR_POINTS;
+      const netPoints = Math.max(0, totalPoints - freePoints);
+      const stoneCount = Math.ceil(netPoints / WAR_STONE_POINTS);
+
+      $('warStageCount').textContent = formatNumber(stageCount) + ' 場';
+      $('warMeritPerBattle').textContent = formatNumber(meritPerBattle);
+      $('warPointCost').textContent = formatNumber(totalPoints) + ' 點';
+      $('warDayCount').textContent = formatNumber(dayCount) + ' 天';
+      $('warFreePoints').textContent = formatNumber(freePoints) + ' 點';
+      $('warNetPoints').textContent = formatNumber(netPoints) + ' 點';
+      $('warStoneCount').textContent = formatNumber(stoneCount) + ' 顆';
+      $('warCountdownEnd').textContent = formatDateTime(countdownEnd);
+    }
+
     function switchTool(tool) {
       const isLevel = tool === 'level';
+      const isStamina = tool === 'stamina';
       $('levelToolPanel').hidden = !isLevel;
       $('levelToolPanel').classList.toggle('hidden', !isLevel);
-      $('staminaToolPanel').hidden = isLevel;
-      $('staminaToolPanel').classList.toggle('hidden', isLevel);
+      $('staminaToolPanel').hidden = !isStamina;
+      $('staminaToolPanel').classList.toggle('hidden', !isStamina);
+      $('warToolPanel').hidden = tool !== 'war';
+      $('warToolPanel').classList.toggle('hidden', tool !== 'war');
       $('levelTab').classList.toggle('active', isLevel);
       $('levelTab').setAttribute('aria-selected', String(isLevel));
-      $('staminaTab').classList.toggle('active', !isLevel);
-      $('staminaTab').setAttribute('aria-selected', String(!isLevel));
+      $('staminaTab').classList.toggle('active', isStamina);
+      $('staminaTab').setAttribute('aria-selected', String(isStamina));
+      $('warTab').classList.toggle('active', tool === 'war');
+      $('warTab').setAttribute('aria-selected', String(tool === 'war'));
       if (isLevel) calculateLevel();
-      else calculateStamina();
+      else if (isStamina) calculateStamina();
+      else calculateWar();
     }
 
     $('levelTab').addEventListener('click', () => switchTool('level'));
     $('staminaTab').addEventListener('click', () => switchTool('stamina'));
+    $('warTab').addEventListener('click', () => switchTool('war'));
     levelFields.forEach(id => $(id).addEventListener('input', calculateLevel));
     staminaFields.forEach(id => $(id).addEventListener('input', calculateStamina));
+    warFields.forEach(id => {
+      $(id).addEventListener('input', calculateWar);
+      $(id).addEventListener('change', calculateWar);
+    });
     switchTool('level');
   </script>
 </body>
