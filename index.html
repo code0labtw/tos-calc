@@ -1,1 +1,1052 @@
-<!doctype html> <html lang="zh-Hant"> <head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"> <meta name="description" content="神魔之塔召喚師等級、體力恢復與魔神戰功勳計算工具。"> <title>神魔之塔｜計算工具</title> <style> :root { color-scheme: dark; --bg: #34363b; --bg-soft: #3d4046; --panel: rgba(59, 62, 68, 0.96); --panel-strong: #45484f; --line: rgba(244, 245, 247, 0.12); --line-strong: rgba(139, 141, 246, 0.48); --text: #f1f2f4; --muted: #c3c5ca; --sky: #8b8df4; --sky-soft: #4b4d6a; --cyan: #b9baff; --green: #72d2aa; --amber: #f0c36b; --red: #f38b9f; --shadow: 0 22px 70px rgba(15, 16, 20, 0.24); } * { box-sizing: border-box; } body { margin: 0; min-width: 320px; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif; line-height: 1.6; } .shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 36px 0 64px; } .hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 24px; } .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--cyan); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; } .eyebrow::before { content: ""; width: 28px; height: 2px; border-radius: 99px; background: var(--sky); box-shadow: 0 0 16px rgba(56, 189, 248, 0.8); } h1 { margin: 10px 0 8px; font-size: clamp(1.9rem, 4vw, 3.2rem); line-height: 1.12; letter-spacing: -0.04em; } .subtitle { max-width: 680px; margin: 0; color: var(--muted); font-size: 1rem; } .verified-badge { flex: 0 0 auto; padding: 10px 14px; border: 1px solid rgba(52, 211, 153, 0.32); border-radius: 14px; background: rgba(6, 78, 59, 0.28); color: #a7f3d0; font-size: 0.82rem; font-weight: 700; text-align: center; } .layout { display: grid; grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.5fr); gap: 24px; align-items: start; } .card { border: 1px solid var(--line); border-radius: 22px; background: #10243b; box-shadow: var(--shadow); } .input-card { position: sticky; top: 24px; padding: 28px; } .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; } .card-title { margin: 0; font-size: 1.1rem; letter-spacing: -0.02em; } .card-description { margin: 4px 0 0; color: var(--muted); font-size: 0.86rem; } .section-label { margin: 20px 0 10px; color: #c7d9ec; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; } .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } .field { display: grid; gap: 7px; } .field.full { grid-column: 1 / -1; } label { color: #c7d9ec; font-size: 0.88rem; font-weight: 650; } .hint { color: var(--muted); font-size: 0.75rem; font-weight: 400; } input, select { width: 100%; min-height: 52px; border: 1px solid rgba(148, 163, 184, 0.24); border-radius: 12px; outline: none; padding: 13px 14px; background: rgba(3, 12, 24, 0.72); color: var(--text); font: inherit; font-variant-numeric: tabular-nums; transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease; } input:hover, select:hover { border-color: rgba(125, 211, 252, 0.45); } input:focus, select:focus { border-color: var(--sky); background: rgba(7, 24, 43, 0.92); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.14); } input.invalid, select.invalid { border-color: var(--red); box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.13); } .field-message { min-height: 18px; color: var(--red); font-size: 0.76rem; } .status { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; margin-top: 18px; padding: 11px 12px; border: 1px solid rgba(139, 141, 246, 0.24); border-radius: 12px; background: rgba(75, 77, 106, 0.3); color: #e5e5ff; font-size: 0.82rem; } .status.error { border-color: rgba(243, 139, 159, 0.36); background: rgba(111, 50, 68, 0.34); color: #ffe1e7; } .status-dot { width: 8px; height: 8px; flex: 0 0 auto; margin-top: 7px; border-radius: 50%; background: var(--sky); box-shadow: 0 0 12px rgba(56, 189, 248, 0.9); } .status.error .status-dot { background: var(--red); box-shadow: 0 0 12px rgba(251, 113, 133, 0.9); } .results { display: grid; gap: 20px; } .primary-result { position: relative; overflow: hidden; padding: 26px; border-color: var(--line-strong); background: #103a59; } .primary-result::after { display: none; } .result-label { color: #bae6fd; font-size: 0.9rem; font-weight: 700; } .result-value { margin-top: 5px; color: #f0f9ff; font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 850; letter-spacing: -0.05em; line-height: 1.08; font-variant-numeric: tabular-nums; } .result-note { margin-top: 12px; color: var(--muted); font-size: 0.84rem; } .metric-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } .metric { min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 18px; background: rgba(10, 25, 43, 0.72); } .metric-label { color: var(--muted); font-size: 0.82rem; font-weight: 650; } .metric-value { margin-top: 7px; color: var(--text); font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 820; letter-spacing: -0.04em; line-height: 1.15; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; } .metric-value .unit { margin-left: 4px; color: var(--sky); font-size: 0.72em; font-weight: 750; letter-spacing: 0; } .metric-note { min-height: 24px; margin-top: 9px; color: #8fa8bf; font-size: 0.76rem; } .progress-card { padding: 20px; border: 1px solid var(--line); border-radius: 18px; background: rgba(10, 25, 43, 0.72); } .progress-top { display: flex; justify-content: space-between; gap: 14px; color: var(--muted); font-size: 0.84rem; } .progress-number { color: var(--cyan); font-weight: 800; font-variant-numeric: tabular-nums; } .progress-track { height: 12px; margin-top: 12px; overflow: hidden; border-radius: 999px; background: rgba(148, 163, 184, 0.14); } .progress-bar { width: 0; height: 100%; border-radius: inherit; background: #38bdf8; box-shadow: 0 0 18px rgba(56, 189, 248, 0.48); transition: width 180ms ease; } .source-card { padding: 20px 22px; border: 1px solid rgba(251, 191, 36, 0.22); border-radius: 18px; background: rgba(120, 53, 15, 0.16); } .source-card h2 { margin: 0 0 8px; color: #fde68a; font-size: 0.98rem; } .source-card p { margin: 0; color: #cbd5e1; font-size: 0.82rem; } .footer { margin-top: 26px; color: #71869d; font-size: 0.76rem; text-align: center; } .hidden { display: none; } [hidden] { display: none !important; } .tool-switch { display: flex; gap: 16px; width: min(100%, 840px); margin: 0 auto 24px; } .tool-tab { flex: 1 1 0; min-width: 0; min-height: 64px; border: 1px solid transparent; border-radius: 14px; padding: 14px 16px; background: rgba(7, 24, 43, 0.58); color: var(--muted); cursor: pointer; font: inherit; font-size: 1rem; font-weight: 750; -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent; } .tool-tab.active { border-color: transparent; background: #0e7490; color: #e0f2fe; box-shadow: none; } .tool-tab:focus, .tool-tab:focus-visible, .tool-tab:active { outline: none; border-color: transparent; box-shadow: none; } .result-actions { position: relative; z-index: 1; margin-top: 18px; } .secondary-button { border: 1px solid rgba(125, 211, 252, 0.36); border-radius: 10px; padding: 10px 13px; background: rgba(8, 47, 73, 0.52); color: #bae6fd; cursor: pointer; font: inherit; font-size: 0.8rem; font-weight: 750; } .secondary-button:focus-visible { outline: 3px solid rgba(103, 232, 249, 0.35); outline-offset: 2px; } .reset-button { display: flex; align-items: center; justify-content: center; gap: 14px; width: 100%; min-height: 58px; margin-top: 18px; border: 0; border-radius: 16px; padding: 12px 20px; background: #0d83ff; color: #ffffff; cursor: pointer; font: inherit; font-size: 1.2rem; font-weight: 800; letter-spacing: 0.02em; line-height: 1; box-shadow: 0 5px 0 rgba(4, 33, 74, 0.22); -webkit-tap-highlight-color: transparent; } .reset-button:focus, .reset-button:focus-visible { outline: none; } .reset-switch { width: 100%; margin: 10px 0 18px; } .reset-switch .reset-button { margin-top: 0; } @media (max-width: 840px) { .hero { align-items: flex-start; flex-direction: column; } .verified-badge { width: 100%; text-align: left; } .layout { grid-template-columns: 1fr; } .input-card { position: static; } } @media (max-width: 520px) { .shell { width: min(100% - 24px, 1120px); padding-top: 24px; padding-bottom: 48px; } h1 { font-size: clamp(1.8rem, 9vw, 2.35rem); } .input-card, .primary-result { padding: 20px; } .field-grid, .metric-grid { grid-template-columns: 1fr; } .tool-switch { gap: 8px; margin-bottom: 18px; } .tool-tab { min-height: 56px; padding: 10px 8px; font-size: 0.82rem; line-height: 1.3; } input, select { min-height: 54px; } .field.full { grid-column: auto; } .card { border-radius: 18px; } .metric { padding: 18px; } } @media (pointer: coarse) { .tool-tab { min-height: 58px; } input, select { min-height: 54px; } } html { background: var(--bg); } body { background: #34363b; } .shell { width: min(1240px, calc(100% - 40px)); padding: 28px 0 56px; } .hero { margin-bottom: 18px; padding-left: 16px; border-left: 3px solid var(--sky); } h1 { margin: 0; font-size: clamp(2rem, 4.5vw, 3.25rem); } .theme-toggle { flex: 0 0 auto; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; background: var(--panel-strong); color: var(--text); cursor: pointer; font: inherit; font-size: 0.82rem; font-weight: 750; -webkit-tap-highlight-color: transparent; } .theme-toggle:focus, .theme-toggle:focus-visible, .theme-toggle:active { outline: none; border-color: var(--line); box-shadow: none; } .tool-switch { width: 100%; max-width: none; gap: 6px; margin-bottom: 0; padding: 6px; border: 1px solid var(--line); border-radius: 18px; background: #2f3136; } .reset-switch { margin: 10px 0 18px; } .tool-tab { min-height: 58px; border-radius: 12px; padding: 12px 16px; background: #3a3d42; font-size: 0.98rem; } .tool-tab.active { background: #6e70df; } .layout { display: flex; flex-direction: column; gap: 18px; align-items: stretch; } .card { border-radius: 18px; background: #3b3e44; box-shadow: 0 18px 46px rgba(15, 16, 20, 0.22); } .input-card { position: static; width: 100%; padding: 22px; } .card-header { margin-bottom: 16px; } .field-grid { gap: 12px; } input, select { min-height: 50px; border-radius: 10px; padding: 12px 13px; background: #303238; } input:focus, select:focus { background: #383a40; box-shadow: 0 0 0 3px rgba(139, 141, 246, 0.12); } .results { gap: 14px; } .primary-result { padding: 22px; border-color: rgba(139, 141, 246, 0.34); background: #464950; } .result-value { font-size: clamp(2rem, 4.8vw, 3.3rem); } .metric-grid { gap: 12px; } .metric { padding: 16px; border-radius: 14px; background: #36393f; } .metric-value { font-size: clamp(1.25rem, 2.5vw, 1.8rem); } .aligned-results-table { display: grid; gap: 1px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--line); } .aligned-result-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(160px, 0.9fr); align-items: center; gap: 20px; padding: 14px 18px; background: #36393f; } .aligned-result-row:nth-child(odd) { background: #3e4147; } .aligned-result-head { background: #4a4d55 !important; color: #ececff; font-size: 0.76rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; } .aligned-result-label { color: #e2e3e6; font-size: 0.86rem; font-weight: 700; } .aligned-result-copy { min-width: 0; } .aligned-result-value { min-width: 0; color: var(--text); text-align: right; font-size: clamp(1rem, 2.5vw, 1.45rem); font-weight: 820; line-height: 1.25; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; } .aligned-result-value .unit { margin-left: 4px; color: var(--sky); font-size: 0.72em; font-weight: 750; letter-spacing: 0; } .aligned-results-table .metric-note { min-height: 0; margin-top: 3px; } .stamina-results-table { display: grid; gap: 1px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--line); } .stamina-result-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(160px, 0.9fr); align-items: center; gap: 20px; padding: 16px 18px; background: #36393f; } .stamina-result-row:nth-child(odd) { background: #3e4147; } .stamina-result-head { background: #4a4d55 !important; color: #ececff; font-size: 0.76rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; } .stamina-result-label { color: #e2e3e6; font-size: 0.86rem; font-weight: 700; } .stamina-result-value { min-width: 0; color: var(--text); text-align: right; font-size: clamp(1.1rem, 2.5vw, 1.55rem); font-weight: 820; line-height: 1.25; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; } @media (max-width: 900px) { .layout { display: flex; flex-direction: column; } .results { order: 0; width: 100%; } .input-card { position: static; width: 100%; } } @media (max-width: 600px) { .shell { width: calc(100% - 32px); padding: 18px 0 40px; } .hero { margin-bottom: 14px; padding-left: 12px; gap: 12px; } .theme-toggle { width: 100%; font-size: 0.9rem; } h1 { font-size: clamp(2rem, 9vw, 2.5rem); } .tool-switch { gap: 5px; margin-bottom: 0; padding: 5px; border-radius: 14px; } .reset-switch { margin: 8px 0 14px; } .tool-tab { min-height: 56px; padding: 9px 5px; border-radius: 10px; font-size: 0.92rem; line-height: 1.3; } .layout { gap: 12px; } .results { order: 0; gap: 10px; } .input-card { padding: 18px; } .card-header { margin-bottom: 14px; } .card-title { font-size: 1.18rem; } .card-description { font-size: 0.92rem; } .field-grid { gap: 12px; } .field { gap: 6px; } label { font-size: 0.98rem; } .hint { font-size: 0.78rem; } input, select { min-height: 54px; padding: 12px 13px; font-size: 16px; } .field-message { min-height: 16px; font-size: 0.76rem; } .primary-result { padding: 19px; } .result-label { font-size: 0.9rem; } .result-value { font-size: clamp(2.1rem, 12vw, 3rem); } .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .metric { padding: 14px; border-radius: 12px; } .reset-button { min-height: 60px; margin-top: 16px; border-radius: 15px; padding: 12px 16px; font-size: 1.18rem; } .metric-label { font-size: 0.78rem; line-height: 1.4; } .metric-value { margin-top: 5px; font-size: 1.2rem; } .metric-note { margin-top: 7px; font-size: 0.72rem; line-height: 1.4; } .aligned-result-row { grid-template-columns: minmax(0, 1fr) minmax(116px, 0.9fr); gap: 10px; padding: 12px 13px; } .aligned-result-head { padding: 10px 13px; } .aligned-result-label { font-size: 0.88rem; line-height: 1.4; } .aligned-result-value { font-size: 1.08rem; } .aligned-results-table .metric-note { font-size: 0.72rem; line-height: 1.4; } .stamina-result-row { grid-template-columns: minmax(0, 1fr) minmax(116px, 0.9fr); gap: 10px; padding: 13px; } .stamina-result-head { padding: 10px 13px; } .stamina-result-label { font-size: 0.88rem; line-height: 1.4; } .stamina-result-value { font-size: 1.08rem; } .progress-card { padding: 15px; } } html.theme-switching, html.theme-switching * { transition: none !important; } html[data-theme="light"] { --bg: #FAF9F6; --bg-soft: #e4e8ed; --panel: #f7f8fa; --panel-strong: #f7f8fa; --line: rgba(15, 23, 42, 0.14); --line-strong: rgba(2, 132, 199, 0.42); --text: #0f172a; --muted: #475569; --sky: #0369a1; --sky-soft: #e0f2fe; --cyan: #0e7490; --green: #047857; --amber: #b45309; --red: #be123c; --shadow: 0 22px 70px rgba(15, 23, 42, 0.12); background: #FAF9F6; } html[data-theme="light"] body { background: #FAF9F6; } html[data-theme="light"] .eyebrow { color: #0e7490; } html[data-theme="light"] .eyebrow::before { background: #0369a1; box-shadow: 0 0 16px rgba(3, 105, 161, 0.32); } html[data-theme="light"] .verified-badge { border-color: rgba(4, 120, 87, 0.25); background: rgba(209, 250, 229, 0.85); color: #065f46; } html[data-theme="light"] label, html[data-theme="light"] .section-label { color: #334155; } html[data-theme="light"] .card { background: #f7f8fa; box-shadow: 0 18px 46px rgba(15, 23, 42, 0.1); } html[data-theme="light"] input, html[data-theme="light"] select { border-color: rgba(15, 23, 42, 0.18); background: #f7f8fa; color: #0f172a; } html[data-theme="light"] input:hover, html[data-theme="light"] select:hover { border-color: rgba(2, 132, 199, 0.48); } html[data-theme="light"] input:focus, html[data-theme="light"] select:focus { background: #FAF9F6; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18); } html[data-theme="light"] .status { border-color: rgba(2, 132, 199, 0.24); background: #f0f9ff; color: #0c4a6e; } html[data-theme="light"] .status.error { border-color: rgba(190, 18, 60, 0.3); background: #fff1f2; color: #9f1239; } html[data-theme="light"] .primary-result { border-color: rgba(2, 132, 199, 0.4); background: #e0f2fe; } html[data-theme="light"] .result-label { color: #075985; } html[data-theme="light"] .result-value { color: #0f172a; } html[data-theme="light"] .metric, html[data-theme="light"] .progress-card { background: #f7f8fa; } html[data-theme="light"] .metric-note { color: #64748b; } html[data-theme="light"] .progress-track { background: rgba(100, 116, 139, 0.2); } html[data-theme="light"] .progress-bar { background: #0284c7; box-shadow: 0 0 18px rgba(2, 132, 199, 0.28); } html[data-theme="light"] .source-card { border-color: rgba(180, 83, 9, 0.28); background: #fffbeb; } html[data-theme="light"] .source-card h2 { color: #92400e; } html[data-theme="light"] .source-card p { color: #475569; } html[data-theme="light"] .footer { color: #64748b; } html[data-theme="light"] .tool-switch { border-color: rgba(15, 23, 42, 0.14); background: #e4e8ed; } html[data-theme="light"] .tool-tab { background: #FAF9F6; color: #475569; } html[data-theme="light"] .tool-tab.active { background: #6e70df; color: #e0f2fe; } html[data-theme="light"] .secondary-button { border-color: rgba(2, 132, 199, 0.36); background: #f0f9ff; color: #075985; } html[data-theme="light"] .aligned-result-row { background: #f7f8fa; } html[data-theme="light"] .aligned-result-row:nth-child(odd) { background: #FAF9F6; } html[data-theme="light"] .aligned-result-head { background: #e0f2fe !important; color: #075985; } html[data-theme="light"] .aligned-result-label { color: #334155; } html[data-theme="light"] .aligned-result-value { color: #0f172a; } html[data-theme="light"] .aligned-result-value .unit { color: #0369a1; } html[data-theme="light"] .stamina-result-row { background: #f7f8fa; } html[data-theme="light"] .stamina-result-row:nth-child(odd) { background: #FAF9F6; } html[data-theme="light"] .stamina-result-head { background: #e0f2fe !important; color: #075985; } html[data-theme="light"] .stamina-result-label { color: #334155; } html[data-theme="light"] .stamina-result-value { color: #0f172a; } .theme-toggle:focus, .theme-toggle:focus-visible, .theme-toggle:active, #warType:focus, #warType:focus-visible, #warType:active { outline: none; box-shadow: none; } #warType { -webkit-tap-highlight-color: transparent; } #warType:hover, #warType:focus, #warType:focus-visible, #warType:active { outline: none; border-color: var(--line); box-shadow: none; } html[data-theme="light"] .theme-toggle:focus, html[data-theme="light"] .theme-toggle:focus-visible, html[data-theme="light"] .theme-toggle:active { outline: none; border-color: var(--line) !important; box-shadow: none; } </style> </head> <body> <main class="shell"> <header class="hero"> <h1>神魔之塔計算工具</h1> <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="切換至淺色模式">切換淺色模式</button> </header> <div class="tool-switch" role="tablist" aria-label="選擇計算工具"> <button class="tool-tab active" id="levelTab" type="button" role="tab" aria-selected="true" aria-controls="levelToolPanel">召喚師等級</button> <button class="tool-tab" id="staminaTab" type="button" role="tab" aria-selected="false" aria-controls="staminaToolPanel">體力恢復</button> <button class="tool-tab" id="warTab" type="button" role="tab" aria-selected="false" aria-controls="warToolPanel">魔神戰功勳</button> </div> <div class="reset-switch" role="group" aria-label="清空目前計算工具欄位"> <button class="reset-button" id="resetLevel" type="button" aria-label="清空召喚師等級計算欄位"> <span>全部重置</span> </button> <button class="reset-button" id="resetStamina" type="button" aria-label="清空體力恢復計算欄位" hidden> <span>全部重置</span> </button> <button class="reset-button" id="resetWar" type="button" aria-label="清空魔神戰功勳計算欄位" hidden> <span>全部重置</span> </button> </div> <section class="tool-panel" id="levelToolPanel" role="tabpanel" aria-labelledby="levelTab"> <section class="layout" aria-label="召喚師等級計算"> <section class="card input-card"> <div class="card-header"> <h2 class="card-title">召喚師等級計算</h2> </div> <div class="field-grid"> <div class="field"> <label for="currentLevel">目前等級 <span class="hint">1 至 2000</span></label> <input id="currentLevel" type="number" min="1" max="2000" step="1" inputmode="numeric"> <div class="field-message" id="currentLevelMessage"></div> </div> <div class="field"> <label for="targetLevel">目標等級 <span class="hint">1 至 2000</span></label> <input id="targetLevel" type="number" min="1" max="2000" step="1" inputmode="numeric"> <div class="field-message" id="targetLevelMessage"></div> </div> <div class="field full"> <label for="currentExp">目前等級已累積 EXP</label> <input id="currentExp" type="number" min="0" step="1" inputmode="numeric"> <div class="field-message" id="currentExpMessage"></div> </div> <div class="field"> <label for="stageExp">單場關卡獲得 EXP</label> <input id="stageExp" type="number" min="0" step="1" inputmode="numeric"> <div class="field-message" id="stageExpMessage"></div> </div> <div class="field"> <label for="stageStamina">單場關卡消耗體力</label> <input id="stageStamina" type="number" min="0" step="1" inputmode="numeric"> <div class="field-message" id="stageStaminaMessage"></div> </div> </div> </section> <section class="results" aria-live="polite"> <article class="card primary-result"> <div class="result-label">升到目標等級尚需 EXP</div> <div class="result-value" id="requiredExp">—</div> </article> <div class="aligned-results-table" role="table" aria-label="召喚師等級計算結果"> <div class="aligned-result-row aligned-result-head" role="row"> <div role="columnheader">結果項目</div> <div role="columnheader" style="text-align: right;">數值</div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">當前等級升級進度</div> <div class="aligned-result-value" id="currentProgress" role="cell">— <span class="unit">%</span></div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">預計所需刷關場次</div> <div class="aligned-result-value" id="stageCount" role="cell">— <span class="unit">場</span></div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">目標等級體力上限</div> <div class="aligned-result-value" id="targetStaminaMax" role="cell">— <span class="unit">體力</span></div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">目前等級體力上限</div> <div class="aligned-result-value" id="levelCurrentStaminaMax" role="cell">— <span class="unit">體力</span></div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">目標等級隊伍空間 Cost</div> <div class="aligned-result-value" id="targetTeamCost" role="cell">— <span class="unit">Cost</span></div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">目前等級隊伍空間 Cost</div> <div class="aligned-result-value" id="levelCurrentTeamCost" role="cell">— <span class="unit">Cost</span></div> </div> </div> <article class="card primary-result"> <div class="result-label">總共消耗體力</div> <div class="result-value" id="totalStamina">—</div> </article> </section> </section> </section> <section class="tool-panel" id="staminaToolPanel" role="tabpanel" aria-labelledby="staminaTab" hidden> <section class="layout" aria-label="體力恢復計算"> <section class="card input-card"> <div class="card-header"> <h2 class="card-title">目前體力狀態</h2> </div> <div class="field-grid"> <div class="field"> <label for="currentStamina">目前剩餘體力</label> <input id="currentStamina" type="number" min="0" step="1" inputmode="numeric"> <div class="field-message" id="currentStaminaMessage"></div> </div> <div class="field"> <label for="currentStaminaMax">目前最大體力</label> <input id="currentStaminaMax" type="number" min="1" step="1" inputmode="numeric"> <div class="field-message" id="currentStaminaMaxMessage"></div> </div> </div> </section> <section class="results" aria-live="polite"> <div class="stamina-results-table" role="table" aria-label="體力恢復計算結果"> <div class="stamina-result-row stamina-result-head" role="row"> <div role="columnheader">結果項目</div> <div role="columnheader" style="text-align: right;">數值</div> </div> <div class="stamina-result-row" role="row"> <div class="stamina-result-label" role="rowheader">恢復時間</div> <div class="stamina-result-value" id="recoveryTime" role="cell">—</div> </div> <div class="stamina-result-row" role="row"> <div class="stamina-result-label" role="rowheader">預估回滿時間</div> <div class="stamina-result-value" id="staminaFullAt" role="cell">—</div> </div> </div> </section> </section> </section> <section class="tool-panel" id="warToolPanel" role="tabpanel" aria-labelledby="warTab" hidden> <section class="layout" aria-label="魔神戰功勳計算"> <section class="card input-card"> <div class="card-header"> <h2 class="card-title">魔神戰功勳計算</h2> </div> <div class="field-grid"> <div class="field full"> <label for="warType">戰鬥類型</label> <select id="warType"> <option value="attack">攻擊戰：100 功勳／場・4 點</option> <option value="defense" selected>防守戰：62 功勳／場・2 點</option> </select> <div class="field-message" id="warTypeMessage"></div> </div> <div class="field"> <label for="warBonus">加成（%）</label> <input id="warBonus" type="number" min="0" step="0.01" inputmode="decimal"> <div class="field-message" id="warBonusMessage"></div> </div> <div class="field"> <label for="warMerit">目標功勳值</label> <input id="warMerit" type="number" min="0" step="1" inputmode="numeric"> <div class="field-message" id="warMeritMessage"></div> </div> <div class="field full"> <label for="warCountdownHours">倒數時間（小時）</label> <input id="warCountdownHours" type="number" min="0" step="0.01" inputmode="decimal"> <div class="field-message" id="warCountdownHoursMessage"></div> </div> </div> </section> <section class="results" aria-live="polite"> <article class="card primary-result"> <div class="result-label">預計所需場次</div> <div class="result-value" id="warStageCount">—</div> </article> <div class="aligned-results-table" role="table" aria-label="魔神戰功勳計算結果"> <div class="aligned-result-row aligned-result-head" role="row"> <div role="columnheader">結果項目</div> <div role="columnheader" style="text-align: right;">數值</div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">每場功勳</div> <div class="aligned-result-value" id="warMeritPerBattle" role="cell">—</div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">總消耗點數</div> <div class="aligned-result-value" id="warPointCost" role="cell">—</div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">活動天數</div> <div class="aligned-result-value" id="warDayCount" role="cell">—</div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-copy" role="rowheader"> <div class="aligned-result-label">今日至最後一日免費點數</div> <div class="metric-note">免費點數為依活動天數累積所得，每日 16 點，當日未使用不帶到隔日。</div> </div> <div class="aligned-result-value" id="warFreePoints" role="cell">—</div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">扣除免費後點數</div> <div class="aligned-result-value" id="warNetPoints" role="cell">—</div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">魔法石使用量</div> <div class="aligned-result-value" id="warStoneCount" role="cell">—</div> </div> <div class="aligned-result-row" role="row"> <div class="aligned-result-label" role="rowheader">倒數結束時間</div> <div class="aligned-result-value" id="warCountdownEnd" role="cell">—</div> </div> </div> </section> </section> </section> </main> <script> const levels = [[10,0,80,85],[15,10,80,85],[20,25,80,85],[25,45,80,85],[30,70,80,86],[45,100,80,86],[62,145,80,86],[82,207,80,86],[107,289,80,86],[134,396,80,87],[164,530,80,87],[199,694,80,87],[236,893,80,87],[276,1129,80,87],[321,1405,80,88],[368,1726,80,88],[418,2094,80,88],[473,2512,80,88],[530,2985,80,88],[590,3515,80,89],[655,4105,80,89],[722,4760,80,89],[792,5482,80,89],[867,6274,80,89],[944,7141,80,90],[1024,8085,80,90],[1109,9109,80,90],[1196,10218,80,90],[1286,11414,80,90],[1381,12700,80,91],[1478,14081,80,91],[1578,15559,80,91],[1683,17137,80,91],[1790,18820,80,91],[1900,20610,80,92],[2015,22510,80,92],[2132,24525,80,92],[2252,26657,80,92],[2377,28909,80,92],[2504,31286,80,93],[2634,33790,80,93],[2769,36424,80,93],[2906,39193,80,93],[3046,42099,80,93],[3191,45145,80,94],[3338,48336,80,94],[3488,51674,80,94],[3643,55162,80,94],[3800,58805,80,94],[3960,62605,80,95],[4125,66565,80,95],[4292,70690,80,95],[4462,74982,80,95],[4637,79444,80,95],[4814,84081,80,96],[4994,88895,80,96],[5179,93889,80,96],[5366,99068,80,96],[5556,104434,80,96],[5751,109990,80,97],[5948,115741,80,97],[6148,121689,80,97],[6353,127837,80,97],[6560,134190,80,97],[6770,140750,80,98],[6985,147520,80,98],[7202,154505,80,98],[7422,161707,80,98],[7647,169129,80,98],[7874,176776,80,99],[8104,184650,80,99],[8339,192754,80,99],[8576,201093,80,99],[8816,209669,80,99],[9061,218485,80,100],[9308,227546,80,100],[9558,236854,80,100],[9813,246412,80,100],[10070,256225,80,100],[10330,266295,80,101],[10595,276625,80,101],[10862,287220,80,101],[11132,298082,80,101],[11407,309214,80,101],[11684,320621,80,102],[11964,332305,80,102],[12249,344269,80,102],[12536,356518,80,102],[12826,369054,80,102],[13121,381880,80,103],[13418,395001,80,103],[13718,408419,80,103],[14023,422137,80,103],[14330,436160,80,103],[14640,450490,80,104],[14955,465130,80,104],[15272,480085,80,104],[15592,495357,80,104],[15917,510949,80,104],[16244,526866,80,105],[16574,543110,80,105],[16909,559684,81,106],[17246,576593,81,106],[17586,593839,82,107],[17931,611425,82,107],[18278,629356,83,108],[18628,647634,83,108],[18983,666262,84,109],[19340,685245,84,109],[19700,704585,85,110],[20065,724285,85,110],[20432,744350,86,111],[20802,764782,86,111],[21177,785584,87,112],[21554,806761,87,112],[21934,828315,88,113],[22319,850249,88,113],[22706,872568,89,114],[23096,895274,89,114],[23491,918370,90,115],[23888,941861,90,115],[24288,965749,91,116],[24693,990037,91,116],[25100,1014730,92,117],[25510,1039830,92,117],[25925,1065340,93,118],[26342,1091265,93,118],[26762,1117607,94,119],[27187,1144369,94,119],[27614,1171556,95,120],[28044,1199170,95,120],[28479,1227214,96,121],[28916,1255693,96,121],[29356,1284609,97,122],[29801,1313965,97,122],[30248,1343766,98,123],[30698,1374014,98,123],[31153,1404712,99,124],[31610,1435865,99,124],[32070,1467475,100,125],[32535,1499545,100,125],[33002,1532080,101,126],[33472,1565082,101,126],[33947,1598554,102,127],[34424,1632501,102,127],[34904,1666925,103,128],[35389,1701829,103,128],[35876,1737218,104,129],[36366,1773094,104,129],[36861,1809460,105,130],[37358,1846321,105,130],[37858,1883679,106,131],[38363,1921537,106,131],[38870,1959900,107,132],[39380,1998770,107,132],[39895,2038150,108,133],[40412,2078045,108,133],[40932,2118457,109,134],[41457,2159389,109,134],[41984,2200846,110,135],[42514,2242830,110,135],[43049,2285344,111,136],[43586,2328393,111,136],[44126,2371979,112,137],[44671,2416105,112,137],[45218,2460776,113,138],[45768,2505994,113,138],[46323,2551762,114,139],[46880,2598085,114,139],[47440,2644965,115,140],[48005,2692405,115,140],[48572,2740410,116,141],[49142,2788982,116,141],[49717,2838124,117,142],[50294,2887841,117,142],[50874,2938135,118,143],[51459,2989009,118,143],[52046,3040468,119,144],[52636,3092514,119,144],[53231,3145150,120,145],[53828,3198381,120,145],[54428,3252209,121,146],[55033,3306637,121,146],[55640,3361670,122,147],[56250,3417310,122,147],[56865,3473560,123,148],[57482,3530425,123,148],[58102,3587907,124,149],[58727,3646009,124,149],[59354,3704736,125,150],[59984,3764090,125,150],[60619,3824074,126,151],[61256,3884693,126,151],[61896,3945949,127,152],[62541,4007845,127,152],[63188,4070386,128,153],[63838,4133574,128,153],[64493,4197412,129,154],[65150,4261905,129,154],[65810,4327055,130,155],[66475,4392865,130,155],[67143,4459340,131,155],[67816,4526483,131,155],[68492,4594299,132,155],[69173,4662791,132,156],[69859,4731964,133,156],[70548,4801823,133,156],[71242,4872371,134,156],[71941,4943613,134,156],[72643,5015554,135,157],[73350,5088197,135,157],[74060,5161547,136,157],[74775,5235607,136,157],[75493,5310382,137,157],[76216,5385875,137,158],[76942,5462091,138,158],[77673,5539033,138,158],[78407,5616706,139,158],[79146,5695113,139,158],[79888,5774259,140,159],[80635,5854147,140,159],[81385,5934782,141,159],[82140,6016167,141,159],[82898,6098307,142,159],[83661,6181205,142,160],[84427,6264866,143,160],[85198,6349293,143,160],[85972,6434491,144,160],[86751,6520463,144,160],[87533,6607214,145,161],[88320,6694747,145,161],[89110,6783067,146,161],[89905,6872177,146,161],[90703,6962082,147,161],[91506,7052785,147,162],[92312,7144291,148,162],[93123,7236603,148,162],[93937,7329726,149,162],[94756,7423663,149,162],[95578,7518419,150,163],[96405,7613997,150,163],[97235,7710402,151,163],[98070,7807637,151,163],[98908,7905707,152,163],[99751,8004615,152,164],[100597,8104366,153,164],[101448,8204963,153,164],[102302,8306411,154,164],[103161,8408713,154,164],[104023,8511874,155,165],[104890,8615897,155,165],[105760,8720787,155,165],[106635,8826547,155,165],[107513,8933182,155,165],[108396,9040695,156,166],[109282,9149091,156,166],[110173,9258373,156,166],[111067,9368546,156,166],[111966,9479613,156,166],[112868,9591579,157,167],[113775,9704447,157,167],[114685,9818222,157,167],[115600,9932907,157,167],[116518,10048507,157,167],[117441,10165025,158,168],[118367,10282466,158,168],[119298,10400833,158,168],[120232,10520131,158,168],[121171,10640363,158,168],[122113,10761534,159,169],[123060,10883647,159,169],[124010,11006707,159,169],[124965,11130717,159,169],[125923,11255682,159,169],[126886,11381605,160,170],[127852,11508491,160,170],[128823,11636343,160,170],[129797,11765166,160,170],[130776,11894963,160,170],[131758,12025739,161,171],[132745,12157497,161,171],[133735,12290242,161,171],[134730,12423977,161,171],[135728,12558707,161,171],[136731,12694435,162,172],[137737,12831166,162,172],[138748,12968903,162,172],[139762,13107651,162,172],[140781,13247413,162,172],[141803,13388194,163,173],[142830,13529997,163,173],[143860,13672827,163,173],[144895,13816687,163,173],[145933,13961582,163,173],[146976,14107515,164,174],[148022,14254491,164,174],[149073,14402513,164,174],[150127,14551586,164,174],[151186,14701713,164,174],[152248,14852899,165,175],[153315,15005147,165,175],[154385,15158462,165,175],[155460,15312847,165,175],[156538,15468307,165,175],[157621,15624845,166,176],[158707,15782466,166,176],[159798,15941173,166,176],[160892,16100971,166,176],[161991,16261863,166,176],[163093,16423854,167,177],[164200,16586947,167,177],[165310,16751147,167,177],[166425,16916457,167,177],[167543,17082882,167,177],[168666,17250425,168,178],[169792,17419091,168,178],[170923,17588883,168,178],[172057,17759806,168,178],[173196,17931863,168,178],[174338,18105059,169,179],[175485,18279397,169,179],[176635,18454882,169,179],[177790,18631517,169,179],[178948,18809307,169,179],[180111,18988255,170,180],[181277,19168366,170,180],[182448,19349643,170,180],[183622,19532091,170,180],[184801,19715713,170,180],[185983,19900514,171,181],[187170,20086497,171,181],[188360,20273667,171,181],[189555,20462027,171,181],[190753,20651582,171,181],[191956,20842335,172,182],[193162,21034291,172,182],[194373,21227453,172,182],[195587,21421826,172,182],[196806,21617413,172,182],[198028,21814219,173,183],[199255,22012247,173,183],[200485,22211502,173,183],[201720,22411987,173,183],[202958,22613707,173,183],[204201,22816665,174,184],[205447,23020866,174,184],[206698,23226313,174,184],[207952,23433011,174,184],[209211,23640963,174,184],[210473,23850174,175,185],[211740,24060647,175,185],[213010,24272387,175,185],[214285,24485397,175,185],[215563,24699682,175,185],[216846,24915245,176,186],[218132,25132091,176,186],[219423,25350223,176,186],[220717,25569646,176,186],[222016,25790363,176,186],[223318,26012379,177,187],[224625,26235697,177,187],[225935,26460322,177,187],[227250,26686257,177,187],[228568,26913507,177,187],[229891,27142075,178,188],[231217,27371966,178,188],[232548,27603183,178,188],[233882,27835731,178,188],[235221,28069613,178,188],[236563,28304834,179,189],[237910,28541397,179,189],[239260,28779307,179,189],[240615,29018567,179,189],[241973,29259182,179,189],[243336,29501155,180,190],[244702,29744491,180,190],[246073,29989193,180,190],[247447,30235266,180,190],[248826,30482713,180,190],[250208,30731539,181,191],[251595,30981747,181,191],[252985,31233342,181,191],[254380,31486327,181,191],[255778,31740707,181,191],[257181,31996485,182,192],[258587,32253666,182,192],[259998,32512253,182,192],[261412,32772251,182,192],[262831,33033663,182,192],[264253,33296494,183,193],[265680,33560747,183,193],[267110,33826427,183,193],[268545,34093537,183,193],[269983,34362082,183,193],[271426,34632065,184,194],[272872,34903491,184,194],[274323,35176363,184,194],[275777,35450686,184,194],[277236,35726463,184,194],[278698,36003699,185,195],[280165,36282397,185,195],[281632,36562562,185,195],[283099,36844194,185,195],[284566,37127293,185,195],[286033,37411859,186,195],[287500,37697892,186,195],[288967,37985392,186,195],[290434,38274359,186,195],[291904,38564793,186,195],[293374,38856697,187,196],[294844,39150071,187,196],[296314,39444915,187,196],[297784,39741229,187,196],[299254,40039013,187,196],[300724,40338267,188,196],[302194,40638991,188,196],[303667,40941185,188,196],[305140,41244852,188,196],[306613,41549992,188,196],[308086,41856605,189,197],[309559,42164691,189,197],[311032,42474250,189,197],[312505,42785282,189,197],[313978,43097787,189,197],[315454,43411765,190,197],[316930,43727219,190,197],[318406,44044149,190,197],[319882,44362555,190,197],[321358,44682437,190,197],[322834,45003795,191,198],[324310,45326629,191,198],[325786,45650939,191,198],[327265,45976725,191,198],[328744,46303990,191,198],[330223,46632734,192,198],[331702,46962957,192,198],[333181,47294659,192,198],[334660,47627840,192,198],[336139,47962500,192,198],[337618,48298639,193,199],[339100,48636257,193,199],[340582,48975357,193,199],[342064,49315939,193,199],[343546,49658003,193,199],[345028,50001549,194,199],[346510,50346577,194,199],[347992,50693087,194,199],[349474,51041079,194,199],[350959,51390553,194,199],[352444,51741512,195,200],[353929,52093956,195,200],[355417,52447885,195,200],[356905,52803302,195,200],[358393,53160207,195,200],[359881,53518600,196,200],[361369,53878481,196,200],[362857,54239850,196,200],[364345,54602707,196,200],[365833,54967052,196,200],[367324,55332885,197,201],[368815,55700209,197,201],[370306,56069024,197,201],[371797,56439330,197,201],[373288,56811127,197,201],[374779,57184415,198,201],[376270,57559194,198,201],[377761,57935464,198,201],[379255,58313225,198,201],[380749,58692480,198,201],[382243,59073229,199,202],[383737,59455472,199,202],[385231,59839209,199,202],[386725,60224440,199,202],[388219,60611165,199,202],[389713,60999384,200,202],[391210,61389097,200,202],[392707,61780307,200,202],[394204,62173014,200,202],[395701,62567218,200,202],[397198,62962919,201,203],[398695,63360117,201,203],[400192,63758812,201,203],[401689,64159004,201,203],[403189,64560693,201,203],[404689,64963882,202,203],[406189,65368571,202,203],[407689,65774760,202,203],[409189,66182449,202,203],[410689,66591638,202,203],[412189,67002327,203,204],[413689,67414516,203,204],[415192,67828205,203,204],[416695,68243397,203,204],[418198,68660092,203,204],[419704,69078290,204,204],[421210,69497994,204,204],[422716,69919204,204,204],[424222,70341920,204,204],[425728,70766142,204,204],[427234,71191870,205,205],[428740,71619104,205,205],[430246,72047844,205,205],[431755,72478090,205,205],[433264,72909845,205,205],[434773,73343109,205,205],[436282,73777882,205,205],[437791,74214164,205,205],[439300,74651955,205,205],[440809,75091255,205,205],[442318,75532064,206,206],[443827,75974382,206,206],[445339,76418209,206,206],[446851,76863548,206,206],[448363,77310399,206,206],[449875,77758762,206,206],[451387,78208637,206,206],[452899,78660024,206,206],[454411,79112923,206,206],[455923,79567334,206,206],[457438,80023257,207,207],[458953,80480695,207,207],[460468,80939648,207,207],[461983,81400116,207,207],[463498,81862099,207,207],[465013,82325597,207,207],[466528,82790610,207,207],[468043,83257138,207,207],[469561,83725181,207,207],[471079,84194742,207,207],[472597,84665821,208,208],[474115,85138418,208,208],[475633,85612533,208,208],[477151,86088166,208,208],[478669,86565317,208,208],[480187,87043986,208,208],[481708,87524173,208,208],[483229,88005881,208,208],[484750,88489110,208,208],[486271,88973860,208,208],[487792,89460131,209,209],[489313,89947923,209,209],[490834,90437236,209,209],[492355,90928070,209,209],[493879,91420425,209,209],[495403,91914304,209,209],[496927,92409707,209,209],[498451,92906634,209,209],[499975,93405085,209,209],[501499,93905060,209,209],[503023,94406559,210,210],[504547,94909582,210,210],[506074,95414129,210,210],[507601,95920203,210,210],[509128,96427804,210,210],[510655,96936932,210,210],[512182,97447587,210,210],[513709,97959769,210,210],[515236,98473478,210,210],[516766,98988714,210,210],[518296,99505480,211,211],[519826,100023776,211,211],[521356,100543602,211,211],[522886,101064958,211,211],[524416,101587844,211,211],[525946,102112260,211,211],[527479,102638206,211,211],[529012,103165685,211,211],[530545,103694697,211,211],[532078,104225242,211,211],[533611,104757320,212,212],[535144,105290931,212,212],[536677,105826075,212,212],[538213,106362752,212,212],[539749,106900965,212,212],[541285,107440714,212,212],[542821,107981999,212,212],[544357,108524820,212,212],[545893,109069177,212,212],[547429,109615070,212,212],[548968,110162499,213,213],[550507,110711467,213,213],[552046,111261974,213,213],[553585,111814020,213,213],[555124,112367605,213,213],[556663,112922729,213,213],[558202,113479392,213,213],[559744,114037594,213,213],[561286,114597338,213,213],[562828,115158624,213,213],[564370,115721452,214,214],[565912,116285822,214,214],[567454,116851734,214,214],[568996,117419188,214,214],[570541,117988184,214,214],[572086,118558725,214,214],[573631,119130811,214,214],[575176,119704442,214,214],[576721,120279618,214,214],[578266,120856339,214,214],[579811,121434605,215,215],[581359,122014416,215,215],[582907,122595775,215,215],[584455,123178682,215,215],[586003,123763137,215,215],[587551,124349140,215,215],[589099,124936691,215,215],[590647,125525790,215,215],[592198,126116437,215,215],[593749,126708635,215,215],[595300,127302384,216,216],[596851,127897684,216,216],[598402,128494535,216,216],[599953,129092937,216,216],[601504,129692890,216,216],[603058,130294394,216,216],[604612,130897452,216,216],[606166,131502064,216,216],[607720,132108230,216,216],[609274,132715950,216,216],[610828,133325224,217,217],[612382,133936052,217,217],[613939,134548434,217,217],[615496,135162373,217,217],[617053,135777869,217,217],[618610,136394922,217,217],[620167,137013532,217,217],[621724,137633699,217,217],[623281,138255423,217,217],[624841,138878704,217,217],[626401,139503545,218,218],[627961,140129946,218,218],[629521,140757907,218,218],[631081,141387428,218,218],[632641,142018509,218,218],[634201,142651150,218,218],[635764,143285351,218,218],[637327,143921115,218,218],[638890,144558442,218,218],[640453,145197332,218,218],[642016,145837785,219,219],[643579,146479801,219,219],[645142,147123380,219,219],[646708,147768522,219,219],[648274,148415230,219,219],[649840,149063504,219,219],[651406,149713344,219,219],[652972,150364750,219,219],[654538,151017722,219,219],[656104,151672260,219,219],[657673,152328364,220,220],[659242,152986037,220,220],[660814,153645279,220,220],[662386,154306093,220,220],[663958,154968479,220,220],[665530,155632437,220,220],[667102,156297967,220,220],[668674,156965069,220,220],[670246,157633743,220,220],[671821,158303989,220,220],[673396,158975810,221,221],[674971,159649206,221,221],[676546,160324177,221,221],[678121,161000723,221,221],[679696,161678844,221,221],[681271,162358540,221,221],[682849,163039811,221,221],[684427,163722660,221,221],[686005,164407087,221,221],[687583,165093092,221,221],[689161,165780675,222,222],[690739,166469836,222,222],[692317,167160575,222,222],[693898,167852892,222,222],[695479,168546790,222,222],[697060,169242269,222,222],[698641,169939329,222,222],[700222,170637970,222,222],[701803,171338192,222,222],[703384,172039995,222,222],[704968,172743379,223,223],[706552,173448347,223,223],[708136,174154899,223,223],[709720,174863035,223,223],[711304,175572755,223,223],[712888,176284059,223,223],[714472,176996947,223,223],[716059,177711419,223,223],[717646,178427478,223,223],[719233,179145124,223,223],[720820,179864357,224,224],[722407,180585177,224,224],[723994,181307584,224,224],[725581,182031578,224,224],[727171,182757159,224,224],[728761,183484330,224,224],[730351,184213091,224,224],[731941,184943442,224,224],[733531,185675383,224,224],[735121,186408914,224,224],[736711,187144035,225,225],[738304,187880746,225,225],[739897,188619050,225,225],[741493,189358947,225,225],[743089,190100440,225,225],[744685,190843529,225,225],[746281,191588214,225,225],[747877,192334495,225,225],[749473,193082372,225,225],[751069,193831845,225,225],[752668,194582914,226,226],[754267,195335582,226,226],[755866,196089849,226,226],[757465,196845715,226,226],[759064,197603180,226,226],[760663,198362244,226,226],[762262,199122907,226,226],[763864,199885169,226,226],[765466,200649033,226,226],[767068,201414499,226,226],[768670,202181567,227,227],[770272,202950237,227,227],[771874,203720509,227,227],[773476,204492383,227,227],[775081,205265859,227,227],[776686,206040940,227,227],[778291,206817626,227,227],[779896,207595917,227,227],[781501,208375813,227,227],[783106,209157314,227,227],[784711,209940420,228,228],[786319,210725131,228,228],[787927,211511450,228,228],[789535,212299377,228,228],[791143,213088912,228,228],[792751,213880055,228,228],[794359,214672806,228,228],[795967,215467165,228,228],[797578,216263132,228,228],[799189,217060710,228,228],[800800,217859899,229,229],[802411,218660699,229,229],[804022,219463110,229,229],[805633,220267132,229,229],[807244,221072765,229,229],[808858,221880009,229,229],[810472,222688867,229,229],[812086,223499339,229,229],[813700,224311425,229,229],[815314,225125125,229,229],[816928,225940439,230,230],[818542,226757367,230,230],[820156,227575909,230,230],[821773,228396065,230,230],[823390,229217838,230,230],[825007,230041228,230,230],[826624,230866235,230,230],[828241,231692859,230,230],[829858,232521100,230,230],[831475,233350958,230,230],[833095,234182433,230,231],[834715,235015528,230,231],[836335,235850243,230,231],[837955,236686578,230,231],[839575,237524533,230,231],[841195,238364108,231,231],[842815,239205303,231,231],[844438,240048118,231,231],[846061,240892556,231,231],[847684,241738617,231,231],[849307,242586301,231,232],[850930,243435608,231,232],[852553,244286538,231,232],[854176,245139091,231,232],[855802,245993267,231,232],[857428,246849069,231,232],[859054,247706497,231,232],[860680,248565551,231,232],[862306,249426231,231,232],[863932,250288537,231,232],[865558,251152469,232,233],[867187,252018027,232,233],[868816,252885214,232,233],[870445,253754030,232,233],[872074,254624475,232,233],[873703,255496549,232,233],[875332,256370252,232,233],[876961,257245584,232,233],[878593,258122545,232,233],[880225,259001138,232,233],[881857,259881363,232,234],[883489,260763220,232,234],[885121,261646709,232,234],[886753,262531830,232,234],[888385,263418583,232,234],[890020,264306968,233,234],[891655,265196988,233,234],[893293,266088643,233,234],[894931,266981936,233,234],[896569,267876867,233,234],[898207,268773436,233,235],[899845,269671643,233,235],[901483,270571488,233,235],[903124,271472971,233,235],[904765,272376095,233,235],[906406,273280860,233,235],[908047,274187266,233,235],[909688,275095313,233,235],[911329,276005001,233,235],[912970,276916330,233,235],[914614,277829300,234,236],[916258,278743914,234,236],[917902,279660172,234,236],[919546,280578074,234,236],[921190,281497620,234,236],[922834,282418810,234,236],[924478,283341644,234,236],[926125,284266122,234,236],[927772,285192247,234,236],[929419,286120019,234,236],[931066,287049438,234,237],[932713,287980504,234,237],[934360,288913217,234,237],[936007,289847577,234,237],[937657,290783584,234,237],[939307,291721241,235,237],[940957,292660548,235,237],[942607,293601505,235,237],[944257,294544112,235,237],[945907,295488369,235,237],[947557,296434276,235,238],[949207,297381833,235,238],[950860,298331040,235,238],[952513,299281900,235,238],[954166,300234413,235,238],[955819,301188579,235,238],[957472,302144398,235,238],[959125,303101870,235,238],[960778,304060995,235,238],[962434,305021773,235,238],[964090,305984207,236,239],[965746,306948297,236,239],[967402,307914043,236,239],[969058,308881445,236,239],[970714,309850503,236,239],[972370,310821217,236,239],[974029,311793587,236,239],[975688,312767616,236,239],[977347,313743304,236,239],[979006,314720651,236,239],[980665,315699657,236,240],[982324,316680322,236,240],[983983,317662646,236,240],[985642,318646629,236,240],[987304,319632271,236,240],[988966,320619575,237,240],[990628,321608541,237,240],[992290,322599169,237,240],[993952,323591459,237,240],[995614,324585411,237,240],[997276,325581025,237,241],[998941,326578301,237,241],[1000606,327577242,237,241],[1002271,328577848,237,241],[1003936,329580119,237,241],[1005601,330584055,237,241],[1007266,331589656,237,241],[1008931,332596922,237,241],[1010599,333605853,237,241],[1012267,334616452,237,241],[1013935,335628719,238,242],[1015603,336642654,238,242],[1017271,337658257,238,242],[1018939,338675528,238,242],[1020607,339694467,238,242],[1022278,340715074,238,242],[1023949,341737352,238,242],[1025620,342761301,238,242],[1027291,343786921,238,242],[1028962,344814212,238,242],[1030633,345843174,238,243],[1032304,346873807,238,243],[1033975,347906111,238,243],[1035649,348940086,238,243],[1037323,349975735,238,243],[1038997,351013058,239,243],[1040671,352052055,239,243],[1042345,353092726,239,243],[1044019,354135071,239,243],[1045693,355179090,239,243],[1047370,356224783,239,244],[1049047,357272153,239,244],[1050724,358321200,239,244],[1052401,359371924,239,244],[1054078,360424325,239,244],[1055755,361478403,239,244],[1057432,362534158,239,244],[1059109,363591590,239,244],[1060786,364650699,239,244],[1062466,365711485,239,244],[1064146,366773951,240,245],[1065826,367838097,240,245],[1067506,368903923,240,245],[1069186,369971429,240,245],[1070866,371040615,240,245],[1072546,372111481,240,245],[1074226,373184027,240,245],[1075906,374258253,240,245],[1077589,375334159,240,245],[1079272,376411748,240,245],[1080955,377491020,240,246],[1082638,378571975,240,246],[1084321,379654613,240,246],[1086004,380738934,240,246],[1087687,381824938,240,246],[1089370,382912625,241,246],[1091053,384001995,241,246],[1092739,385093048,241,246],[1094425,386185787,241,246],[1096111,387280212,241,246],[1097797,388376323,241,247],[1099483,389474120,241,247],[1101169,390573603,241,247],[1102855,391674772,241,247],[1104541,392777627,241,247],[1106227,393882168,241,247],[1107916,394988395,241,247],[1109605,396096311,241,247],[1111294,397205916,241,247],[1112983,398317210,241,247],[1114672,399430193,242,248],[1116361,400544865,242,248],[1118050,401661226,242,248],[1119739,402779276,242,248],[1121428,403899015,242,248],[1123120,405020443,242,248],[1124812,406143563,242,248],[1126504,407268375,242,248],[1128196,408394879,242,248],[1129888,409523075,242,248],[1131580,410652963,242,249],[1133272,411784543,242,249],[1134964,412917815,242,249],[1136656,414052779,242,249],[1138351,415189435,242,249],[1140046,416327786,243,249],[1141741,417467832,243,249],[1143436,418609573,243,249],[1145131,419753009,243,249],[1146826,420898140,243,249],[1148521,422044966,243,250],[1150216,423193487,243,250],[1151911,424343703,243,250],[1153609,425495614,243,250],[1155307,426649223,243,250],[1157005,427804530,243,250],[1158703,428961535,243,250],[1160401,430120238,243,250],[1162099,431280639,243,250],[1163797,432442738,243,250],[1165495,433606535,244,251],[1167193,434772030,244,251],[1168894,435939223,244,251],[1170595,437108117,244,251],[1172296,438278712,244,251],[1173997,439451008,244,251],[1175698,440625005,244,251],[1177399,441800703,244,251],[1179100,442978102,244,251],[1180801,444157202,244,251],[1182502,445338003,244,252],[1184206,446520505,244,252],[1185910,447704711,244,252],[1187614,448890621,244,252],[1189318,450078235,244,252],[1191022,451267553,245,252],[1192726,452458575,245,252],[1194430,453651301,245,252],[1196134,454845731,245,252],[1197838,456041865,245,252],[1199545,457239703,245,253],[1201252,458439248,245,253],[1202959,459640500,245,253],[1204666,460843459,245,253],[1206373,462048125,245,253],[1208080,463254498,245,253],[1209787,464462578,245,253],[1211494,465672365,245,253],[1213201,466883859,245,253],[1214911,468097060,245,253],[1216621,469311971,246,254],[1218331,470528592,246,254],[1220041,471746923,246,254],[1221751,472966964,246,254],[1223461,474188715,246,254],[1225171,475412176,246,254],[1226881,476637347,246,254],[1228591,477864228,246,254],[1230304,479092819,246,254],[1232017,480323123,246,254],[1233730,481555140,246,255],[1235443,482788870,246,255],[1237156,484024313,246,255],[1238869,485261469,246,255],[1240582,486500338,246,255],[1242295,487740920,247,255],[1244008,488983215,247,255],[1245724,490227223,247,255],[1247440,491472947,247,255],[1249156,492720387,247,255],[1250872,493969543,247,256],[1252588,495220415,247,256],[1254304,496473003,247,256],[1256020,497727307,247,256],[1257736,498983327,247,256],[1259452,500241063,247,256],[1261171,501500515,247,256],[1262890,502761686,247,256],[1264609,504024576,247,256],[1266328,505289185,247,256],[1268047,506555513,248,257],[1269766,507823560,248,257],[1271485,509093326,248,257],[1273204,510364811,248,257],[1274923,511638015,248,257],[1276645,512912938,248,257],[1278367,514189583,248,257],[1280089,515467950,248,257],[1281811,516748039,248,257],[1283533,518029850,248,257],[1285255,519313383,248,258],[1286977,520598638,248,258],[1288699,521885615,248,258],[1290421,523174314,248,258],[1292146,524464735,248,258],[1293871,525756881,249,258],[1295596,527050752,249,258],[1297321,528346348,249,258],[1299046,529643669,249,258],[1300771,530942715,249,258],[1302496,532243486,249,259],[1304221,533545982,249,259],[1305946,534850203,249,259],[1307674,536156149,249,259],[1309402,537463823,249,259],[1311130,538773225,249,259],[1312858,540084355,249,259],[1314586,541397213,249,259],[1316314,542711799,249,259],[1318042,544028113,249,259],[1319770,545346155,250,260],[1321498,546665925,250,260],[1323229,547987423,250,260],[1324960,549310652,250,260],[1326691,550635612,250,260],[1328422,551962303,250,260],[1330153,553290725,250,260],[1331884,554620878,250,260],[1333615,555952762,250,260],[1335346,557286377,250,260],[1337077,558621723,250,261],[1338811,559958800,250,262],[1340545,561297611,250,262],[1342279,562638156,250,262],[1344013,563980435,250,262],[1345747,565324448,251,262],[1347481,566670195,251,262],[1349215,568017676,251,262],[1350949,569366891,251,262],[1352683,570717840,251,262],[1354420,572070523,251,262],[1356157,573424943,251,263],[1357894,574781100,251,263],[1359631,576138994,251,263],[1361368,577498625,251,263],[1363105,578859993,251,263],[1364842,580223098,251,263],[1366579,581587940,251,263],[1368316,582954519,251,263],[1370056,584322835,251,263],[1371796,585692891,252,263],[1373536,587064687,252,264],[1375276,588438223,252,264],[1377016,589813499,252,264],[1378756,591190515,252,264],[1380496,592569271,252,264],[1382236,593949767,252,264],[1383976,595332003,252,264],[1385719,596715979,252,264],[1387462,598101698,252,264],[1389205,599489160,252,264],[1390948,600878365,252,265],[1392691,602269313,252,265],[1394434,603662004,252,265],[1396177,605056438,252,265],[1397920,606452615,253,265],[1399663,607850535,253,265],[1401409,609250198,253,265],[1403155,610651607,253,265],[1404901,612054762,253,265],[1406647,613459663,253,265],[1408393,614866310,253,266],[1410139,616274703,253,266],[1411885,617684842,253,266],[1413631,619096727,253,266],[1415377,620510358,253,266],[1417126,621925735,253,266],[1418875,623342861,253,266],[1420624,624761736,253,266],[1422373,626182360,253,266],[1424122,627604733,254,266],[1425871,629028855,254,267],[1427620,630454726,254,267],[1429369,631882346,254,267],[1431118,633311715,254,267],[1432870,634742833,254,267],[1434622,636175703,254,267],[1436374,637610325,254,267],[1438126,639046699,254,267],[1439878,640484825,254,267],[1441630,641924703,254,267],[1443382,643366333,254,268],[1445134,644809715,254,268],[1446886,646254849,254,268],[1448641,647701735,254,268],[1450396,649150376,255,268],[1452151,650600772,255,268],[1453906,652052923,255,268],[1455661,653506829,255,268],[1457416,654962490,255,268],[1459171,656419906,255,268],[1460926,657879077,255,269],[1462681,659340003,255,269],[1464439,660802684,255,269],[1466197,662267123,255,269],[1467955,663733320,255,269],[1469713,665201275,255,269],[1471471,666670988,255,269],[1473229,668142459,255,269],[1474987,669615688,255,269],[1476745,671090675,256,269],[1478503,672567420,256,270],[1480264,674045923,256,270],[1482025,675526187,256,270],[1483786,677008212,256,270],[1485547,678491998,256,270],[1487308,679977545,256,270],[1489069,681464853,256,270],[1490830,682953922,256,270],[1492591,684444752,256,270],[1494352,685937343,256,270],[1496116,687431695,256,271],[1497880,688927811,256,271],[1499644,690425691,256,271],[1501408,691925335,256,271],[1503172,693426743,257,271],[1504936,694929915,257,271],[1506700,696434851,257,271],[1508464,697941551,257,271],[1510228,699450015,257,271],[1511995,700960243,257,271],[1513762,702472238,257,272],[1515529,703986000,257,272],[1517296,705501529,257,272],[1519063,707018825,257,272],[1520830,708537888,257,272],[1522597,710058718,257,272],[1524364,711581315,257,272],[1526131,713105679,257,272],[1527901,714631810,257,272],[1529671,716159711,258,272],[1531441,717689382,258,273],[1533211,719220823,258,273],[1534981,720754034,258,273],[1536751,722289015,258,273],[1538521,723825766,258,273],[1540291,725364287,258,273],[1542061,726904578,258,273],[1543834,728446639,258,273],[1545607,729990473,258,273],[1547380,731536080,258,273],[1549153,733083460,258,274],[1550926,734632613,258,275],[1552699,736183539,258,275],[1554472,737736238,258,275],[1556245,739290710,259,275],[1558018,740846955,259,275],[1559794,742404973,259,275],[1561570,743964767,259,275],[1563346,745526337,259,275],[1565122,747089683,259,275],[1566898,748654805,259,275],[1568674,750221703,259,276],[1570450,751790377,259,276],[1572226,753360827,259,276],[1574002,754933053,259,276],[1575781,756507055,259,276],[1577560,758082836,259,276],[1579339,759660396,259,276],[1581118,761239735,259,276],[1582897,762820853,260,276],[1584676,764403750,260,276],[1586455,765988426,260,277],[1588234,767574881,260,277],[1590013,769163115,260,277],[1591795,770753128,260,277],[1593577,772344923,260,277],[1595359,773938500,260,277],[1597141,775533859,260,277],[1598923,777131000,260,277],[1600705,778729923,260,277],[1602487,780330628,260,277],[1604269,781933115,260,278],[1606051,783537384,260,278],[1607836,785143435,260,278],[1609621,786751271,261,278],[1611406,788360892,261,278],[1613191,789972298,261,278],[1614976,791585489,261,278],[1616761,793200465,261,278],[1618546,794817226,261,278],[1620331,796435772,261,278],[1622116,798056103,261,279],[1623904,799678219,261,279],[1625692,801302123,261,279],[1627480,802927815,261,279],[1629268,804555295,261,279],[1631056,806184563,261,279],[1632844,807815619,261,279],[1634632,809448463,261,279],[1636420,811083095,262,279],[1638208,812719515,262,279],[1639999,814357723,262,280],[1641790,815997722,262,280],[1643581,817639512,262,280],[1645372,819283093,262,280],[1647163,820928465,262,280],[1648954,822575628,262,280],[1650745,824224582,262,280],[1652536,825875327,262,280],[1654327,827527863,262,280],[1656121,829182190,262,280],[1657915,830838311,262,281],[1659709,832496226,262,281],[1661503,834155935,262,281],[1663297,835817438,263,281],[1665091,837480735,263,281],[1666885,839145826,263,281],[1668679,840812711,263,281],[1670473,842481390,263,281],[1672270,844151863,263,281],[1674067,845824133,263,281],[1675864,847498200,263,282],[1677661,849174064,263,282],[1679458,850851725,263,282],[1681255,852531183,263,282],[1683052,854212438,263,282],[1684849,855895490,263,282],[1686646,857580339,263,282],[1688446,859266985,263,282],[1690246,860955431,264,282],[1692046,862645677,264,282],[1693846,864337723,264,283],[1695646,866031569,264,283],[1697446,867727215,264,283],[1699246,869424661,264,283],[1701046,871123907,264,283],[1702846,872824953,264,283],[1704649,874527799,264,283],[1706452,876232448,264,283],[1708255,877938900,264,283],[1710058,879647155,264,283],[1711861,881357213,264,284],[1713664,883069074,264,284],[1715467,884782738,264,284],[1717270,886498205,265,284],[1719073,888215475,265,284],[1720879,889934548,265,284],[1722685,891655427,265,284],[1724491,893378112,265,284],[1726297,895102603,265,284],[1728103,896828900,265,284],[1729909,898557003,265,285],[1731715,900286912,265,285],[1733521,902018627,265,285],[1735327,903752148,265,285],[1737136,905487475,265,285],[1738945,907224611,265,285],[1740754,908963556,265,285],[1742563,910704310,265,285],[1744372,912446873,266,285],[1746181,914191245,266,285],[1747990,915937426,266,286],[1749799,917685416,266,286],[1751608,919435215,266,286],[1753420,921186823,266,286],[1755232,922940243,266,286],[1757044,924695475,266,286],[1758856,926452519,266,286],[1760668,928211375,266,286],[1762480,929972043,266,286],[1764292,931734523,266,286],[1766104,933498815,266,287],[1767916,935264919,266,288],[1769731,937032835,266,288],[1771546,938802566,267,288],[1773361,940574112,267,288],[1775176,942347473,267,288],[1776991,944122649,267,288],[1778806,945899640,267,288],[1780621,947678446,267,288],[1782436,949459067,267,288],[1784251,951241503,267,288],[1786069,953025754,267,289],[1787887,954811823,267,289],[1789705,956599710,267,289],[1791523,958389415,267,289],[1793341,960180938,267,289],[1795159,961974279,267,289],[1796977,963769438,267,289],[1798795,965566415,268,289],[1800613,967365210,268,289],[1802434,969165823,268,289],[1804255,970968257,268,290],[1806076,972772512,268,290],[1807897,974578588,268,290],[1809718,976386485,268,290],[1811539,978196203,268,290],[1813360,980007742,268,290],[1815181,981821102,268,290],[1817002,983636283,268,290],[1818826,985453285,268,290],[1820650,987272111,268,290],[1822474,989092761,268,291],[1824298,990915235,268,291],[1826122,992739533,269,291],[1827946,994565655,269,291],[1829770,996393601,269,291],[1831594,998223371,269,291],[1833418,1000054965,269,291],[1835245,1001888383,269,291],[1837072,1003723628,269,291],[1838899,1005560700,269,291],[1840726,1007399599,269,292],[1842553,1009240325,269,292],[1844380,1011082878,269,292],[1846207,1012927258,269,292],[1848034,1014773465,269,292],[1849861,1016621499,269,292],[1851691,1018471360,269,292],[1853521,1020323051,270,292],[1855351,1022176572,270,292],[1857181,1024031923,270,292],[1859011,1025889104,270,293],[1860841,1027748115,270,293],[1862671,1029608956,270,293],[1864501,1031471627,270,293],[1866331,1033336128,270,293],[1868164,1035202459,270,293],[1869997,1037070623,270,293],[1871830,1038940620,270,293],[1873663,1040812450,270,293],[1875496,1042686113,270,293],[1877329,1044561609,270,294],[1879162,1046438938,270,294],[1880995,1048318100,271,294],[1882828,1050199095,271,294],[1884664,1052081923,271,294],[1886500,1053966587,271,294],[1888336,1055853087,271,294],[1890172,1057741423,271,294],[1892008,1059631595,271,294],[1893844,1061523603,271,294],[1895680,1063417447,271,295],[1897516,1065313127,271,295],[1899352,1067210643,271,295],[1901191,1069109995,271,295],[1903030,1071011186,271,295],[1904869,1072914216,271,295],[1906708,1074819085,271,295],[1908547,1076725793,272,295],[1910386,1078634340,272,295],[1912225,1080544726,272,295],[1914064,1082456951,272,296],[1915903,1084371015,272,296],[1917745,1086286918,272,296],[1919587,1088204663,272,296],[1921429,1090124250,272,296],[1923271,1092045679,272,296],[1925113,1093968950,272,296],[1926955,1095894063,272,296],[1928797,1097821018,272,296],[1930639,1099749815,272,296],[1932481,1101680454,272,297],[1934326,1103612935,272,297],[1936171,1105547261,273,297],[1938016,1107483432,273,297],[1939861,1109421448,273,297],[1941706,1111361309,273,297],[1943551,1113303015,273,297],[1945396,1115246566,273,297],[1947241,1117191962,273,297],[1949086,1119139203,273,297],[1950934,1121088289,273,298],[1952782,1123039223,273,298],[1954630,1124992005,273,298],[1956478,1126946635,273,298],[1958326,1128903113,273,298],[1960174,1130861439,273,298],[1962022,1132821613,273,298],[1963870,1134783635,274,298],[1965718,1136747505,274,298],[1967569,1138713223,274,298],[1969420,1140680792,274,299],[1971271,1142650212,274,299],[1973122,1144621483,274,299],[1974973,1146594605,274,299],[1976824,1148569578,274,299],[1978675,1150546402,274,299],[1980526,1152525077,274,299],[1982377,1154505603,274,299],[1984231,1156487980,274,299],[1986085,1158472211,274,299],[1987939,1160458296,274,300],[1989793,1162446235,274,300],[1991647,1164436028,275,300],[1993501,1166427675,275,300],[1995355,1168421176,275,300],[1997209,1170416531,275,300],[1999063,1172413740,275,301],[2000920,1174412803,275,301],[2002777,1176413723,275,301],[2004634,1178416500,275,301],[2006491,1180421134,275,301],[2008348,1182427625,275,301],[2010205,1184435973,275,302],[2012062,1186446178,275,302],[2013919,1188458240,275,302],[2015776,1190472159,275,302],[2017636,1192487935,275,302],[2019496,1194505571,276,302],[2021356,1196525067,276,303],[2023216,1198546423,276,303],[2025076,1200569639,276,303],[2026936,1202594715,276,303],[2028796,1204621651,276,303],[2030656,1206650447,276,303],[2032516,1208681103,276,304],[2034379,1210713619,276,304],[2036242,1212747998,276,304],[2038105,1214784240,276,304],[2039968,1216822345,276,304],[2041831,1218862313,276,304],[2043694,1220904144,276,305],[2045557,1222947838,276,305],[2047420,1224993395,277,305],[2049283,1227040815,277,305],[2051149,1229090098,277,305],[2053015,1231141247,277,305],[2054881,1233194262,277,306],[2056747,1235249143,277,306],[2058613,1237305890,277,306],[2060479,1239364503,277,306],[2062345,1241424982,277,306],[2064211,1243487327,277,306],[2066077,1245551538,277,307],[2067946,1247617615,277,307],[2069815,1249685561,277,307],[2071684,1251755376,277,307],[2073553,1253827060,277,307],[2075422,1255900613,278,307],[2077291,1257976035,278,308],[2079160,1260053326,278,308],[2081029,1262132486,278,308],[2082898,1264213515,278,308],[2084770,1266296413,278,308],[2086642,1268381183,278,308],[2088514,1270467825,278,309],[2090386,1272556339,278,309],[2092258,1274646725,278,309],[2094130,1276738983,278,309],[2096002,1278833113,278,309],[2097874,1280929115,278,309],[2099746,1283026989,278,310],[2101621,1285126735,278,310],[2103496,1287228356,279,310],[2105371,1289331852,279,310],[2107246,1291437223,279,310],[2109121,1293544469,279,310],[2110996,1295653590,279,311],[2112871,1297764586,279,311],[2114746,1299877457,279,311],[2116621,1301992203,279,311],[2118499,1304108824,279,311],[2120377,1306227323,279,311],[2122255,1308347700,279,312],[2124133,1310469955,279,312],[2126011,1312594088,279,312],[2127889,1314720099,279,312],[2129767,1316847988,279,312],[2131645,1318977755,280,312],[2133523,1321109400,280,313],[2135404,1323242923,280,313],[2137285,1325378327,280,313],[2139166,1327515612,280,313],[2141047,1329654778,280,313],[2142928,1331795825,280,313],[2144809,1333938753,280,314],[2146690,1336083562,280,314],[2148571,1338230252,280,314],[2150452,1340378823,280,314],[2152336,1342529275,280,314],[2154220,1344681611,280,314],[2156104,1346835831,280,315],[2157988,1348991935,280,315],[2159872,1351149923,281,315],[2161756,1353309795,281,315],[2163640,1355471551,281,315],[2165524,1357635191,281,315],[2167408,1359800715,281,316],[2169295,1361968123,281,316],[2171182,1364137418,281,316],[2173069,1366308600,281,316],[2174956,1368481669,281,316],[2176843,1370656625,281,316],[2178730,1372833468,281,317],[2180617,1375012198,281,317],[2182504,1377192815,281,317],[2184391,1379375319,281,317],[2186281,1381559710,281,317],[2188171,1383745991,282,317],[2190061,1385934162,282,318],[2191951,1388124223,282,318],[2193841,1390316174,282,318],[2195731,1392510015,282,318],[2197621,1394705746,282,318],[2199511,1396903367,282,318],[2201401,1399102878,282,319],[2203294,1401304279,282,319],[2205187,1403507573,282,319],[2207080,1405712760,282,319],[2208973,1407919840,282,319],[2210866,1410128813,282,319],[2212759,1412339679,282,320],[2214652,1414552438,282,320],[2216545,1416767090,283,320],[2218438,1418983635,283,320],[2220334,1421202073,283,320],[2222230,1423422407,283,320],[2224126,1425644637,283,321],[2226022,1427868763,283,321],[2227918,1430094785,283,321],[2229814,1432322703,283,321],[2231710,1434552517,283,321],[2233606,1436784227,283,321],[2235502,1439017833,283,322],[2237401,1441253335,283,322],[2239300,1443490736,283,322],[2241199,1445730036,283,322],[2243098,1447971235,283,322],[2244997,1450214333,284,322],[2246899,1452459330,284,323],[2248801,1454706229,284,323],[2250703,1456955030,284,323],[2252605,1459205733,284,323],[2254507,1461458338,284,323],[2256409,1463712845,284,323],[2258311,1465969254,284,324],[2260213,1468227565,284,324],[2262115,1470487778,284,324],[2264020,1472749893,284,324],[2265925,1475013913,284,324],[2267830,1477279838,284,324],[2269735,1479547668,284,325],[2271640,1481817403,284,325],[2273545,1484089043,285,325],[2275450,1486362588,285,325],[2277355,1488638038,285,325],[2279260,1490915393,285,325],[2281168,1493194653,285,326],[2283076,1495475821,285,326],[2284984,1497758897,285,326],[2286892,1500043881,285,326],[2288800,1502330773,285,326],[2290708,1504619573,285,326],[2292616,1506910281,285,327],[2294524,1509202897,285,327],[2296432,1511497421,285,327],[2298343,1513793853,285,327],[2300254,1516092196,285,327],[2302165,1518392450,286,327],[2304076,1520694615,286,328],[2305987,1522998691,286,328],[2307898,1525304678,286,328],[2309809,1527612576,286,328],[2311720,1529922385,286,328],[2313631,1532234105,286,328],[2315545,1534547736,286,329],[2317459,1536863281,286,329],[2319373,1539180740,286,329],[2321287,1541500113,286,329],[2323201,1543821400,286,329],[2325115,1546144601,286,329],[2327029,1548469716,286,330],[2328943,1550796745,286,330],[2330857,1553125688,287,330],[2332774,1555456545,287,330],[2334691,1557789319,287,330],[2336608,1560124010,287,330],[2338525,1562460618,287,331],[2340442,1564799143,287,331],[2342359,1567139585,287,331],[2344276,1569481944,287,331],[2346193,1571826220,287,331],[2348110,1574172413,287,331],[2350030,1576520523,287,332],[2351950,1578870553,287,332],[2353870,1581222503,287,332],[2355790,1583576373,287,332],[2357710,1585932163,287,332],[2359630,1588289873,288,332],[2361550,1590649503,288,333],[2363470,1593011053,288,333],[2365390,1595374523,288,333],[2367313,1597739913,288,333],[2369236,1600107226,288,333],[2371159,1602476462,288,333],[2373082,1604847621,288,334],[2375005,1607220703,288,334],[2376928,1609595708,288,334],[2378851,1611972636,288,334],[2380774,1614351487,288,334],[2382697,1616732261,288,334],[2384623,1619114958,288,335],[2386549,1621499581,288,335],[2388475,1623886130,289,335],[2390401,1626274605,289,335],[2392327,1628665006,289,335],[2394253,1631057333,289,335],[2396179,1633451586,289,336],[2398105,1635847765,289,336],[2400031,1638245870,289,336],[2401960,1640645901,289,336],[2403889,1643047861,289,336],[2405818,1645451750,289,336],[2407747,1647857568,289,337],[2409676,1650265315,289,337],[2411605,1652674991,289,337],[2413534,1655086596,289,337],[2415463,1657500130,289,337],[2417392,1659915593,290,337],[2419324,1662332985,290,338],[2421256,1664752309,290,338],[2423188,1667173565,290,338],[2425120,1669596753,290,338],[2427052,1672021873,290,338],[2428984,1674448925,290,338],[2430916,1676877909,290,339],[2432848,1679308825,290,339],[2434780,1681741673,290,339],[2436715,1684176453,290,339],[2438650,1686613168,290,339],[2440585,1689051818,290,339],[2442520,1691492403,290,340],[2444455,1693934923,290,340],[2446390,1696379378,291,340],[2448325,1698825768,291,340],[2450260,1701274093,291,340],[2452195,1703724353,291,340],[2454133,1706176548,291,341],[2456071,1708630681,291,341],[2458009,1711086752,291,341],[2459947,1713544761,291,341],[2461885,1716004708,291,341],[2463823,1718466593,291,341],[2465761,1720930416,291,342],[2467699,1723396177,291,342],[2469637,1725863876,291,342],[2471578,1728333513,291,342],[2473519,1730805091,291,342],[2475460,1733278610,292,342],[2477401,1735754070,292,343],[2479342,1738231471,292,343],[2481286,1740710813,292,343],[2483230,1743192099,292,343],[2485174,1745675329,292,343],[2487118,1748160503,292,343],[2489062,1750647621,292,344],[2491006,1753136683,292,344],[2492950,1755627689,292,344],[2494894,1758120639,292,344],[2496838,1760615533,292,344],[2498785,1763112371,292,344],[2500732,1765611156,292,345],[2502679,1768111888,292,345],[2504626,1770614567,293,345],[2506573,1773119193,293,345],[2508520,1775625766,293,345],[2510467,1778134286,293,345],[2512414,1780644753,293,346],[2514361,1783157167,293,346],[2516311,1785671528,293,346],[2518261,1788187839,293,346],[2520211,1790706100,293,346],[2522161,1793226311,293,346],[2524111,1795748472,293,347],[2526061,1798272583,293,347],[2528011,1800798644,293,347],[2529961,1803326655,293,347],[2531911,1805856616,293,347],[2533864,1808388527,294,347],[2535817,1810922391,294,348],[2537770,1813458208,294,348],[2539723,1815995978,294,348],[2541676,1818535701,294,348],[2543629,1821077377,294,348],[2545582,1823621006,294,348],[2547535,1826166588,294,349],[2549488,1828714123,294,349],[2551444,1831263611,294,349],[2553400,1833815055,294,349],[2555356,1836368455,294,349],[2557312,1838923811,294,349],[2559268,1841481123,294,350],[2561224,1844040391,294,350],[2563180,1846601615,295,350],[2565136,1849164795,295,350],[2567092,1851729931,295,350],[2569051,1854297023,295,350],[2571010,1856866074,295,351],[2572969,1859437084,295,351],[2574928,1862010053,295,351],[2576887,1864584981,295,351],[2578846,1867161868,295,351],[2580805,1869740714,295,351],[2582764,1872321519,295,352],[2584723,1874904283,295,352],[2586685,1877489006,295,352],[2588647,1880075691,295,352],[2590609,1882664338,295,352],[2592571,1885254947,296,352],[2594533,1887847518,296,353],[2596495,1890442051,296,353],[2598457,1893038546,296,353],[2600419,1895637003,296,353],[2602381,1898237422,296,353],[2604346,1900839803,296,353],[2606311,1903444149,296,354],[2608276,1906050460,296,354],[2610241,1908658736,296,354],[2612206,1911268977,296,354],[2614171,1913881183,296,354],[2616136,1916495354,296,354],[2618101,1919111490,296,355],[2620066,1921729591,296,355],[2622034,1924349657,297,355],[2624002,1926971691,297,355],[2625970,1929595693,297,355],[2627938,1932221663,297,355],[2629909,1934849601,297,356],[2631880,1937479510,297,356],[2633851,1940111390,297,356],[2635822,1942745241,297,356],[2637793,1945381063,297,356],[2639764,1948018856,297,356],[2641735,1950658620,297,357],[2643706,1953300355,297,357],[2645677,1955944061,297,357],[2647651,1958589738,297,357],[2649625,1961237389,297,357],[2651599,1963887014,298,357],[2653573,1966538613,298,358],[2655547,1969192186,298,358],[2657521,1971847733,298,358],[2659495,1974505254,298,358],[2661469,1977164749,298,358],[2663443,1979826218,298,358],[2665420,1982489661,298,359],[2667397,1985155081,298,359],[2669374,1987822478,298,359],[2671351,1990491852,298,359],[2673328,1993163203,298,359],[2675305,1995836531,298,359],[2677282,1998511836,298,360],[2679259,2001189118,298,360],[2681236,2003868377,299,360],[2683216,2006549613,299,360],[2685196,2009232829,299,360],[2687176,2011918025,299,360],[2689156,2014605201,299,361],[2691136,2017294357,299,361],[2693116,2019985493,299,361],[2695096,2022678609,299,361],[2697076,2025373705,299,361],[2699056,2028070781,299,361],[2701039,2030769837,299,362],[2703022,2033470876,299,362],[2705005,2036173898,299,362],[2706988,2038878903,299,362],[2708971,2041585891,299,362],[2710954,2044294862,300,362],[2712937,2047005816,300,363],[2714923,2049718753,300,363],[2716909,2052433676,300,363],[2718895,2055150585,300,363],[2720881,2057869480,300,363],[2722867,2060590361,300,363],[2724853,2063313228,300,364],[2726839,2066038081,300,364],[2728825,2068764920,300,364],[2730811,2071493745,300,364],[2732800,2074224556,300,364],[2734789,2076957356,300,364],[2736778,2079692145,300,365],[2738767,2082428923,300,365],[2740756,2085167690,301,365],[2742745,2087908446,301,365],[2744734,2090651191,301,365],[2746723,2093395925,301,365],[2748712,2096142648,301,366],[2750704,2098891360,301,366],[2752696,2101642064,301,366],[2754688,2104394760,301,366],[2756680,2107149448,301,366],[2758672,2109906128,301,366],[2760664,2112664800,301,367],[2762656,2115425464,301,367],[2764648,2118188120,301,367],[2766640,2120952768,301,367],[2768635,2123719408,301,367],[2770630,2126488043,302,367],[2772625,2129258673,302,368],[2774620,2132031298,302,368],[2776615,2134805918,302,368],[2778610,2137582533,302,368],[2780605,2140361143,302,368],[2782600,2143141748,302,368],[2784595,2145924348,302,369],[2786593,2148708943,302,369],[2788591,2151495536,302,369],[2790589,2154284127,302,369],[2792587,2157074716,302,369],[2794585,2159867303,302,369],[2796586,2162661888,302,370],[2798587,2165458474,302,370],[2800588,2168257061,303,370],[2802589,2171057649,303,370],[2804590,2173860238,303,370],[2806591,2176664828,303,370],[2808592,2179471419,303,371],[2810593,2182280011,303,371],[2812594,2185090604,303,371],[2814598,2187903198,303,371],[2816602,2190717796,303,371],[2818606,2193534398,303,371],[2820610,2196353004,303,372],[2822614,2199173614,303,372],[2824618,2201996228,303,372],[2826622,2204820846,303,372],[2828626,2207647468,303,372],[2830630,2210476094,304,372],[2832637,2213306724,304,373],[2834644,2216139361,304,373],[2836651,2218974005,304,373],[2838658,2221810656,304,373],[2840665,2224649314,304,373],[2842672,2227489979,304,373],[2844679,2230332651,304,374],[2846686,2233177330,304,374],[2848693,2236024016,304,374],[2850703,2238872709,304,374],[2852713,2241723412,304,374],[2854723,2244576125,304,374],[2856733,2247430848,304,375],[2858743,2250287581,304,375],[2860753,2253146324,305,375],[2862763,2256007077,305,375],[2864773,2258869840,305,375],[2866783,2261734613,305,375],[2868796,2264601396,305,376],[2870809,2267470192,305,376],[2872822,2270341001,305,376],[2874835,2273213823,305,376],[2876848,2276088658,305,376],[2878861,2278965506,305,376],[2880874,2281844367,305,377],[2882887,2284725241,305,377],[2884900,2287608128,305,377],[2886916,2290493028,305,377],[2888932,2293379944,305,377],[2890948,2296268876,306,377],[2892964,2299159824,306,378],[2894980,2302052788,306,378],[2896996,2304947768,306,378],[2899012,2307844764,306,378],[2901028,2310743776,306,378],[2903044,2313644804,306,378],[2905063,2316547848,306,379],[2907082,2319452911,306,379],[2909101,2322359993,306,379],[2911120,2325269094,306,379],[2913139,2328180214,306,379],[2915158,2331093353,306,379],[2917177,2334008511,306,380],[2919196,2336925688,306,380],[2921215,2339844884,307,380],[2923237,2342766099,307,380],[2925259,2345689336,307,380],[2927281,2348614595,307,380],[2929303,2351541876,307,381],[2931325,2354471179,307,381],[2933347,2357402504,307,381],[2935369,2360335851,307,381],[2937391,2363271220,307,381],[2939413,2366208611,307,381],[2941438,2369148024,307,382],[2943463,2372089462,307,382],[2945488,2375032925,307,382],[2947513,2377978413,307,382],[2949538,2380925926,307,382],[2951563,2383875464,308,382],[2953588,2386827027,308,383],[2955613,2389780615,308,383],[2957638,2392736228,308,383],[2959666,2395693866,308,383],[2961694,2398653532,308,383],[2963722,2401615226,308,383],[2965750,2404578948,308,384],[2967778,2407544698,308,384],[2969806,2410512476,308,384],[2971834,2413482282,308,384],[2973862,2416454116,308,384],[2975890,2419427978,308,384],[2977921,2422403868,308,385],[2979952,2425381789,308,385],[2981983,2428361741,309,385],[2984014,2431343724,309,385],[2986045,2434327738,309,385],[2988076,2437313783,309,385],[2990107,2440301859,309,386],[2992138,2443291966,309,386],[2994169,2446284104,309,386],[2996203,2449278273,309,386],[2998237,2452274476,309,386],[3000271,2455272713,309,386],[3002305,2458272984,309,387],[3004339,2461275289,309,387],[3006373,2464279628,309,387],[3008407,2467286001,309,387],[3010441,2470294408,309,387],[3012475,2473304849,310,387],[3014512,2476317324,310,388],[3016549,2479331836,310,388],[3018586,2482348385,310,388],[3020623,2485366971,310,388],[3022660,2488387594,310,388],[3024697,2491410254,310,388],[3026734,2494434951,310,389],[3028771,2497461685,310,389],[3030808,2500490456,310,389],[3032848,2503521264,310,389],[3034888,2506554112,310,389],[3036928,2509589000,310,389],[3038968,2512625928,310,390],[3041008,2515664896,310,390],[3043051,2518705904,311,390],[3045094,2521748955,311,390],[3047137,2524794049,311,390],[3049180,2527841186,311,390],[3051223,2530890366,311,391],[3053266,2533941589,311,391],[3055309,2536994855,311,391],[3057352,2540050164,311,391],[3059395,2543107516,311,391],[3061441,2546166911,311,391],[3063487,2549228352,311,392],[3065533,2552291839,311,392],[3067579,2555357372,311,392],[3069625,2558424951,311,392],[3071671,2561494576,311,392],[3073717,2564566247,312,392],[3075763,2567639964,312,393],[3077809,2570715727,312,393],[3079858,2573793536,312,393],[3081907,2576873394,312,393],[3083956,2579955301,312,393],[3086005,2583039257,312,393],[3088054,2586125262,312,394],[3090103,2589213316,312,394],[3092152,2592303419,312,394],[3094201,2595395571,312,394],[3096250,2598489772,312,394],[3098302,2601586022,312,394],[3100354,2604684324,312,395],[3102406,2607784678,312,395],[3104458,2610887084,313,395],[3106510,2613991542,313,395],[3108562,2617098052,313,395],[3110614,2620206614,313,395],[3112666,2623317228,313,396],[3114718,2626429894,313,396]]; const numberFormat = new Intl.NumberFormat('zh-TW'); const RECOVERY_MINUTES_PER_STAMINA = 8; const TAIWAN_TIME_ZONE = 'Asia/Taipei'; const taiwanDateFormatter = new Intl.DateTimeFormat('en-CA', { timeZone: TAIWAN_TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit' }); const taiwanDateTimeFormatter = new Intl.DateTimeFormat('en-CA', { timeZone: TAIWAN_TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false, hourCycle: 'h23' }); const taiwanMonthDayTimeFormatter = new Intl.DateTimeFormat('en-CA', { timeZone: TAIWAN_TIME_ZONE, month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, hourCycle: 'h23' }); const levelFields = ['currentLevel', 'currentExp', 'targetLevel', 'stageExp', 'stageStamina']; const staminaFields = ['currentStamina', 'currentStaminaMax']; const warFields = ['warType', 'warBonus', 'warMerit', 'warCountdownHours']; const FREE_WAR_POINTS = 16; const WAR_STONE_POINTS = 8; const metricIds = ['currentProgress', 'stageCount', 'targetStaminaMax', 'levelCurrentStaminaMax', 'targetTeamCost', 'levelCurrentTeamCost']; const nodeCache = new Map(Array.from(document.querySelectorAll('[id]'), element => [element.id, element])); const metricUnitNodes = new Map(metricIds.map(id => [id, nodeCache.get(id).querySelector('.unit')])); const $ = id => nodeCache.get(id); function readNumber(id) { const value = $(id).value.trim(); return value === '' ? NaN : Number(value); } function formatInteger(value) { return Number.isFinite(value) ? numberFormat.format(Math.round(value)) : '—'; } function formatRecoveryTime(stamina) { const totalMinutes = Math.max(0, Math.round(stamina * RECOVERY_MINUTES_PER_STAMINA)); const days = Math.floor(totalMinutes / 1440); const hours = Math.floor((totalMinutes % 1440) / 60); const minutes = totalMinutes % 60; const parts = []; if (days > 0) parts.push(days + '日'); if (hours > 0) parts.push(hours + '小時'); if (minutes > 0 || parts.length === 0) parts.push(minutes + '分鐘'); return parts.join(' '); } function formatNumber(value) { return Number.isFinite(value) ? numberFormat.format(value) : '—'; } function getTaiwanDateParts(date) { const parts = taiwanDateFormatter.formatToParts(date); return parts.reduce((result, part) => { if (part.type === 'year' || part.type === 'month' || part.type === 'day') result[part.type] = Number(part.value); return result; }, {}); } function formatDateTime(date) { const parts = taiwanDateTimeFormatter.formatToParts(date); const values = parts.reduce((result, part) => { if (['year', 'month', 'day', 'hour', 'minute'].includes(part.type)) result[part.type] = part.value; return result; }, {}); return values.year + '/' + values.month + '/' + values.day + ' ' + values.hour + ':' + values.minute; } function formatMonthDayTime(date) { const parts = taiwanMonthDayTimeFormatter.formatToParts(date); const values = parts.reduce((result, part) => { if (['month', 'day', 'hour', 'minute'].includes(part.type)) result[part.type] = part.value; return result; }, {}); return Number(values.month) + '月' + Number(values.day) + '日 ' + values.hour + ':' + values.minute; } function calendarDaysInclusive(start, end) { const startParts = getTaiwanDateParts(start); const endParts = getTaiwanDateParts(end); const startDay = Date.UTC(startParts.year, startParts.month - 1, startParts.day); const endDay = Date.UTC(endParts.year, endParts.month - 1, endParts.day); return Math.max(1, Math.floor((endDay - startDay) / 86400000) + 1); } function setMessage(id, message) { const input = $(id); const messageNode = $(id + 'Message'); const invalid = message !== ''; if (messageNode.textContent !== message) messageNode.textContent = message; if (input.classList.contains('invalid') !== invalid) input.classList.toggle('invalid', invalid); } function setMetric(id, value, unit) { const valueNode = $(id); const unitNode = metricUnitNodes.get(id); const valueText = value + ' '; if (valueNode.firstChild.textContent !== valueText) valueNode.firstChild.textContent = valueText; if (unitNode.textContent !== unit) unitNode.textContent = unit; } function clearMessages(fieldIds) { fieldIds.forEach(id => setMessage(id, '')); } function resetLevelResults() { $('requiredExp').textContent = '—'; setMetric('currentProgress', '—', '%'); setMetric('stageCount', '—', '場'); setMetric('targetStaminaMax', '—', '體力'); setMetric('levelCurrentStaminaMax', '—', '體力'); setMetric('targetTeamCost', '—', 'Cost'); setMetric('levelCurrentTeamCost', '—', 'Cost'); $('totalStamina').textContent = '—'; } function calculateLevel() { clearMessages(levelFields); const currentLevel = readNumber('currentLevel'); const currentExp = readNumber('currentExp'); const targetLevel = readNumber('targetLevel'); const stageExp = readNumber('stageExp'); const stageStamina = readNumber('stageStamina'); if ([currentLevel, currentExp, targetLevel, stageExp, stageStamina].some(value => !Number.isFinite(value))) { resetLevelResults(); return; } let hasError = false; if (!Number.isInteger(currentLevel) || currentLevel < 1 || currentLevel > 2000) { setMessage('currentLevel', '請輸入 1 至 2000 的整數。'); hasError = true; } if (!Number.isInteger(targetLevel) || targetLevel < 1 || targetLevel > 2000) { setMessage('targetLevel', '請輸入 1 至 2000 的整數。'); hasError = true; } if (currentExp < 0) { setMessage('currentExp', '目前等級已累積 EXP 不可小於 0。'); hasError = true; } if (stageExp <= 0) { setMessage('stageExp', '單場關卡獲得 EXP 必須大於 0。'); hasError = true; } if (stageStamina < 0) { setMessage('stageStamina', '單場關卡消耗體力不可小於 0。'); hasError = true; } const current = levels[currentLevel - 1]; const target = levels[targetLevel - 1]; if (current && currentExp > current[0]) { setMessage('currentExp', '不可高於目前等級升到下級所需 EXP。'); hasError = true; } if (Number.isInteger(currentLevel) && Number.isInteger(targetLevel) && targetLevel < currentLevel) { setMessage('targetLevel', '目標等級不可低於目前等級。'); hasError = true; } if (hasError || !current || !target) { resetLevelResults(); return; } const progress = currentLevel === 2000 ? 100 : Math.min(100, Math.max(0, currentExp / current[0] * 100)); const remainingExp = Math.max(0, target[1] - current[1] - currentExp); const stageCount = remainingExp === 0 ? 0 : Math.ceil(remainingExp / stageExp); const totalStamina = stageCount * stageStamina; $('requiredExp').textContent = formatInteger(remainingExp); setMetric('currentProgress', progress.toFixed(2), '%'); setMetric('stageCount', formatInteger(stageCount), '場'); setMetric('targetStaminaMax', formatInteger(target[2]), '體力'); setMetric('levelCurrentStaminaMax', formatInteger(current[2]), '體力'); setMetric('targetTeamCost', formatInteger(target[3]), 'Cost'); setMetric('levelCurrentTeamCost', formatInteger(current[3]), 'Cost'); $('totalStamina').textContent = formatInteger(totalStamina) + ' 體力'; } function resetStaminaResult() { $('recoveryTime').textContent = '—'; $('staminaFullAt').textContent = '—'; } function calculateStamina() { clearMessages(staminaFields); const currentStamina = readNumber('currentStamina'); const currentStaminaMax = readNumber('currentStaminaMax'); if (!Number.isFinite(currentStamina) || !Number.isFinite(currentStaminaMax)) { resetStaminaResult(); return; } let hasError = false; if (currentStamina < 0) { setMessage('currentStamina', '目前剩餘體力不可小於 0。'); hasError = true; } if (currentStaminaMax <= 0) { setMessage('currentStaminaMax', '目前最大體力必須大於 0。'); hasError = true; } if (currentStamina > currentStaminaMax) { setMessage('currentStamina', '目前剩餘體力不可高於目前最大體力。'); hasError = true; } if (hasError) { resetStaminaResult(); return; } const missingStamina = Math.max(0, currentStaminaMax - currentStamina); const fullAt = new Date(Date.now() + missingStamina * RECOVERY_MINUTES_PER_STAMINA * 60 * 1000); $('recoveryTime').textContent = formatRecoveryTime(missingStamina); $('staminaFullAt').textContent = formatMonthDayTime(fullAt); } function resetWarResults() { $('warStageCount').textContent = '—'; $('warMeritPerBattle').textContent = '—'; $('warPointCost').textContent = '—'; $('warDayCount').textContent = '—'; $('warFreePoints').textContent = '—'; $('warNetPoints').textContent = '—'; $('warStoneCount').textContent = '—'; $('warCountdownEnd').textContent = '—'; } function clearFieldValues(fieldIds) { fieldIds.forEach(id => { $(id).value = ''; }); } function resetLevelTool() { cancelScheduledCalculation(); clearFieldValues(levelFields); clearMessages(levelFields); resetLevelResults(); } function resetStaminaTool() { cancelScheduledCalculation(); clearFieldValues(staminaFields); clearMessages(staminaFields); resetStaminaResult(); } function resetWarTool() { cancelScheduledCalculation(); $('warType').value = 'defense'; clearFieldValues(['warBonus', 'warMerit', 'warCountdownHours']); clearMessages(warFields); resetWarResults(); } function calculateWar() { clearMessages(warFields); const warBonus = readNumber('warBonus'); const warMerit = readNumber('warMerit'); const warCountdownHours = readNumber('warCountdownHours'); if ([warBonus, warMerit, warCountdownHours].some(value => !Number.isFinite(value))) { resetWarResults(); return; } let hasError = false; if (warBonus < 0) { setMessage('warBonus', '加成不可小於 0。'); hasError = true; } if (warMerit < 0) { setMessage('warMerit', '目標功勳值不可小於 0。'); hasError = true; } if (warCountdownHours < 0) { setMessage('warCountdownHours', '倒數時間不可小於 0。'); hasError = true; } if (hasError) { resetWarResults(); return; } const config = $('warType').value === 'attack' ? { baseMerit: 100, pointCost: 4 } : { baseMerit: 62, pointCost: 2 }; const meritPerBattle = config.baseMerit * (2 + warBonus / 100); const stageCount = warMerit === 0 ? 0 : Math.ceil(warMerit / meritPerBattle); const totalPoints = stageCount * config.pointCost; const now = new Date(); const countdownEnd = new Date(now.getTime() + warCountdownHours * 60 * 60 * 1000); const dayCount = calendarDaysInclusive(now, countdownEnd); const freePoints = dayCount * FREE_WAR_POINTS; const netPoints = Math.max(0, totalPoints - freePoints); const stoneCount = Math.ceil(netPoints / WAR_STONE_POINTS); $('warStageCount').textContent = formatNumber(stageCount) + ' 場'; $('warMeritPerBattle').textContent = formatNumber(meritPerBattle); $('warPointCost').textContent = formatNumber(totalPoints) + ' 點'; $('warDayCount').textContent = formatNumber(dayCount) + ' 天'; $('warFreePoints').textContent = formatNumber(freePoints) + ' 點'; $('warNetPoints').textContent = formatNumber(netPoints) + ' 點'; $('warStoneCount').textContent = formatNumber(stoneCount) + ' 顆'; $('warCountdownEnd').textContent = formatDateTime(countdownEnd); } function switchTool(tool) { cancelScheduledCalculation(); if (activeTool === tool) { scheduleCalculation(tool); return; } activeTool = tool; const isLevel = tool === 'level'; const isStamina = tool === 'stamina'; $('levelToolPanel').hidden = !isLevel; $('staminaToolPanel').hidden = !isStamina; $('warToolPanel').hidden = tool !== 'war'; $('levelTab').classList.toggle('active', isLevel); $('levelTab').setAttribute('aria-selected', String(isLevel)); $('staminaTab').classList.toggle('active', isStamina); $('staminaTab').setAttribute('aria-selected', String(isStamina)); $('warTab').classList.toggle('active', tool === 'war'); $('warTab').setAttribute('aria-selected', String(tool === 'war')); $('resetLevel').hidden = !isLevel; $('resetStamina').hidden = !isStamina; $('resetWar').hidden = tool !== 'war'; scheduleCalculation(tool); } $('levelTab').addEventListener('click', () => switchTool('level')); $('staminaTab').addEventListener('click', () => switchTool('stamina')); $('warTab').addEventListener('click', () => switchTool('war')); const calculateByTool = { level: calculateLevel, stamina: calculateStamina, war: calculateWar }; let activeTool = ''; let scheduledTool = ''; let scheduledFrame = 0; function cancelScheduledCalculation() { if (scheduledFrame) cancelAnimationFrame(scheduledFrame); scheduledTool = ''; scheduledFrame = 0; } function scheduleCalculation(tool) { scheduledTool = tool; if (scheduledFrame) return; scheduledFrame = requestAnimationFrame(() => { const toolToCalculate = scheduledTool; scheduledTool = ''; scheduledFrame = 0; calculateByTool[toolToCalculate](); }); } levelFields.forEach(id => $(id).addEventListener('input', () => scheduleCalculation('level'))); staminaFields.forEach(id => $(id).addEventListener('input', () => scheduleCalculation('stamina'))); warFields.forEach(id => { $(id).addEventListener('input', () => scheduleCalculation('war')); $(id).addEventListener('change', () => scheduleCalculation('war')); }); $('resetLevel').addEventListener('click', resetLevelTool); $('resetStamina').addEventListener('click', resetStaminaTool); $('resetWar').addEventListener('click', resetWarTool); let themeSaveTimer = 0; let themeFrame = 0; function setTheme(theme) { const isLight = theme === 'light'; const nextTheme = isLight ? 'light' : 'dark'; const root = document.documentElement; root.classList.add('theme-switching'); root.dataset.theme = nextTheme; $('themeToggle').textContent = isLight ? '切換深色模式' : '切換淺色模式'; $('themeToggle').setAttribute('aria-pressed', String(isLight)); $('themeToggle').setAttribute('aria-label', isLight ? '切換至深色模式' : '切換至淺色模式'); if (themeSaveTimer) clearTimeout(themeSaveTimer); themeSaveTimer = setTimeout(() => { try { localStorage.setItem('tos-theme', nextTheme); } catch (error) {} }, 0); if (themeFrame) cancelAnimationFrame(themeFrame); themeFrame = requestAnimationFrame(() => { root.classList.remove('theme-switching'); themeFrame = 0; }); } let savedTheme = null; try { savedTheme = localStorage.getItem('tos-theme'); } catch (error) {} setTheme(savedTheme === 'light' ? 'light' : 'dark'); $('themeToggle').addEventListener('click', () => { setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'); }); switchTool('level'); </script> </body> </html>
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="神魔之塔召喚師等級、體力恢復與魔神戰功勳計算工具。">
+  <title>神魔之塔｜計算工具</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #34363b;
+      --panel-strong: #45484f;
+      --line: rgba(244, 245, 247, 0.12);
+      --line-strong: rgba(139, 141, 246, 0.48);
+      --text: #f1f2f4;
+      --muted: #c3c5ca;
+      --sky: #8b8df4;
+      --red: #f38b9f;
+      --shadow: 0 22px 70px rgba(15, 16, 20, 0.24);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+      line-height: 1.6;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 36px 0 64px;
+    }
+
+    .hero {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 10px 0 8px;
+      font-size: clamp(1.9rem, 4vw, 3.2rem);
+      line-height: 1.12;
+      letter-spacing: -0.04em;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.5fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: #10243b;
+      box-shadow: var(--shadow);
+    }
+
+    .input-card {
+      position: sticky;
+      top: 24px;
+      padding: 28px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      color: #c7d9ec;
+      font-size: 0.88rem;
+      font-weight: 650;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 400;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 52px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 12px;
+      outline: none;
+      padding: 13px 14px;
+      background: rgba(3, 12, 24, 0.72);
+      color: var(--text);
+      font: inherit;
+      font-variant-numeric: tabular-nums;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    input:hover, select:hover { border-color: rgba(125, 211, 252, 0.45); }
+    input:focus, select:focus {
+      border-color: var(--sky);
+      background: rgba(7, 24, 43, 0.92);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.14);
+    }
+
+    input.invalid, select.invalid {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.13);
+    }
+
+    .field-message {
+      min-height: 18px;
+      color: var(--red);
+      font-size: 0.76rem;
+    }
+
+    .results {
+      display: grid;
+      gap: 20px;
+    }
+
+    .primary-result {
+      position: relative;
+      overflow: hidden;
+      padding: 26px;
+      border-color: var(--line-strong);
+      background: #103a59;
+    }
+
+    .primary-result::after { display: none; }
+
+    .result-label {
+      color: #bae6fd;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .result-value {
+      margin-top: 5px;
+      color: #f0f9ff;
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      font-weight: 850;
+      letter-spacing: -0.05em;
+      line-height: 1.08;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-note {
+      min-height: 24px;
+      margin-top: 9px;
+      color: #8fa8bf;
+      font-size: 0.76rem;
+    }
+
+    [hidden] { display: none !important; }
+
+    .tool-switch {
+      display: flex;
+      gap: 16px;
+      width: min(100%, 840px);
+      margin: 0 auto 24px;
+    }
+
+    .tool-tab {
+      flex: 1 1 0;
+      min-width: 0;
+      min-height: 64px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      padding: 14px 16px;
+      background: rgba(7, 24, 43, 0.58);
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 750;
+      -webkit-appearance: none;
+      appearance: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tool-tab.active {
+      border-color: transparent;
+      background: #0e7490;
+      color: #e0f2fe;
+      box-shadow: none;
+    }
+
+    .tool-tab:focus,
+    .tool-tab:focus-visible,
+    .tool-tab:active {
+      outline: none;
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .reset-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+      min-height: 58px;
+      margin-top: 18px;
+      border: 0;
+      border-radius: 16px;
+      padding: 12px 20px;
+      background: #0d83ff;
+      color: #ffffff;
+      cursor: pointer;
+      font: inherit;
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      box-shadow: 0 5px 0 rgba(4, 33, 74, 0.22);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .reset-button:focus,
+    .reset-button:focus-visible {
+      outline: none;
+    }
+
+    .reset-switch {
+      width: 100%;
+      margin: 10px 0 18px;
+    }
+
+    .reset-switch .reset-button {
+      margin-top: 0;
+    }
+
+
+    @media (max-width: 840px) {
+      .hero { align-items: flex-start; flex-direction: column; }
+      .layout { grid-template-columns: 1fr; }
+      .input-card { position: static; }
+    }
+
+    @media (max-width: 520px) {
+      .shell { width: min(100% - 24px, 1120px); padding-top: 24px; padding-bottom: 48px; }
+      h1 { font-size: clamp(1.8rem, 9vw, 2.35rem); }
+      .input-card, .primary-result { padding: 20px; }
+      .field-grid { grid-template-columns: 1fr; }
+      .tool-switch { gap: 8px; margin-bottom: 18px; }
+      .tool-tab { min-height: 56px; padding: 10px 8px; font-size: 0.82rem; line-height: 1.3; }
+      input, select { min-height: 54px; }
+      .field.full { grid-column: auto; }
+      .card { border-radius: 18px; }
+    }
+
+    @media (pointer: coarse) {
+      .tool-tab { min-height: 58px; }
+      input, select { min-height: 54px; }
+    }
+
+    html { background: var(--bg); }
+    body { background: #34363b; }
+    .shell { width: min(1240px, calc(100% - 40px)); padding: 28px 0 56px; }
+    .hero { margin-bottom: 18px; padding-left: 16px; border-left: 3px solid var(--sky); }
+    h1 { margin: 0; font-size: clamp(2rem, 4.5vw, 3.25rem); }
+    .theme-toggle { flex: 0 0 auto; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; background: var(--panel-strong); color: var(--text); cursor: pointer; font: inherit; font-size: 0.82rem; font-weight: 750; -webkit-tap-highlight-color: transparent; }
+    .theme-toggle:focus, .theme-toggle:focus-visible, .theme-toggle:active { outline: none; border-color: var(--line); box-shadow: none; }
+    .tool-switch { width: 100%; max-width: none; gap: 6px; margin-bottom: 0; padding: 6px; border: 1px solid var(--line); border-radius: 18px; background: #2f3136; }
+    .reset-switch { margin: 10px 0 18px; }
+    .tool-tab { min-height: 58px; border-radius: 12px; padding: 12px 16px; background: #3a3d42; font-size: 0.98rem; }
+    .tool-tab.active { background: #6e70df; }
+    .layout { display: flex; flex-direction: column; gap: 18px; align-items: stretch; }
+    .card { border-radius: 18px; background: #3b3e44; box-shadow: 0 18px 46px rgba(15, 16, 20, 0.22); }
+    .input-card { position: static; width: 100%; padding: 22px; }
+    .card-header { margin-bottom: 16px; }
+    .field-grid { gap: 12px; }
+    input, select { min-height: 50px; border-radius: 10px; padding: 12px 13px; background: #303238; }
+    input:focus, select:focus { background: #383a40; box-shadow: 0 0 0 3px rgba(139, 141, 246, 0.12); }
+    .results { gap: 14px; }
+    .primary-result { padding: 22px; border-color: rgba(139, 141, 246, 0.34); background: #464950; }
+    .result-value { font-size: clamp(2rem, 4.8vw, 3.3rem); }
+    .aligned-results-table { display: grid; gap: 1px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--line); }
+    .aligned-result-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(160px, 0.9fr); align-items: center; gap: 20px; padding: 14px 18px; background: #36393f; }
+    .aligned-result-row:nth-child(odd) { background: #3e4147; }
+    .aligned-result-head { background: #4a4d55 !important; color: #ececff; font-size: 0.76rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+    .aligned-result-label { color: #e2e3e6; font-size: 0.86rem; font-weight: 700; }
+    .aligned-result-copy { min-width: 0; }
+    .aligned-result-value { min-width: 0; color: var(--text); text-align: right; font-size: clamp(1rem, 2.5vw, 1.45rem); font-weight: 820; line-height: 1.25; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    .aligned-result-value .unit { margin-left: 4px; color: var(--sky); font-size: 0.72em; font-weight: 750; letter-spacing: 0; }
+    .aligned-results-table .metric-note { min-height: 0; margin-top: 3px; }
+    .stamina-results-table { display: grid; gap: 1px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--line); }
+    .stamina-result-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(160px, 0.9fr); align-items: center; gap: 20px; padding: 16px 18px; background: #36393f; }
+    .stamina-result-row:nth-child(odd) { background: #3e4147; }
+    .stamina-result-head { background: #4a4d55 !important; color: #ececff; font-size: 0.76rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+    .stamina-result-label { color: #e2e3e6; font-size: 0.86rem; font-weight: 700; }
+    .stamina-result-value { min-width: 0; color: var(--text); text-align: right; font-size: clamp(1.1rem, 2.5vw, 1.55rem); font-weight: 820; line-height: 1.25; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+
+    @media (max-width: 900px) {
+      .layout { display: flex; flex-direction: column; }
+      .results { order: 0; width: 100%; }
+      .input-card { position: static; width: 100%; }
+    }
+
+    @media (max-width: 600px) {
+      .shell { width: calc(100% - 32px); padding: 18px 0 40px; }
+      .hero { margin-bottom: 14px; padding-left: 12px; gap: 12px; }
+      .theme-toggle { width: 100%; font-size: 0.9rem; }
+      h1 { font-size: clamp(2rem, 9vw, 2.5rem); }
+      .tool-switch { gap: 5px; margin-bottom: 0; padding: 5px; border-radius: 14px; }
+      .reset-switch { margin: 8px 0 14px; }
+      .tool-tab { min-height: 56px; padding: 9px 5px; border-radius: 10px; font-size: 0.92rem; line-height: 1.3; }
+      .layout { gap: 12px; }
+      .results { order: 0; gap: 10px; }
+      .input-card { padding: 18px; }
+      .card-header { margin-bottom: 14px; }
+      .card-title { font-size: 1.18rem; }
+      .field-grid { gap: 12px; }
+      .field { gap: 6px; }
+      label { font-size: 0.98rem; }
+      .hint { font-size: 0.78rem; }
+      input, select { min-height: 54px; padding: 12px 13px; font-size: 16px; }
+      .field-message { min-height: 16px; font-size: 0.76rem; }
+      .primary-result { padding: 19px; }
+      .result-label { font-size: 0.9rem; }
+      .result-value { font-size: clamp(2.1rem, 12vw, 3rem); }
+      .reset-button { min-height: 60px; margin-top: 16px; border-radius: 15px; padding: 12px 16px; font-size: 1.18rem; }
+      .metric-note { margin-top: 7px; font-size: 0.72rem; line-height: 1.4; }
+      .aligned-result-row { grid-template-columns: minmax(0, 1fr) minmax(116px, 0.9fr); gap: 10px; padding: 12px 13px; }
+      .aligned-result-head { padding: 10px 13px; }
+      .aligned-result-label { font-size: 0.88rem; line-height: 1.4; }
+      .aligned-result-value { font-size: 1.08rem; }
+      .aligned-results-table .metric-note { font-size: 0.72rem; line-height: 1.4; }
+      .stamina-result-row { grid-template-columns: minmax(0, 1fr) minmax(116px, 0.9fr); gap: 10px; padding: 13px; }
+      .stamina-result-head { padding: 10px 13px; }
+      .stamina-result-label { font-size: 0.88rem; line-height: 1.4; }
+      .stamina-result-value { font-size: 1.08rem; }
+    }
+    html.theme-switching,
+    html.theme-switching * {
+      transition: none !important;
+    }
+
+    html[data-theme="light"] {
+      --bg: #FAF9F6;
+      --panel-strong: #f7f8fa;
+      --line: rgba(15, 23, 42, 0.14);
+      --line-strong: rgba(2, 132, 199, 0.42);
+      --text: #0f172a;
+      --muted: #475569;
+      --sky: #0369a1;
+      --red: #be123c;
+      --shadow: 0 22px 70px rgba(15, 23, 42, 0.12);
+      background: #FAF9F6;
+    }
+
+    html[data-theme="light"] body { background: #FAF9F6; }
+    html[data-theme="light"] label { color: #334155; }
+    html[data-theme="light"] .card { background: #f7f8fa; box-shadow: 0 18px 46px rgba(15, 23, 42, 0.1); }
+    html[data-theme="light"] input, html[data-theme="light"] select { border-color: rgba(15, 23, 42, 0.18); background: #f7f8fa; color: #0f172a; }
+    html[data-theme="light"] input:hover, html[data-theme="light"] select:hover { border-color: rgba(2, 132, 199, 0.48); }
+    html[data-theme="light"] input:focus, html[data-theme="light"] select:focus { background: #FAF9F6; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18); }
+    html[data-theme="light"] .primary-result { border-color: rgba(2, 132, 199, 0.4); background: #e0f2fe; }
+    html[data-theme="light"] .result-label { color: #075985; }
+    html[data-theme="light"] .result-value { color: #0f172a; }
+    html[data-theme="light"] .tool-switch { border-color: rgba(15, 23, 42, 0.14); background: #e4e8ed; }
+    html[data-theme="light"] .tool-tab { background: #FAF9F6; color: #475569; }
+    html[data-theme="light"] .tool-tab.active { background: #6e70df; color: #e0f2fe; }
+    html[data-theme="light"] .aligned-result-row { background: #f7f8fa; }
+    html[data-theme="light"] .aligned-result-row:nth-child(odd) { background: #FAF9F6; }
+    html[data-theme="light"] .aligned-result-head { background: #e0f2fe !important; color: #075985; }
+    html[data-theme="light"] .aligned-result-label { color: #334155; }
+    html[data-theme="light"] .aligned-result-value { color: #0f172a; }
+    html[data-theme="light"] .aligned-result-value .unit { color: #0369a1; }
+    html[data-theme="light"] .stamina-result-row { background: #f7f8fa; }
+    html[data-theme="light"] .stamina-result-row:nth-child(odd) { background: #FAF9F6; }
+    html[data-theme="light"] .stamina-result-head { background: #e0f2fe !important; color: #075985; }
+    html[data-theme="light"] .stamina-result-label { color: #334155; }
+    html[data-theme="light"] .stamina-result-value { color: #0f172a; }
+    .theme-toggle:focus, .theme-toggle:focus-visible, .theme-toggle:active,
+    #warType:focus, #warType:focus-visible, #warType:active { outline: none; box-shadow: none; }
+    #warType { -webkit-tap-highlight-color: transparent; }
+    #warType:hover, #warType:focus, #warType:focus-visible, #warType:active { outline: none; border-color: var(--line); box-shadow: none; }
+    html[data-theme="light"] .theme-toggle:focus, html[data-theme="light"] .theme-toggle:focus-visible, html[data-theme="light"] .theme-toggle:active { outline: none; border-color: var(--line) !important; box-shadow: none; }
+
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <h1>神魔之塔計算工具</h1>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="切換至淺色模式">切換淺色模式</button>
+    </header>
+
+    <div class="tool-switch" role="tablist" aria-label="選擇計算工具">
+      <button class="tool-tab active" id="levelTab" type="button" role="tab" aria-selected="true" aria-controls="levelToolPanel">召喚師等級</button>
+      <button class="tool-tab" id="staminaTab" type="button" role="tab" aria-selected="false" aria-controls="staminaToolPanel">體力恢復</button>
+      <button class="tool-tab" id="warTab" type="button" role="tab" aria-selected="false" aria-controls="warToolPanel">魔神戰功勳</button>
+    </div>
+
+    <div class="reset-switch" role="group" aria-label="清空目前計算工具欄位">
+      <button class="reset-button" id="resetLevel" type="button" aria-label="清空召喚師等級計算欄位">
+        <span>全部重置</span>
+      </button>
+      <button class="reset-button" id="resetStamina" type="button" aria-label="清空體力恢復計算欄位" hidden>
+        <span>全部重置</span>
+      </button>
+      <button class="reset-button" id="resetWar" type="button" aria-label="清空魔神戰功勳計算欄位" hidden>
+        <span>全部重置</span>
+      </button>
+    </div>
+
+    <section class="tool-panel" id="levelToolPanel" role="tabpanel" aria-labelledby="levelTab">
+      <section class="layout" aria-label="召喚師等級計算">
+        <section class="card input-card">
+          <div class="card-header">
+            <h2 class="card-title">召喚師等級計算</h2>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="currentLevel">目前等級 <span class="hint">1 至 2000</span></label>
+              <input id="currentLevel" type="number" min="1" max="2000" step="1" inputmode="numeric">
+              <div class="field-message" id="currentLevelMessage"></div>
+            </div>
+            <div class="field">
+              <label for="targetLevel">目標等級 <span class="hint">1 至 2000</span></label>
+              <input id="targetLevel" type="number" min="1" max="2000" step="1" inputmode="numeric">
+              <div class="field-message" id="targetLevelMessage"></div>
+            </div>
+            <div class="field full">
+              <label for="currentExp">目前等級已累積 EXP</label>
+              <input id="currentExp" type="number" min="0" step="1" inputmode="numeric">
+              <div class="field-message" id="currentExpMessage"></div>
+            </div>
+            <div class="field">
+              <label for="stageExp">單場關卡獲得 EXP</label>
+              <input id="stageExp" type="number" min="0" step="1" inputmode="numeric">
+              <div class="field-message" id="stageExpMessage"></div>
+            </div>
+            <div class="field">
+              <label for="stageStamina">單場關卡消耗體力</label>
+              <input id="stageStamina" type="number" min="0" step="1" inputmode="numeric">
+              <div class="field-message" id="stageStaminaMessage"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="results" aria-live="polite">
+          <article class="card primary-result">
+            <div class="result-label">升到目標等級尚需 EXP</div>
+            <div class="result-value" id="requiredExp">—</div>
+          </article>
+
+          <div class="aligned-results-table" role="table" aria-label="召喚師等級計算結果">
+            <div class="aligned-result-row aligned-result-head" role="row">
+              <div role="columnheader">結果項目</div>
+              <div role="columnheader" style="text-align: right;">數值</div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">當前等級升級進度</div>
+              <div class="aligned-result-value" id="currentProgress" role="cell">— <span class="unit">%</span></div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">預計所需刷關場次</div>
+              <div class="aligned-result-value" id="stageCount" role="cell">— <span class="unit">場</span></div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">目標等級體力上限</div>
+              <div class="aligned-result-value" id="targetStaminaMax" role="cell">— <span class="unit">體力</span></div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">目前等級體力上限</div>
+              <div class="aligned-result-value" id="levelCurrentStaminaMax" role="cell">— <span class="unit">體力</span></div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">目標等級隊伍空間 Cost</div>
+              <div class="aligned-result-value" id="targetTeamCost" role="cell">— <span class="unit">Cost</span></div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">目前等級隊伍空間 Cost</div>
+              <div class="aligned-result-value" id="levelCurrentTeamCost" role="cell">— <span class="unit">Cost</span></div>
+            </div>
+          </div>
+
+          <article class="card primary-result">
+            <div class="result-label">總共消耗體力</div>
+            <div class="result-value" id="totalStamina">—</div>
+          </article>
+        </section>
+      </section>
+    </section>
+
+    <section class="tool-panel" id="staminaToolPanel" role="tabpanel" aria-labelledby="staminaTab" hidden>
+      <section class="layout" aria-label="體力恢復計算">
+        <section class="card input-card">
+          <div class="card-header">
+            <h2 class="card-title">目前體力狀態</h2>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="currentStamina">目前剩餘體力</label>
+              <input id="currentStamina" type="number" min="0" step="1" inputmode="numeric">
+              <div class="field-message" id="currentStaminaMessage"></div>
+            </div>
+            <div class="field">
+              <label for="currentStaminaMax">目前最大體力</label>
+              <input id="currentStaminaMax" type="number" min="1" step="1" inputmode="numeric">
+              <div class="field-message" id="currentStaminaMaxMessage"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="results" aria-live="polite">
+          <div class="stamina-results-table" role="table" aria-label="體力恢復計算結果">
+            <div class="stamina-result-row stamina-result-head" role="row">
+              <div role="columnheader">結果項目</div>
+              <div role="columnheader" style="text-align: right;">數值</div>
+            </div>
+            <div class="stamina-result-row" role="row">
+              <div class="stamina-result-label" role="rowheader">恢復時間</div>
+              <div class="stamina-result-value" id="recoveryTime" role="cell">—</div>
+            </div>
+            <div class="stamina-result-row" role="row">
+              <div class="stamina-result-label" role="rowheader">預估回滿時間</div>
+              <div class="stamina-result-value" id="staminaFullAt" role="cell">—</div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </section>
+
+    <section class="tool-panel" id="warToolPanel" role="tabpanel" aria-labelledby="warTab" hidden>
+      <section class="layout" aria-label="魔神戰功勳計算">
+        <section class="card input-card">
+          <div class="card-header">
+            <h2 class="card-title">魔神戰功勳計算</h2>
+          </div>
+
+          <div class="field-grid">
+            <div class="field full">
+              <label for="warType">戰鬥類型</label>
+              <select id="warType">
+                <option value="attack">攻擊戰：100 功勳／場・4 點</option>
+                <option value="defense" selected>防守戰：62 功勳／場・2 點</option>
+              </select>
+              <div class="field-message" id="warTypeMessage"></div>
+            </div>
+            <div class="field">
+              <label for="warBonus">加成（%）</label>
+              <input id="warBonus" type="number" min="0" step="0.01" inputmode="decimal">
+              <div class="field-message" id="warBonusMessage"></div>
+            </div>
+            <div class="field">
+              <label for="warMerit">目標功勳值</label>
+              <input id="warMerit" type="number" min="0" step="1" inputmode="numeric">
+              <div class="field-message" id="warMeritMessage"></div>
+            </div>
+            <div class="field full">
+              <label for="warCountdownHours">倒數時間（小時）</label>
+              <input id="warCountdownHours" type="number" min="0" step="0.01" inputmode="decimal">
+              <div class="field-message" id="warCountdownHoursMessage"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="results" aria-live="polite">
+          <article class="card primary-result">
+            <div class="result-label">預計所需場次</div>
+            <div class="result-value" id="warStageCount">—</div>
+          </article>
+
+          <div class="aligned-results-table" role="table" aria-label="魔神戰功勳計算結果">
+            <div class="aligned-result-row aligned-result-head" role="row">
+              <div role="columnheader">結果項目</div>
+              <div role="columnheader" style="text-align: right;">數值</div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">每場功勳</div>
+              <div class="aligned-result-value" id="warMeritPerBattle" role="cell">—</div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">總消耗點數</div>
+              <div class="aligned-result-value" id="warPointCost" role="cell">—</div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">活動天數</div>
+              <div class="aligned-result-value" id="warDayCount" role="cell">—</div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-copy" role="rowheader">
+                <div class="aligned-result-label">今日至最後一日免費點數</div>
+                <div class="metric-note">免費點數為依活動天數累積所得，每日 16 點，當日未使用不帶到隔日。</div>
+              </div>
+              <div class="aligned-result-value" id="warFreePoints" role="cell">—</div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">扣除免費後點數</div>
+              <div class="aligned-result-value" id="warNetPoints" role="cell">—</div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">魔法石使用量</div>
+              <div class="aligned-result-value" id="warStoneCount" role="cell">—</div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">倒數結束時間</div>
+              <div class="aligned-result-value" id="warCountdownEnd" role="cell">—</div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </section>
+
+  </main>
+
+  <script>
+    const levels = [[10,0,80,85],[15,10,80,85],[20,25,80,85],[25,45,80,85],[30,70,80,86],[45,100,80,86],[62,145,80,86],[82,207,80,86],[107,289,80,86],[134,396,80,87],[164,530,80,87],[199,694,80,87],[236,893,80,87],[276,1129,80,87],[321,1405,80,88],[368,1726,80,88],[418,2094,80,88],[473,2512,80,88],[530,2985,80,88],[590,3515,80,89],[655,4105,80,89],[722,4760,80,89],[792,5482,80,89],[867,6274,80,89],[944,7141,80,90],[1024,8085,80,90],[1109,9109,80,90],[1196,10218,80,90],[1286,11414,80,90],[1381,12700,80,91],[1478,14081,80,91],[1578,15559,80,91],[1683,17137,80,91],[1790,18820,80,91],[1900,20610,80,92],[2015,22510,80,92],[2132,24525,80,92],[2252,26657,80,92],[2377,28909,80,92],[2504,31286,80,93],[2634,33790,80,93],[2769,36424,80,93],[2906,39193,80,93],[3046,42099,80,93],[3191,45145,80,94],[3338,48336,80,94],[3488,51674,80,94],[3643,55162,80,94],[3800,58805,80,94],[3960,62605,80,95],[4125,66565,80,95],[4292,70690,80,95],[4462,74982,80,95],[4637,79444,80,95],[4814,84081,80,96],[4994,88895,80,96],[5179,93889,80,96],[5366,99068,80,96],[5556,104434,80,96],[5751,109990,80,97],[5948,115741,80,97],[6148,121689,80,97],[6353,127837,80,97],[6560,134190,80,97],[6770,140750,80,98],[6985,147520,80,98],[7202,154505,80,98],[7422,161707,80,98],[7647,169129,80,98],[7874,176776,80,99],[8104,184650,80,99],[8339,192754,80,99],[8576,201093,80,99],[8816,209669,80,99],[9061,218485,80,100],[9308,227546,80,100],[9558,236854,80,100],[9813,246412,80,100],[10070,256225,80,100],[10330,266295,80,101],[10595,276625,80,101],[10862,287220,80,101],[11132,298082,80,101],[11407,309214,80,101],[11684,320621,80,102],[11964,332305,80,102],[12249,344269,80,102],[12536,356518,80,102],[12826,369054,80,102],[13121,381880,80,103],[13418,395001,80,103],[13718,408419,80,103],[14023,422137,80,103],[14330,436160,80,103],[14640,450490,80,104],[14955,465130,80,104],[15272,480085,80,104],[15592,495357,80,104],[15917,510949,80,104],[16244,526866,80,105],[16574,543110,80,105],[16909,559684,81,106],[17246,576593,81,106],[17586,593839,82,107],[17931,611425,82,107],[18278,629356,83,108],[18628,647634,83,108],[18983,666262,84,109],[19340,685245,84,109],[19700,704585,85,110],[20065,724285,85,110],[20432,744350,86,111],[20802,764782,86,111],[21177,785584,87,112],[21554,806761,87,112],[21934,828315,88,113],[22319,850249,88,113],[22706,872568,89,114],[23096,895274,89,114],[23491,918370,90,115],[23888,941861,90,115],[24288,965749,91,116],[24693,990037,91,116],[25100,1014730,92,117],[25510,1039830,92,117],[25925,1065340,93,118],[26342,1091265,93,118],[26762,1117607,94,119],[27187,1144369,94,119],[27614,1171556,95,120],[28044,1199170,95,120],[28479,1227214,96,121],[28916,1255693,96,121],[29356,1284609,97,122],[29801,1313965,97,122],[30248,1343766,98,123],[30698,1374014,98,123],[31153,1404712,99,124],[31610,1435865,99,124],[32070,1467475,100,125],[32535,1499545,100,125],[33002,1532080,101,126],[33472,1565082,101,126],[33947,1598554,102,127],[34424,1632501,102,127],[34904,1666925,103,128],[35389,1701829,103,128],[35876,1737218,104,129],[36366,1773094,104,129],[36861,1809460,105,130],[37358,1846321,105,130],[37858,1883679,106,131],[38363,1921537,106,131],[38870,1959900,107,132],[39380,1998770,107,132],[39895,2038150,108,133],[40412,2078045,108,133],[40932,2118457,109,134],[41457,2159389,109,134],[41984,2200846,110,135],[42514,2242830,110,135],[43049,2285344,111,136],[43586,2328393,111,136],[44126,2371979,112,137],[44671,2416105,112,137],[45218,2460776,113,138],[45768,2505994,113,138],[46323,2551762,114,139],[46880,2598085,114,139],[47440,2644965,115,140],[48005,2692405,115,140],[48572,2740410,116,141],[49142,2788982,116,141],[49717,2838124,117,142],[50294,2887841,117,142],[50874,2938135,118,143],[51459,2989009,118,143],[52046,3040468,119,144],[52636,3092514,119,144],[53231,3145150,120,145],[53828,3198381,120,145],[54428,3252209,121,146],[55033,3306637,121,146],[55640,3361670,122,147],[56250,3417310,122,147],[56865,3473560,123,148],[57482,3530425,123,148],[58102,3587907,124,149],[58727,3646009,124,149],[59354,3704736,125,150],[59984,3764090,125,150],[60619,3824074,126,151],[61256,3884693,126,151],[61896,3945949,127,152],[62541,4007845,127,152],[63188,4070386,128,153],[63838,4133574,128,153],[64493,4197412,129,154],[65150,4261905,129,154],[65810,4327055,130,155],[66475,4392865,130,155],[67143,4459340,131,155],[67816,4526483,131,155],[68492,4594299,132,155],[69173,4662791,132,156],[69859,4731964,133,156],[70548,4801823,133,156],[71242,4872371,134,156],[71941,4943613,134,156],[72643,5015554,135,157],[73350,5088197,135,157],[74060,5161547,136,157],[74775,5235607,136,157],[75493,5310382,137,157],[76216,5385875,137,158],[76942,5462091,138,158],[77673,5539033,138,158],[78407,5616706,139,158],[79146,5695113,139,158],[79888,5774259,140,159],[80635,5854147,140,159],[81385,5934782,141,159],[82140,6016167,141,159],[82898,6098307,142,159],[83661,6181205,142,160],[84427,6264866,143,160],[85198,6349293,143,160],[85972,6434491,144,160],[86751,6520463,144,160],[87533,6607214,145,161],[88320,6694747,145,161],[89110,6783067,146,161],[89905,6872177,146,161],[90703,6962082,147,161],[91506,7052785,147,162],[92312,7144291,148,162],[93123,7236603,148,162],[93937,7329726,149,162],[94756,7423663,149,162],[95578,7518419,150,163],[96405,7613997,150,163],[97235,7710402,151,163],[98070,7807637,151,163],[98908,7905707,152,163],[99751,8004615,152,164],[100597,8104366,153,164],[101448,8204963,153,164],[102302,8306411,154,164],[103161,8408713,154,164],[104023,8511874,155,165],[104890,8615897,155,165],[105760,8720787,155,165],[106635,8826547,155,165],[107513,8933182,155,165],[108396,9040695,156,166],[109282,9149091,156,166],[110173,9258373,156,166],[111067,9368546,156,166],[111966,9479613,156,166],[112868,9591579,157,167],[113775,9704447,157,167],[114685,9818222,157,167],[115600,9932907,157,167],[116518,10048507,157,167],[117441,10165025,158,168],[118367,10282466,158,168],[119298,10400833,158,168],[120232,10520131,158,168],[121171,10640363,158,168],[122113,10761534,159,169],[123060,10883647,159,169],[124010,11006707,159,169],[124965,11130717,159,169],[125923,11255682,159,169],[126886,11381605,160,170],[127852,11508491,160,170],[128823,11636343,160,170],[129797,11765166,160,170],[130776,11894963,160,170],[131758,12025739,161,171],[132745,12157497,161,171],[133735,12290242,161,171],[134730,12423977,161,171],[135728,12558707,161,171],[136731,12694435,162,172],[137737,12831166,162,172],[138748,12968903,162,172],[139762,13107651,162,172],[140781,13247413,162,172],[141803,13388194,163,173],[142830,13529997,163,173],[143860,13672827,163,173],[144895,13816687,163,173],[145933,13961582,163,173],[146976,14107515,164,174],[148022,14254491,164,174],[149073,14402513,164,174],[150127,14551586,164,174],[151186,14701713,164,174],[152248,14852899,165,175],[153315,15005147,165,175],[154385,15158462,165,175],[155460,15312847,165,175],[156538,15468307,165,175],[157621,15624845,166,176],[158707,15782466,166,176],[159798,15941173,166,176],[160892,16100971,166,176],[161991,16261863,166,176],[163093,16423854,167,177],[164200,16586947,167,177],[165310,16751147,167,177],[166425,16916457,167,177],[167543,17082882,167,177],[168666,17250425,168,178],[169792,17419091,168,178],[170923,17588883,168,178],[172057,17759806,168,178],[173196,17931863,168,178],[174338,18105059,169,179],[175485,18279397,169,179],[176635,18454882,169,179],[177790,18631517,169,179],[178948,18809307,169,179],[180111,18988255,170,180],[181277,19168366,170,180],[182448,19349643,170,180],[183622,19532091,170,180],[184801,19715713,170,180],[185983,19900514,171,181],[187170,20086497,171,181],[188360,20273667,171,181],[189555,20462027,171,181],[190753,20651582,171,181],[191956,20842335,172,182],[193162,21034291,172,182],[194373,21227453,172,182],[195587,21421826,172,182],[196806,21617413,172,182],[198028,21814219,173,183],[199255,22012247,173,183],[200485,22211502,173,183],[201720,22411987,173,183],[202958,22613707,173,183],[204201,22816665,174,184],[205447,23020866,174,184],[206698,23226313,174,184],[207952,23433011,174,184],[209211,23640963,174,184],[210473,23850174,175,185],[211740,24060647,175,185],[213010,24272387,175,185],[214285,24485397,175,185],[215563,24699682,175,185],[216846,24915245,176,186],[218132,25132091,176,186],[219423,25350223,176,186],[220717,25569646,176,186],[222016,25790363,176,186],[223318,26012379,177,187],[224625,26235697,177,187],[225935,26460322,177,187],[227250,26686257,177,187],[228568,26913507,177,187],[229891,27142075,178,188],[231217,27371966,178,188],[232548,27603183,178,188],[233882,27835731,178,188],[235221,28069613,178,188],[236563,28304834,179,189],[237910,28541397,179,189],[239260,28779307,179,189],[240615,29018567,179,189],[241973,29259182,179,189],[243336,29501155,180,190],[244702,29744491,180,190],[246073,29989193,180,190],[247447,30235266,180,190],[248826,30482713,180,190],[250208,30731539,181,191],[251595,30981747,181,191],[252985,31233342,181,191],[254380,31486327,181,191],[255778,31740707,181,191],[257181,31996485,182,192],[258587,32253666,182,192],[259998,32512253,182,192],[261412,32772251,182,192],[262831,33033663,182,192],[264253,33296494,183,193],[265680,33560747,183,193],[267110,33826427,183,193],[268545,34093537,183,193],[269983,34362082,183,193],[271426,34632065,184,194],[272872,34903491,184,194],[274323,35176363,184,194],[275777,35450686,184,194],[277236,35726463,184,194],[278698,36003699,185,195],[280165,36282397,185,195],[281632,36562562,185,195],[283099,36844194,185,195],[284566,37127293,185,195],[286033,37411859,186,195],[287500,37697892,186,195],[288967,37985392,186,195],[290434,38274359,186,195],[291904,38564793,186,195],[293374,38856697,187,196],[294844,39150071,187,196],[296314,39444915,187,196],[297784,39741229,187,196],[299254,40039013,187,196],[300724,40338267,188,196],[302194,40638991,188,196],[303667,40941185,188,196],[305140,41244852,188,196],[306613,41549992,188,196],[308086,41856605,189,197],[309559,42164691,189,197],[311032,42474250,189,197],[312505,42785282,189,197],[313978,43097787,189,197],[315454,43411765,190,197],[316930,43727219,190,197],[318406,44044149,190,197],[319882,44362555,190,197],[321358,44682437,190,197],[322834,45003795,191,198],[324310,45326629,191,198],[325786,45650939,191,198],[327265,45976725,191,198],[328744,46303990,191,198],[330223,46632734,192,198],[331702,46962957,192,198],[333181,47294659,192,198],[334660,47627840,192,198],[336139,47962500,192,198],[337618,48298639,193,199],[339100,48636257,193,199],[340582,48975357,193,199],[342064,49315939,193,199],[343546,49658003,193,199],[345028,50001549,194,199],[346510,50346577,194,199],[347992,50693087,194,199],[349474,51041079,194,199],[350959,51390553,194,199],[352444,51741512,195,200],[353929,52093956,195,200],[355417,52447885,195,200],[356905,52803302,195,200],[358393,53160207,195,200],[359881,53518600,196,200],[361369,53878481,196,200],[362857,54239850,196,200],[364345,54602707,196,200],[365833,54967052,196,200],[367324,55332885,197,201],[368815,55700209,197,201],[370306,56069024,197,201],[371797,56439330,197,201],[373288,56811127,197,201],[374779,57184415,198,201],[376270,57559194,198,201],[377761,57935464,198,201],[379255,58313225,198,201],[380749,58692480,198,201],[382243,59073229,199,202],[383737,59455472,199,202],[385231,59839209,199,202],[386725,60224440,199,202],[388219,60611165,199,202],[389713,60999384,200,202],[391210,61389097,200,202],[392707,61780307,200,202],[394204,62173014,200,202],[395701,62567218,200,202],[397198,62962919,201,203],[398695,63360117,201,203],[400192,63758812,201,203],[401689,64159004,201,203],[403189,64560693,201,203],[404689,64963882,202,203],[406189,65368571,202,203],[407689,65774760,202,203],[409189,66182449,202,203],[410689,66591638,202,203],[412189,67002327,203,204],[413689,67414516,203,204],[415192,67828205,203,204],[416695,68243397,203,204],[418198,68660092,203,204],[419704,69078290,204,204],[421210,69497994,204,204],[422716,69919204,204,204],[424222,70341920,204,204],[425728,70766142,204,204],[427234,71191870,205,205],[428740,71619104,205,205],[430246,72047844,205,205],[431755,72478090,205,205],[433264,72909845,205,205],[434773,73343109,205,205],[436282,73777882,205,205],[437791,74214164,205,205],[439300,74651955,205,205],[440809,75091255,205,205],[442318,75532064,206,206],[443827,75974382,206,206],[445339,76418209,206,206],[446851,76863548,206,206],[448363,77310399,206,206],[449875,77758762,206,206],[451387,78208637,206,206],[452899,78660024,206,206],[454411,79112923,206,206],[455923,79567334,206,206],[457438,80023257,207,207],[458953,80480695,207,207],[460468,80939648,207,207],[461983,81400116,207,207],[463498,81862099,207,207],[465013,82325597,207,207],[466528,82790610,207,207],[468043,83257138,207,207],[469561,83725181,207,207],[471079,84194742,207,207],[472597,84665821,208,208],[474115,85138418,208,208],[475633,85612533,208,208],[477151,86088166,208,208],[478669,86565317,208,208],[480187,87043986,208,208],[481708,87524173,208,208],[483229,88005881,208,208],[484750,88489110,208,208],[486271,88973860,208,208],[487792,89460131,209,209],[489313,89947923,209,209],[490834,90437236,209,209],[492355,90928070,209,209],[493879,91420425,209,209],[495403,91914304,209,209],[496927,92409707,209,209],[498451,92906634,209,209],[499975,93405085,209,209],[501499,93905060,209,209],[503023,94406559,210,210],[504547,94909582,210,210],[506074,95414129,210,210],[507601,95920203,210,210],[509128,96427804,210,210],[510655,96936932,210,210],[512182,97447587,210,210],[513709,97959769,210,210],[515236,98473478,210,210],[516766,98988714,210,210],[518296,99505480,211,211],[519826,100023776,211,211],[521356,100543602,211,211],[522886,101064958,211,211],[524416,101587844,211,211],[525946,102112260,211,211],[527479,102638206,211,211],[529012,103165685,211,211],[530545,103694697,211,211],[532078,104225242,211,211],[533611,104757320,212,212],[535144,105290931,212,212],[536677,105826075,212,212],[538213,106362752,212,212],[539749,106900965,212,212],[541285,107440714,212,212],[542821,107981999,212,212],[544357,108524820,212,212],[545893,109069177,212,212],[547429,109615070,212,212],[548968,110162499,213,213],[550507,110711467,213,213],[552046,111261974,213,213],[553585,111814020,213,213],[555124,112367605,213,213],[556663,112922729,213,213],[558202,113479392,213,213],[559744,114037594,213,213],[561286,114597338,213,213],[562828,115158624,213,213],[564370,115721452,214,214],[565912,116285822,214,214],[567454,116851734,214,214],[568996,117419188,214,214],[570541,117988184,214,214],[572086,118558725,214,214],[573631,119130811,214,214],[575176,119704442,214,214],[576721,120279618,214,214],[578266,120856339,214,214],[579811,121434605,215,215],[581359,122014416,215,215],[582907,122595775,215,215],[584455,123178682,215,215],[586003,123763137,215,215],[587551,124349140,215,215],[589099,124936691,215,215],[590647,125525790,215,215],[592198,126116437,215,215],[593749,126708635,215,215],[595300,127302384,216,216],[596851,127897684,216,216],[598402,128494535,216,216],[599953,129092937,216,216],[601504,129692890,216,216],[603058,130294394,216,216],[604612,130897452,216,216],[606166,131502064,216,216],[607720,132108230,216,216],[609274,132715950,216,216],[610828,133325224,217,217],[612382,133936052,217,217],[613939,134548434,217,217],[615496,135162373,217,217],[617053,135777869,217,217],[618610,136394922,217,217],[620167,137013532,217,217],[621724,137633699,217,217],[623281,138255423,217,217],[624841,138878704,217,217],[626401,139503545,218,218],[627961,140129946,218,218],[629521,140757907,218,218],[631081,141387428,218,218],[632641,142018509,218,218],[634201,142651150,218,218],[635764,143285351,218,218],[637327,143921115,218,218],[638890,144558442,218,218],[640453,145197332,218,218],[642016,145837785,219,219],[643579,146479801,219,219],[645142,147123380,219,219],[646708,147768522,219,219],[648274,148415230,219,219],[649840,149063504,219,219],[651406,149713344,219,219],[652972,150364750,219,219],[654538,151017722,219,219],[656104,151672260,219,219],[657673,152328364,220,220],[659242,152986037,220,220],[660814,153645279,220,220],[662386,154306093,220,220],[663958,154968479,220,220],[665530,155632437,220,220],[667102,156297967,220,220],[668674,156965069,220,220],[670246,157633743,220,220],[671821,158303989,220,220],[673396,158975810,221,221],[674971,159649206,221,221],[676546,160324177,221,221],[678121,161000723,221,221],[679696,161678844,221,221],[681271,162358540,221,221],[682849,163039811,221,221],[684427,163722660,221,221],[686005,164407087,221,221],[687583,165093092,221,221],[689161,165780675,222,222],[690739,166469836,222,222],[692317,167160575,222,222],[693898,167852892,222,222],[695479,168546790,222,222],[697060,169242269,222,222],[698641,169939329,222,222],[700222,170637970,222,222],[701803,171338192,222,222],[703384,172039995,222,222],[704968,172743379,223,223],[706552,173448347,223,223],[708136,174154899,223,223],[709720,174863035,223,223],[711304,175572755,223,223],[712888,176284059,223,223],[714472,176996947,223,223],[716059,177711419,223,223],[717646,178427478,223,223],[719233,179145124,223,223],[720820,179864357,224,224],[722407,180585177,224,224],[723994,181307584,224,224],[725581,182031578,224,224],[727171,182757159,224,224],[728761,183484330,224,224],[730351,184213091,224,224],[731941,184943442,224,224],[733531,185675383,224,224],[735121,186408914,224,224],[736711,187144035,225,225],[738304,187880746,225,225],[739897,188619050,225,225],[741493,189358947,225,225],[743089,190100440,225,225],[744685,190843529,225,225],[746281,191588214,225,225],[747877,192334495,225,225],[749473,193082372,225,225],[751069,193831845,225,225],[752668,194582914,226,226],[754267,195335582,226,226],[755866,196089849,226,226],[757465,196845715,226,226],[759064,197603180,226,226],[760663,198362244,226,226],[762262,199122907,226,226],[763864,199885169,226,226],[765466,200649033,226,226],[767068,201414499,226,226],[768670,202181567,227,227],[770272,202950237,227,227],[771874,203720509,227,227],[773476,204492383,227,227],[775081,205265859,227,227],[776686,206040940,227,227],[778291,206817626,227,227],[779896,207595917,227,227],[781501,208375813,227,227],[783106,209157314,227,227],[784711,209940420,228,228],[786319,210725131,228,228],[787927,211511450,228,228],[789535,212299377,228,228],[791143,213088912,228,228],[792751,213880055,228,228],[794359,214672806,228,228],[795967,215467165,228,228],[797578,216263132,228,228],[799189,217060710,228,228],[800800,217859899,229,229],[802411,218660699,229,229],[804022,219463110,229,229],[805633,220267132,229,229],[807244,221072765,229,229],[808858,221880009,229,229],[810472,222688867,229,229],[812086,223499339,229,229],[813700,224311425,229,229],[815314,225125125,229,229],[816928,225940439,230,230],[818542,226757367,230,230],[820156,227575909,230,230],[821773,228396065,230,230],[823390,229217838,230,230],[825007,230041228,230,230],[826624,230866235,230,230],[828241,231692859,230,230],[829858,232521100,230,230],[831475,233350958,230,230],[833095,234182433,230,231],[834715,235015528,230,231],[836335,235850243,230,231],[837955,236686578,230,231],[839575,237524533,230,231],[841195,238364108,231,231],[842815,239205303,231,231],[844438,240048118,231,231],[846061,240892556,231,231],[847684,241738617,231,231],[849307,242586301,231,232],[850930,243435608,231,232],[852553,244286538,231,232],[854176,245139091,231,232],[855802,245993267,231,232],[857428,246849069,231,232],[859054,247706497,231,232],[860680,248565551,231,232],[862306,249426231,231,232],[863932,250288537,231,232],[865558,251152469,232,233],[867187,252018027,232,233],[868816,252885214,232,233],[870445,253754030,232,233],[872074,254624475,232,233],[873703,255496549,232,233],[875332,256370252,232,233],[876961,257245584,232,233],[878593,258122545,232,233],[880225,259001138,232,233],[881857,259881363,232,234],[883489,260763220,232,234],[885121,261646709,232,234],[886753,262531830,232,234],[888385,263418583,232,234],[890020,264306968,233,234],[891655,265196988,233,234],[893293,266088643,233,234],[894931,266981936,233,234],[896569,267876867,233,234],[898207,268773436,233,235],[899845,269671643,233,235],[901483,270571488,233,235],[903124,271472971,233,235],[904765,272376095,233,235],[906406,273280860,233,235],[908047,274187266,233,235],[909688,275095313,233,235],[911329,276005001,233,235],[912970,276916330,233,235],[914614,277829300,234,236],[916258,278743914,234,236],[917902,279660172,234,236],[919546,280578074,234,236],[921190,281497620,234,236],[922834,282418810,234,236],[924478,283341644,234,236],[926125,284266122,234,236],[927772,285192247,234,236],[929419,286120019,234,236],[931066,287049438,234,237],[932713,287980504,234,237],[934360,288913217,234,237],[936007,289847577,234,237],[937657,290783584,234,237],[939307,291721241,235,237],[940957,292660548,235,237],[942607,293601505,235,237],[944257,294544112,235,237],[945907,295488369,235,237],[947557,296434276,235,238],[949207,297381833,235,238],[950860,298331040,235,238],[952513,299281900,235,238],[954166,300234413,235,238],[955819,301188579,235,238],[957472,302144398,235,238],[959125,303101870,235,238],[960778,304060995,235,238],[962434,305021773,235,238],[964090,305984207,236,239],[965746,306948297,236,239],[967402,307914043,236,239],[969058,308881445,236,239],[970714,309850503,236,239],[972370,310821217,236,239],[974029,311793587,236,239],[975688,312767616,236,239],[977347,313743304,236,239],[979006,314720651,236,239],[980665,315699657,236,240],[982324,316680322,236,240],[983983,317662646,236,240],[985642,318646629,236,240],[987304,319632271,236,240],[988966,320619575,237,240],[990628,321608541,237,240],[992290,322599169,237,240],[993952,323591459,237,240],[995614,324585411,237,240],[997276,325581025,237,241],[998941,326578301,237,241],[1000606,327577242,237,241],[1002271,328577848,237,241],[1003936,329580119,237,241],[1005601,330584055,237,241],[1007266,331589656,237,241],[1008931,332596922,237,241],[1010599,333605853,237,241],[1012267,334616452,237,241],[1013935,335628719,238,242],[1015603,336642654,238,242],[1017271,337658257,238,242],[1018939,338675528,238,242],[1020607,339694467,238,242],[1022278,340715074,238,242],[1023949,341737352,238,242],[1025620,342761301,238,242],[1027291,343786921,238,242],[1028962,344814212,238,242],[1030633,345843174,238,243],[1032304,346873807,238,243],[1033975,347906111,238,243],[1035649,348940086,238,243],[1037323,349975735,238,243],[1038997,351013058,239,243],[1040671,352052055,239,243],[1042345,353092726,239,243],[1044019,354135071,239,243],[1045693,355179090,239,243],[1047370,356224783,239,244],[1049047,357272153,239,244],[1050724,358321200,239,244],[1052401,359371924,239,244],[1054078,360424325,239,244],[1055755,361478403,239,244],[1057432,362534158,239,244],[1059109,363591590,239,244],[1060786,364650699,239,244],[1062466,365711485,239,244],[1064146,366773951,240,245],[1065826,367838097,240,245],[1067506,368903923,240,245],[1069186,369971429,240,245],[1070866,371040615,240,245],[1072546,372111481,240,245],[1074226,373184027,240,245],[1075906,374258253,240,245],[1077589,375334159,240,245],[1079272,376411748,240,245],[1080955,377491020,240,246],[1082638,378571975,240,246],[1084321,379654613,240,246],[1086004,380738934,240,246],[1087687,381824938,240,246],[1089370,382912625,241,246],[1091053,384001995,241,246],[1092739,385093048,241,246],[1094425,386185787,241,246],[1096111,387280212,241,246],[1097797,388376323,241,247],[1099483,389474120,241,247],[1101169,390573603,241,247],[1102855,391674772,241,247],[1104541,392777627,241,247],[1106227,393882168,241,247],[1107916,394988395,241,247],[1109605,396096311,241,247],[1111294,397205916,241,247],[1112983,398317210,241,247],[1114672,399430193,242,248],[1116361,400544865,242,248],[1118050,401661226,242,248],[1119739,402779276,242,248],[1121428,403899015,242,248],[1123120,405020443,242,248],[1124812,406143563,242,248],[1126504,407268375,242,248],[1128196,408394879,242,248],[1129888,409523075,242,248],[1131580,410652963,242,249],[1133272,411784543,242,249],[1134964,412917815,242,249],[1136656,414052779,242,249],[1138351,415189435,242,249],[1140046,416327786,243,249],[1141741,417467832,243,249],[1143436,418609573,243,249],[1145131,419753009,243,249],[1146826,420898140,243,249],[1148521,422044966,243,250],[1150216,423193487,243,250],[1151911,424343703,243,250],[1153609,425495614,243,250],[1155307,426649223,243,250],[1157005,427804530,243,250],[1158703,428961535,243,250],[1160401,430120238,243,250],[1162099,431280639,243,250],[1163797,432442738,243,250],[1165495,433606535,244,251],[1167193,434772030,244,251],[1168894,435939223,244,251],[1170595,437108117,244,251],[1172296,438278712,244,251],[1173997,439451008,244,251],[1175698,440625005,244,251],[1177399,441800703,244,251],[1179100,442978102,244,251],[1180801,444157202,244,251],[1182502,445338003,244,252],[1184206,446520505,244,252],[1185910,447704711,244,252],[1187614,448890621,244,252],[1189318,450078235,244,252],[1191022,451267553,245,252],[1192726,452458575,245,252],[1194430,453651301,245,252],[1196134,454845731,245,252],[1197838,456041865,245,252],[1199545,457239703,245,253],[1201252,458439248,245,253],[1202959,459640500,245,253],[1204666,460843459,245,253],[1206373,462048125,245,253],[1208080,463254498,245,253],[1209787,464462578,245,253],[1211494,465672365,245,253],[1213201,466883859,245,253],[1214911,468097060,245,253],[1216621,469311971,246,254],[1218331,470528592,246,254],[1220041,471746923,246,254],[1221751,472966964,246,254],[1223461,474188715,246,254],[1225171,475412176,246,254],[1226881,476637347,246,254],[1228591,477864228,246,254],[1230304,479092819,246,254],[1232017,480323123,246,254],[1233730,481555140,246,255],[1235443,482788870,246,255],[1237156,484024313,246,255],[1238869,485261469,246,255],[1240582,486500338,246,255],[1242295,487740920,247,255],[1244008,488983215,247,255],[1245724,490227223,247,255],[1247440,491472947,247,255],[1249156,492720387,247,255],[1250872,493969543,247,256],[1252588,495220415,247,256],[1254304,496473003,247,256],[1256020,497727307,247,256],[1257736,498983327,247,256],[1259452,500241063,247,256],[1261171,501500515,247,256],[1262890,502761686,247,256],[1264609,504024576,247,256],[1266328,505289185,247,256],[1268047,506555513,248,257],[1269766,507823560,248,257],[1271485,509093326,248,257],[1273204,510364811,248,257],[1274923,511638015,248,257],[1276645,512912938,248,257],[1278367,514189583,248,257],[1280089,515467950,248,257],[1281811,516748039,248,257],[1283533,518029850,248,257],[1285255,519313383,248,258],[1286977,520598638,248,258],[1288699,521885615,248,258],[1290421,523174314,248,258],[1292146,524464735,248,258],[1293871,525756881,249,258],[1295596,527050752,249,258],[1297321,528346348,249,258],[1299046,529643669,249,258],[1300771,530942715,249,258],[1302496,532243486,249,259],[1304221,533545982,249,259],[1305946,534850203,249,259],[1307674,536156149,249,259],[1309402,537463823,249,259],[1311130,538773225,249,259],[1312858,540084355,249,259],[1314586,541397213,249,259],[1316314,542711799,249,259],[1318042,544028113,249,259],[1319770,545346155,250,260],[1321498,546665925,250,260],[1323229,547987423,250,260],[1324960,549310652,250,260],[1326691,550635612,250,260],[1328422,551962303,250,260],[1330153,553290725,250,260],[1331884,554620878,250,260],[1333615,555952762,250,260],[1335346,557286377,250,260],[1337077,558621723,250,261],[1338811,559958800,250,262],[1340545,561297611,250,262],[1342279,562638156,250,262],[1344013,563980435,250,262],[1345747,565324448,251,262],[1347481,566670195,251,262],[1349215,568017676,251,262],[1350949,569366891,251,262],[1352683,570717840,251,262],[1354420,572070523,251,262],[1356157,573424943,251,263],[1357894,574781100,251,263],[1359631,576138994,251,263],[1361368,577498625,251,263],[1363105,578859993,251,263],[1364842,580223098,251,263],[1366579,581587940,251,263],[1368316,582954519,251,263],[1370056,584322835,251,263],[1371796,585692891,252,263],[1373536,587064687,252,264],[1375276,588438223,252,264],[1377016,589813499,252,264],[1378756,591190515,252,264],[1380496,592569271,252,264],[1382236,593949767,252,264],[1383976,595332003,252,264],[1385719,596715979,252,264],[1387462,598101698,252,264],[1389205,599489160,252,264],[1390948,600878365,252,265],[1392691,602269313,252,265],[1394434,603662004,252,265],[1396177,605056438,252,265],[1397920,606452615,253,265],[1399663,607850535,253,265],[1401409,609250198,253,265],[1403155,610651607,253,265],[1404901,612054762,253,265],[1406647,613459663,253,265],[1408393,614866310,253,266],[1410139,616274703,253,266],[1411885,617684842,253,266],[1413631,619096727,253,266],[1415377,620510358,253,266],[1417126,621925735,253,266],[1418875,623342861,253,266],[1420624,624761736,253,266],[1422373,626182360,253,266],[1424122,627604733,254,266],[1425871,629028855,254,267],[1427620,630454726,254,267],[1429369,631882346,254,267],[1431118,633311715,254,267],[1432870,634742833,254,267],[1434622,636175703,254,267],[1436374,637610325,254,267],[1438126,639046699,254,267],[1439878,640484825,254,267],[1441630,641924703,254,267],[1443382,643366333,254,268],[1445134,644809715,254,268],[1446886,646254849,254,268],[1448641,647701735,254,268],[1450396,649150376,255,268],[1452151,650600772,255,268],[1453906,652052923,255,268],[1455661,653506829,255,268],[1457416,654962490,255,268],[1459171,656419906,255,268],[1460926,657879077,255,269],[1462681,659340003,255,269],[1464439,660802684,255,269],[1466197,662267123,255,269],[1467955,663733320,255,269],[1469713,665201275,255,269],[1471471,666670988,255,269],[1473229,668142459,255,269],[1474987,669615688,255,269],[1476745,671090675,256,269],[1478503,672567420,256,270],[1480264,674045923,256,270],[1482025,675526187,256,270],[1483786,677008212,256,270],[1485547,678491998,256,270],[1487308,679977545,256,270],[1489069,681464853,256,270],[1490830,682953922,256,270],[1492591,684444752,256,270],[1494352,685937343,256,270],[1496116,687431695,256,271],[1497880,688927811,256,271],[1499644,690425691,256,271],[1501408,691925335,256,271],[1503172,693426743,257,271],[1504936,694929915,257,271],[1506700,696434851,257,271],[1508464,697941551,257,271],[1510228,699450015,257,271],[1511995,700960243,257,271],[1513762,702472238,257,272],[1515529,703986000,257,272],[1517296,705501529,257,272],[1519063,707018825,257,272],[1520830,708537888,257,272],[1522597,710058718,257,272],[1524364,711581315,257,272],[1526131,713105679,257,272],[1527901,714631810,257,272],[1529671,716159711,258,272],[1531441,717689382,258,273],[1533211,719220823,258,273],[1534981,720754034,258,273],[1536751,722289015,258,273],[1538521,723825766,258,273],[1540291,725364287,258,273],[1542061,726904578,258,273],[1543834,728446639,258,273],[1545607,729990473,258,273],[1547380,731536080,258,273],[1549153,733083460,258,274],[1550926,734632613,258,275],[1552699,736183539,258,275],[1554472,737736238,258,275],[1556245,739290710,259,275],[1558018,740846955,259,275],[1559794,742404973,259,275],[1561570,743964767,259,275],[1563346,745526337,259,275],[1565122,747089683,259,275],[1566898,748654805,259,275],[1568674,750221703,259,276],[1570450,751790377,259,276],[1572226,753360827,259,276],[1574002,754933053,259,276],[1575781,756507055,259,276],[1577560,758082836,259,276],[1579339,759660396,259,276],[1581118,761239735,259,276],[1582897,762820853,260,276],[1584676,764403750,260,276],[1586455,765988426,260,277],[1588234,767574881,260,277],[1590013,769163115,260,277],[1591795,770753128,260,277],[1593577,772344923,260,277],[1595359,773938500,260,277],[1597141,775533859,260,277],[1598923,777131000,260,277],[1600705,778729923,260,277],[1602487,780330628,260,277],[1604269,781933115,260,278],[1606051,783537384,260,278],[1607836,785143435,260,278],[1609621,786751271,261,278],[1611406,788360892,261,278],[1613191,789972298,261,278],[1614976,791585489,261,278],[1616761,793200465,261,278],[1618546,794817226,261,278],[1620331,796435772,261,278],[1622116,798056103,261,279],[1623904,799678219,261,279],[1625692,801302123,261,279],[1627480,802927815,261,279],[1629268,804555295,261,279],[1631056,806184563,261,279],[1632844,807815619,261,279],[1634632,809448463,261,279],[1636420,811083095,262,279],[1638208,812719515,262,279],[1639999,814357723,262,280],[1641790,815997722,262,280],[1643581,817639512,262,280],[1645372,819283093,262,280],[1647163,820928465,262,280],[1648954,822575628,262,280],[1650745,824224582,262,280],[1652536,825875327,262,280],[1654327,827527863,262,280],[1656121,829182190,262,280],[1657915,830838311,262,281],[1659709,832496226,262,281],[1661503,834155935,262,281],[1663297,835817438,263,281],[1665091,837480735,263,281],[1666885,839145826,263,281],[1668679,840812711,263,281],[1670473,842481390,263,281],[1672270,844151863,263,281],[1674067,845824133,263,281],[1675864,847498200,263,282],[1677661,849174064,263,282],[1679458,850851725,263,282],[1681255,852531183,263,282],[1683052,854212438,263,282],[1684849,855895490,263,282],[1686646,857580339,263,282],[1688446,859266985,263,282],[1690246,860955431,264,282],[1692046,862645677,264,282],[1693846,864337723,264,283],[1695646,866031569,264,283],[1697446,867727215,264,283],[1699246,869424661,264,283],[1701046,871123907,264,283],[1702846,872824953,264,283],[1704649,874527799,264,283],[1706452,876232448,264,283],[1708255,877938900,264,283],[1710058,879647155,264,283],[1711861,881357213,264,284],[1713664,883069074,264,284],[1715467,884782738,264,284],[1717270,886498205,265,284],[1719073,888215475,265,284],[1720879,889934548,265,284],[1722685,891655427,265,284],[1724491,893378112,265,284],[1726297,895102603,265,284],[1728103,896828900,265,284],[1729909,898557003,265,285],[1731715,900286912,265,285],[1733521,902018627,265,285],[1735327,903752148,265,285],[1737136,905487475,265,285],[1738945,907224611,265,285],[1740754,908963556,265,285],[1742563,910704310,265,285],[1744372,912446873,266,285],[1746181,914191245,266,285],[1747990,915937426,266,286],[1749799,917685416,266,286],[1751608,919435215,266,286],[1753420,921186823,266,286],[1755232,922940243,266,286],[1757044,924695475,266,286],[1758856,926452519,266,286],[1760668,928211375,266,286],[1762480,929972043,266,286],[1764292,931734523,266,286],[1766104,933498815,266,287],[1767916,935264919,266,288],[1769731,937032835,266,288],[1771546,938802566,267,288],[1773361,940574112,267,288],[1775176,942347473,267,288],[1776991,944122649,267,288],[1778806,945899640,267,288],[1780621,947678446,267,288],[1782436,949459067,267,288],[1784251,951241503,267,288],[1786069,953025754,267,289],[1787887,954811823,267,289],[1789705,956599710,267,289],[1791523,958389415,267,289],[1793341,960180938,267,289],[1795159,961974279,267,289],[1796977,963769438,267,289],[1798795,965566415,268,289],[1800613,967365210,268,289],[1802434,969165823,268,289],[1804255,970968257,268,290],[1806076,972772512,268,290],[1807897,974578588,268,290],[1809718,976386485,268,290],[1811539,978196203,268,290],[1813360,980007742,268,290],[1815181,981821102,268,290],[1817002,983636283,268,290],[1818826,985453285,268,290],[1820650,987272111,268,290],[1822474,989092761,268,291],[1824298,990915235,268,291],[1826122,992739533,269,291],[1827946,994565655,269,291],[1829770,996393601,269,291],[1831594,998223371,269,291],[1833418,1000054965,269,291],[1835245,1001888383,269,291],[1837072,1003723628,269,291],[1838899,1005560700,269,291],[1840726,1007399599,269,292],[1842553,1009240325,269,292],[1844380,1011082878,269,292],[1846207,1012927258,269,292],[1848034,1014773465,269,292],[1849861,1016621499,269,292],[1851691,1018471360,269,292],[1853521,1020323051,270,292],[1855351,1022176572,270,292],[1857181,1024031923,270,292],[1859011,1025889104,270,293],[1860841,1027748115,270,293],[1862671,1029608956,270,293],[1864501,1031471627,270,293],[1866331,1033336128,270,293],[1868164,1035202459,270,293],[1869997,1037070623,270,293],[1871830,1038940620,270,293],[1873663,1040812450,270,293],[1875496,1042686113,270,293],[1877329,1044561609,270,294],[1879162,1046438938,270,294],[1880995,1048318100,271,294],[1882828,1050199095,271,294],[1884664,1052081923,271,294],[1886500,1053966587,271,294],[1888336,1055853087,271,294],[1890172,1057741423,271,294],[1892008,1059631595,271,294],[1893844,1061523603,271,294],[1895680,1063417447,271,295],[1897516,1065313127,271,295],[1899352,1067210643,271,295],[1901191,1069109995,271,295],[1903030,1071011186,271,295],[1904869,1072914216,271,295],[1906708,1074819085,271,295],[1908547,1076725793,272,295],[1910386,1078634340,272,295],[1912225,1080544726,272,295],[1914064,1082456951,272,296],[1915903,1084371015,272,296],[1917745,1086286918,272,296],[1919587,1088204663,272,296],[1921429,1090124250,272,296],[1923271,1092045679,272,296],[1925113,1093968950,272,296],[1926955,1095894063,272,296],[1928797,1097821018,272,296],[1930639,1099749815,272,296],[1932481,1101680454,272,297],[1934326,1103612935,272,297],[1936171,1105547261,273,297],[1938016,1107483432,273,297],[1939861,1109421448,273,297],[1941706,1111361309,273,297],[1943551,1113303015,273,297],[1945396,1115246566,273,297],[1947241,1117191962,273,297],[1949086,1119139203,273,297],[1950934,1121088289,273,298],[1952782,1123039223,273,298],[1954630,1124992005,273,298],[1956478,1126946635,273,298],[1958326,1128903113,273,298],[1960174,1130861439,273,298],[1962022,1132821613,273,298],[1963870,1134783635,274,298],[1965718,1136747505,274,298],[1967569,1138713223,274,298],[1969420,1140680792,274,299],[1971271,1142650212,274,299],[1973122,1144621483,274,299],[1974973,1146594605,274,299],[1976824,1148569578,274,299],[1978675,1150546402,274,299],[1980526,1152525077,274,299],[1982377,1154505603,274,299],[1984231,1156487980,274,299],[1986085,1158472211,274,299],[1987939,1160458296,274,300],[1989793,1162446235,274,300],[1991647,1164436028,275,300],[1993501,1166427675,275,300],[1995355,1168421176,275,300],[1997209,1170416531,275,300],[1999063,1172413740,275,301],[2000920,1174412803,275,301],[2002777,1176413723,275,301],[2004634,1178416500,275,301],[2006491,1180421134,275,301],[2008348,1182427625,275,301],[2010205,1184435973,275,302],[2012062,1186446178,275,302],[2013919,1188458240,275,302],[2015776,1190472159,275,302],[2017636,1192487935,275,302],[2019496,1194505571,276,302],[2021356,1196525067,276,303],[2023216,1198546423,276,303],[2025076,1200569639,276,303],[2026936,1202594715,276,303],[2028796,1204621651,276,303],[2030656,1206650447,276,303],[2032516,1208681103,276,304],[2034379,1210713619,276,304],[2036242,1212747998,276,304],[2038105,1214784240,276,304],[2039968,1216822345,276,304],[2041831,1218862313,276,304],[2043694,1220904144,276,305],[2045557,1222947838,276,305],[2047420,1224993395,277,305],[2049283,1227040815,277,305],[2051149,1229090098,277,305],[2053015,1231141247,277,305],[2054881,1233194262,277,306],[2056747,1235249143,277,306],[2058613,1237305890,277,306],[2060479,1239364503,277,306],[2062345,1241424982,277,306],[2064211,1243487327,277,306],[2066077,1245551538,277,307],[2067946,1247617615,277,307],[2069815,1249685561,277,307],[2071684,1251755376,277,307],[2073553,1253827060,277,307],[2075422,1255900613,278,307],[2077291,1257976035,278,308],[2079160,1260053326,278,308],[2081029,1262132486,278,308],[2082898,1264213515,278,308],[2084770,1266296413,278,308],[2086642,1268381183,278,308],[2088514,1270467825,278,309],[2090386,1272556339,278,309],[2092258,1274646725,278,309],[2094130,1276738983,278,309],[2096002,1278833113,278,309],[2097874,1280929115,278,309],[2099746,1283026989,278,310],[2101621,1285126735,278,310],[2103496,1287228356,279,310],[2105371,1289331852,279,310],[2107246,1291437223,279,310],[2109121,1293544469,279,310],[2110996,1295653590,279,311],[2112871,1297764586,279,311],[2114746,1299877457,279,311],[2116621,1301992203,279,311],[2118499,1304108824,279,311],[2120377,1306227323,279,311],[2122255,1308347700,279,312],[2124133,1310469955,279,312],[2126011,1312594088,279,312],[2127889,1314720099,279,312],[2129767,1316847988,279,312],[2131645,1318977755,280,312],[2133523,1321109400,280,313],[2135404,1323242923,280,313],[2137285,1325378327,280,313],[2139166,1327515612,280,313],[2141047,1329654778,280,313],[2142928,1331795825,280,313],[2144809,1333938753,280,314],[2146690,1336083562,280,314],[2148571,1338230252,280,314],[2150452,1340378823,280,314],[2152336,1342529275,280,314],[2154220,1344681611,280,314],[2156104,1346835831,280,315],[2157988,1348991935,280,315],[2159872,1351149923,281,315],[2161756,1353309795,281,315],[2163640,1355471551,281,315],[2165524,1357635191,281,315],[2167408,1359800715,281,316],[2169295,1361968123,281,316],[2171182,1364137418,281,316],[2173069,1366308600,281,316],[2174956,1368481669,281,316],[2176843,1370656625,281,316],[2178730,1372833468,281,317],[2180617,1375012198,281,317],[2182504,1377192815,281,317],[2184391,1379375319,281,317],[2186281,1381559710,281,317],[2188171,1383745991,282,317],[2190061,1385934162,282,318],[2191951,1388124223,282,318],[2193841,1390316174,282,318],[2195731,1392510015,282,318],[2197621,1394705746,282,318],[2199511,1396903367,282,318],[2201401,1399102878,282,319],[2203294,1401304279,282,319],[2205187,1403507573,282,319],[2207080,1405712760,282,319],[2208973,1407919840,282,319],[2210866,1410128813,282,319],[2212759,1412339679,282,320],[2214652,1414552438,282,320],[2216545,1416767090,283,320],[2218438,1418983635,283,320],[2220334,1421202073,283,320],[2222230,1423422407,283,320],[2224126,1425644637,283,321],[2226022,1427868763,283,321],[2227918,1430094785,283,321],[2229814,1432322703,283,321],[2231710,1434552517,283,321],[2233606,1436784227,283,321],[2235502,1439017833,283,322],[2237401,1441253335,283,322],[2239300,1443490736,283,322],[2241199,1445730036,283,322],[2243098,1447971235,283,322],[2244997,1450214333,284,322],[2246899,1452459330,284,323],[2248801,1454706229,284,323],[2250703,1456955030,284,323],[2252605,1459205733,284,323],[2254507,1461458338,284,323],[2256409,1463712845,284,323],[2258311,1465969254,284,324],[2260213,1468227565,284,324],[2262115,1470487778,284,324],[2264020,1472749893,284,324],[2265925,1475013913,284,324],[2267830,1477279838,284,324],[2269735,1479547668,284,325],[2271640,1481817403,284,325],[2273545,1484089043,285,325],[2275450,1486362588,285,325],[2277355,1488638038,285,325],[2279260,1490915393,285,325],[2281168,1493194653,285,326],[2283076,1495475821,285,326],[2284984,1497758897,285,326],[2286892,1500043881,285,326],[2288800,1502330773,285,326],[2290708,1504619573,285,326],[2292616,1506910281,285,327],[2294524,1509202897,285,327],[2296432,1511497421,285,327],[2298343,1513793853,285,327],[2300254,1516092196,285,327],[2302165,1518392450,286,327],[2304076,1520694615,286,328],[2305987,1522998691,286,328],[2307898,1525304678,286,328],[2309809,1527612576,286,328],[2311720,1529922385,286,328],[2313631,1532234105,286,328],[2315545,1534547736,286,329],[2317459,1536863281,286,329],[2319373,1539180740,286,329],[2321287,1541500113,286,329],[2323201,1543821400,286,329],[2325115,1546144601,286,329],[2327029,1548469716,286,330],[2328943,1550796745,286,330],[2330857,1553125688,287,330],[2332774,1555456545,287,330],[2334691,1557789319,287,330],[2336608,1560124010,287,330],[2338525,1562460618,287,331],[2340442,1564799143,287,331],[2342359,1567139585,287,331],[2344276,1569481944,287,331],[2346193,1571826220,287,331],[2348110,1574172413,287,331],[2350030,1576520523,287,332],[2351950,1578870553,287,332],[2353870,1581222503,287,332],[2355790,1583576373,287,332],[2357710,1585932163,287,332],[2359630,1588289873,288,332],[2361550,1590649503,288,333],[2363470,1593011053,288,333],[2365390,1595374523,288,333],[2367313,1597739913,288,333],[2369236,1600107226,288,333],[2371159,1602476462,288,333],[2373082,1604847621,288,334],[2375005,1607220703,288,334],[2376928,1609595708,288,334],[2378851,1611972636,288,334],[2380774,1614351487,288,334],[2382697,1616732261,288,334],[2384623,1619114958,288,335],[2386549,1621499581,288,335],[2388475,1623886130,289,335],[2390401,1626274605,289,335],[2392327,1628665006,289,335],[2394253,1631057333,289,335],[2396179,1633451586,289,336],[2398105,1635847765,289,336],[2400031,1638245870,289,336],[2401960,1640645901,289,336],[2403889,1643047861,289,336],[2405818,1645451750,289,336],[2407747,1647857568,289,337],[2409676,1650265315,289,337],[2411605,1652674991,289,337],[2413534,1655086596,289,337],[2415463,1657500130,289,337],[2417392,1659915593,290,337],[2419324,1662332985,290,338],[2421256,1664752309,290,338],[2423188,1667173565,290,338],[2425120,1669596753,290,338],[2427052,1672021873,290,338],[2428984,1674448925,290,338],[2430916,1676877909,290,339],[2432848,1679308825,290,339],[2434780,1681741673,290,339],[2436715,1684176453,290,339],[2438650,1686613168,290,339],[2440585,1689051818,290,339],[2442520,1691492403,290,340],[2444455,1693934923,290,340],[2446390,1696379378,291,340],[2448325,1698825768,291,340],[2450260,1701274093,291,340],[2452195,1703724353,291,340],[2454133,1706176548,291,341],[2456071,1708630681,291,341],[2458009,1711086752,291,341],[2459947,1713544761,291,341],[2461885,1716004708,291,341],[2463823,1718466593,291,341],[2465761,1720930416,291,342],[2467699,1723396177,291,342],[2469637,1725863876,291,342],[2471578,1728333513,291,342],[2473519,1730805091,291,342],[2475460,1733278610,292,342],[2477401,1735754070,292,343],[2479342,1738231471,292,343],[2481286,1740710813,292,343],[2483230,1743192099,292,343],[2485174,1745675329,292,343],[2487118,1748160503,292,343],[2489062,1750647621,292,344],[2491006,1753136683,292,344],[2492950,1755627689,292,344],[2494894,1758120639,292,344],[2496838,1760615533,292,344],[2498785,1763112371,292,344],[2500732,1765611156,292,345],[2502679,1768111888,292,345],[2504626,1770614567,293,345],[2506573,1773119193,293,345],[2508520,1775625766,293,345],[2510467,1778134286,293,345],[2512414,1780644753,293,346],[2514361,1783157167,293,346],[2516311,1785671528,293,346],[2518261,1788187839,293,346],[2520211,1790706100,293,346],[2522161,1793226311,293,346],[2524111,1795748472,293,347],[2526061,1798272583,293,347],[2528011,1800798644,293,347],[2529961,1803326655,293,347],[2531911,1805856616,293,347],[2533864,1808388527,294,347],[2535817,1810922391,294,348],[2537770,1813458208,294,348],[2539723,1815995978,294,348],[2541676,1818535701,294,348],[2543629,1821077377,294,348],[2545582,1823621006,294,348],[2547535,1826166588,294,349],[2549488,1828714123,294,349],[2551444,1831263611,294,349],[2553400,1833815055,294,349],[2555356,1836368455,294,349],[2557312,1838923811,294,349],[2559268,1841481123,294,350],[2561224,1844040391,294,350],[2563180,1846601615,295,350],[2565136,1849164795,295,350],[2567092,1851729931,295,350],[2569051,1854297023,295,350],[2571010,1856866074,295,351],[2572969,1859437084,295,351],[2574928,1862010053,295,351],[2576887,1864584981,295,351],[2578846,1867161868,295,351],[2580805,1869740714,295,351],[2582764,1872321519,295,352],[2584723,1874904283,295,352],[2586685,1877489006,295,352],[2588647,1880075691,295,352],[2590609,1882664338,295,352],[2592571,1885254947,296,352],[2594533,1887847518,296,353],[2596495,1890442051,296,353],[2598457,1893038546,296,353],[2600419,1895637003,296,353],[2602381,1898237422,296,353],[2604346,1900839803,296,353],[2606311,1903444149,296,354],[2608276,1906050460,296,354],[2610241,1908658736,296,354],[2612206,1911268977,296,354],[2614171,1913881183,296,354],[2616136,1916495354,296,354],[2618101,1919111490,296,355],[2620066,1921729591,296,355],[2622034,1924349657,297,355],[2624002,1926971691,297,355],[2625970,1929595693,297,355],[2627938,1932221663,297,355],[2629909,1934849601,297,356],[2631880,1937479510,297,356],[2633851,1940111390,297,356],[2635822,1942745241,297,356],[2637793,1945381063,297,356],[2639764,1948018856,297,356],[2641735,1950658620,297,357],[2643706,1953300355,297,357],[2645677,1955944061,297,357],[2647651,1958589738,297,357],[2649625,1961237389,297,357],[2651599,1963887014,298,357],[2653573,1966538613,298,358],[2655547,1969192186,298,358],[2657521,1971847733,298,358],[2659495,1974505254,298,358],[2661469,1977164749,298,358],[2663443,1979826218,298,358],[2665420,1982489661,298,359],[2667397,1985155081,298,359],[2669374,1987822478,298,359],[2671351,1990491852,298,359],[2673328,1993163203,298,359],[2675305,1995836531,298,359],[2677282,1998511836,298,360],[2679259,2001189118,298,360],[2681236,2003868377,299,360],[2683216,2006549613,299,360],[2685196,2009232829,299,360],[2687176,2011918025,299,360],[2689156,2014605201,299,361],[2691136,2017294357,299,361],[2693116,2019985493,299,361],[2695096,2022678609,299,361],[2697076,2025373705,299,361],[2699056,2028070781,299,361],[2701039,2030769837,299,362],[2703022,2033470876,299,362],[2705005,2036173898,299,362],[2706988,2038878903,299,362],[2708971,2041585891,299,362],[2710954,2044294862,300,362],[2712937,2047005816,300,363],[2714923,2049718753,300,363],[2716909,2052433676,300,363],[2718895,2055150585,300,363],[2720881,2057869480,300,363],[2722867,2060590361,300,363],[2724853,2063313228,300,364],[2726839,2066038081,300,364],[2728825,2068764920,300,364],[2730811,2071493745,300,364],[2732800,2074224556,300,364],[2734789,2076957356,300,364],[2736778,2079692145,300,365],[2738767,2082428923,300,365],[2740756,2085167690,301,365],[2742745,2087908446,301,365],[2744734,2090651191,301,365],[2746723,2093395925,301,365],[2748712,2096142648,301,366],[2750704,2098891360,301,366],[2752696,2101642064,301,366],[2754688,2104394760,301,366],[2756680,2107149448,301,366],[2758672,2109906128,301,366],[2760664,2112664800,301,367],[2762656,2115425464,301,367],[2764648,2118188120,301,367],[2766640,2120952768,301,367],[2768635,2123719408,301,367],[2770630,2126488043,302,367],[2772625,2129258673,302,368],[2774620,2132031298,302,368],[2776615,2134805918,302,368],[2778610,2137582533,302,368],[2780605,2140361143,302,368],[2782600,2143141748,302,368],[2784595,2145924348,302,369],[2786593,2148708943,302,369],[2788591,2151495536,302,369],[2790589,2154284127,302,369],[2792587,2157074716,302,369],[2794585,2159867303,302,369],[2796586,2162661888,302,370],[2798587,2165458474,302,370],[2800588,2168257061,303,370],[2802589,2171057649,303,370],[2804590,2173860238,303,370],[2806591,2176664828,303,370],[2808592,2179471419,303,371],[2810593,2182280011,303,371],[2812594,2185090604,303,371],[2814598,2187903198,303,371],[2816602,2190717796,303,371],[2818606,2193534398,303,371],[2820610,2196353004,303,372],[2822614,2199173614,303,372],[2824618,2201996228,303,372],[2826622,2204820846,303,372],[2828626,2207647468,303,372],[2830630,2210476094,304,372],[2832637,2213306724,304,373],[2834644,2216139361,304,373],[2836651,2218974005,304,373],[2838658,2221810656,304,373],[2840665,2224649314,304,373],[2842672,2227489979,304,373],[2844679,2230332651,304,374],[2846686,2233177330,304,374],[2848693,2236024016,304,374],[2850703,2238872709,304,374],[2852713,2241723412,304,374],[2854723,2244576125,304,374],[2856733,2247430848,304,375],[2858743,2250287581,304,375],[2860753,2253146324,305,375],[2862763,2256007077,305,375],[2864773,2258869840,305,375],[2866783,2261734613,305,375],[2868796,2264601396,305,376],[2870809,2267470192,305,376],[2872822,2270341001,305,376],[2874835,2273213823,305,376],[2876848,2276088658,305,376],[2878861,2278965506,305,376],[2880874,2281844367,305,377],[2882887,2284725241,305,377],[2884900,2287608128,305,377],[2886916,2290493028,305,377],[2888932,2293379944,305,377],[2890948,2296268876,306,377],[2892964,2299159824,306,378],[2894980,2302052788,306,378],[2896996,2304947768,306,378],[2899012,2307844764,306,378],[2901028,2310743776,306,378],[2903044,2313644804,306,378],[2905063,2316547848,306,379],[2907082,2319452911,306,379],[2909101,2322359993,306,379],[2911120,2325269094,306,379],[2913139,2328180214,306,379],[2915158,2331093353,306,379],[2917177,2334008511,306,380],[2919196,2336925688,306,380],[2921215,2339844884,307,380],[2923237,2342766099,307,380],[2925259,2345689336,307,380],[2927281,2348614595,307,380],[2929303,2351541876,307,381],[2931325,2354471179,307,381],[2933347,2357402504,307,381],[2935369,2360335851,307,381],[2937391,2363271220,307,381],[2939413,2366208611,307,381],[2941438,2369148024,307,382],[2943463,2372089462,307,382],[2945488,2375032925,307,382],[2947513,2377978413,307,382],[2949538,2380925926,307,382],[2951563,2383875464,308,382],[2953588,2386827027,308,383],[2955613,2389780615,308,383],[2957638,2392736228,308,383],[2959666,2395693866,308,383],[2961694,2398653532,308,383],[2963722,2401615226,308,383],[2965750,2404578948,308,384],[2967778,2407544698,308,384],[2969806,2410512476,308,384],[2971834,2413482282,308,384],[2973862,2416454116,308,384],[2975890,2419427978,308,384],[2977921,2422403868,308,385],[2979952,2425381789,308,385],[2981983,2428361741,309,385],[2984014,2431343724,309,385],[2986045,2434327738,309,385],[2988076,2437313783,309,385],[2990107,2440301859,309,386],[2992138,2443291966,309,386],[2994169,2446284104,309,386],[2996203,2449278273,309,386],[2998237,2452274476,309,386],[3000271,2455272713,309,386],[3002305,2458272984,309,387],[3004339,2461275289,309,387],[3006373,2464279628,309,387],[3008407,2467286001,309,387],[3010441,2470294408,309,387],[3012475,2473304849,310,387],[3014512,2476317324,310,388],[3016549,2479331836,310,388],[3018586,2482348385,310,388],[3020623,2485366971,310,388],[3022660,2488387594,310,388],[3024697,2491410254,310,388],[3026734,2494434951,310,389],[3028771,2497461685,310,389],[3030808,2500490456,310,389],[3032848,2503521264,310,389],[3034888,2506554112,310,389],[3036928,2509589000,310,389],[3038968,2512625928,310,390],[3041008,2515664896,310,390],[3043051,2518705904,311,390],[3045094,2521748955,311,390],[3047137,2524794049,311,390],[3049180,2527841186,311,390],[3051223,2530890366,311,391],[3053266,2533941589,311,391],[3055309,2536994855,311,391],[3057352,2540050164,311,391],[3059395,2543107516,311,391],[3061441,2546166911,311,391],[3063487,2549228352,311,392],[3065533,2552291839,311,392],[3067579,2555357372,311,392],[3069625,2558424951,311,392],[3071671,2561494576,311,392],[3073717,2564566247,312,392],[3075763,2567639964,312,393],[3077809,2570715727,312,393],[3079858,2573793536,312,393],[3081907,2576873394,312,393],[3083956,2579955301,312,393],[3086005,2583039257,312,393],[3088054,2586125262,312,394],[3090103,2589213316,312,394],[3092152,2592303419,312,394],[3094201,2595395571,312,394],[3096250,2598489772,312,394],[3098302,2601586022,312,394],[3100354,2604684324,312,395],[3102406,2607784678,312,395],[3104458,2610887084,313,395],[3106510,2613991542,313,395],[3108562,2617098052,313,395],[3110614,2620206614,313,395],[3112666,2623317228,313,396],[3114718,2626429894,313,396]];
+    const numberFormat = new Intl.NumberFormat('zh-TW');
+    const RECOVERY_MINUTES_PER_STAMINA = 8;
+    const TAIWAN_TIME_ZONE = 'Asia/Taipei';
+    const taiwanDateFormatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: TAIWAN_TIME_ZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    const taiwanDateTimeFormatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: TAIWAN_TIME_ZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      hourCycle: 'h23'
+    });
+    const taiwanMonthDayTimeFormatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: TAIWAN_TIME_ZONE,
+      month: 'numeric',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      hourCycle: 'h23'
+    });
+    const levelFields = ['currentLevel', 'currentExp', 'targetLevel', 'stageExp', 'stageStamina'];
+    const staminaFields = ['currentStamina', 'currentStaminaMax'];
+    const warFields = ['warType', 'warBonus', 'warMerit', 'warCountdownHours'];
+    const FREE_WAR_POINTS = 16;
+    const WAR_STONE_POINTS = 8;
+    const metricIds = ['currentProgress', 'stageCount', 'targetStaminaMax', 'levelCurrentStaminaMax', 'targetTeamCost', 'levelCurrentTeamCost'];
+
+    const nodeCache = new Map(Array.from(document.querySelectorAll('[id]'), element => [element.id, element]));
+    const metricUnitNodes = new Map(metricIds.map(id => [id, nodeCache.get(id).querySelector('.unit')]));
+    const $ = id => nodeCache.get(id);
+
+    function readNumber(id) {
+      const value = $(id).value.trim();
+      return value === '' ? NaN : Number(value);
+    }
+
+    function formatInteger(value) {
+      return Number.isFinite(value) ? numberFormat.format(Math.round(value)) : '—';
+    }
+
+    function formatRecoveryTime(stamina) {
+      const totalMinutes = Math.max(0, Math.round(stamina * RECOVERY_MINUTES_PER_STAMINA));
+      const days = Math.floor(totalMinutes / 1440);
+      const hours = Math.floor((totalMinutes % 1440) / 60);
+      const minutes = totalMinutes % 60;
+      const parts = [];
+      if (days > 0) parts.push(days + '日');
+      if (hours > 0) parts.push(hours + '小時');
+      if (minutes > 0 || parts.length === 0) parts.push(minutes + '分鐘');
+      return parts.join(' ');
+    }
+
+    function formatNumber(value) {
+      return Number.isFinite(value) ? numberFormat.format(value) : '—';
+    }
+
+    function getTaiwanDateParts(date) {
+      const parts = taiwanDateFormatter.formatToParts(date);
+      return parts.reduce((result, part) => {
+        if (part.type === 'year' || part.type === 'month' || part.type === 'day') result[part.type] = Number(part.value);
+        return result;
+      }, {});
+    }
+
+    function formatDateTime(date) {
+      const parts = taiwanDateTimeFormatter.formatToParts(date);
+      const values = parts.reduce((result, part) => {
+        if (['year', 'month', 'day', 'hour', 'minute'].includes(part.type)) result[part.type] = part.value;
+        return result;
+      }, {});
+      return values.year + '/' + values.month + '/' + values.day + ' ' + values.hour + ':' + values.minute;
+    }
+
+    function formatMonthDayTime(date) {
+      const parts = taiwanMonthDayTimeFormatter.formatToParts(date);
+      const values = parts.reduce((result, part) => {
+        if (['month', 'day', 'hour', 'minute'].includes(part.type)) result[part.type] = part.value;
+        return result;
+      }, {});
+      return Number(values.month) + '月' + Number(values.day) + '日 ' + values.hour + ':' + values.minute;
+    }
+
+    function calendarDaysInclusive(start, end) {
+      const startParts = getTaiwanDateParts(start);
+      const endParts = getTaiwanDateParts(end);
+      const startDay = Date.UTC(startParts.year, startParts.month - 1, startParts.day);
+      const endDay = Date.UTC(endParts.year, endParts.month - 1, endParts.day);
+      return Math.max(1, Math.floor((endDay - startDay) / 86400000) + 1);
+    }
+
+    function setMessage(id, message) {
+      const input = $(id);
+      const messageNode = $(id + 'Message');
+      const invalid = message !== '';
+      if (messageNode.textContent !== message) messageNode.textContent = message;
+      if (input.classList.contains('invalid') !== invalid) input.classList.toggle('invalid', invalid);
+    }
+
+    function setMetric(id, value, unit) {
+      const valueNode = $(id);
+      const unitNode = metricUnitNodes.get(id);
+      const valueText = value + ' ';
+      if (valueNode.firstChild.textContent !== valueText) valueNode.firstChild.textContent = valueText;
+      if (unitNode.textContent !== unit) unitNode.textContent = unit;
+    }
+
+    function clearMessages(fieldIds) {
+      fieldIds.forEach(id => setMessage(id, ''));
+    }
+
+    function resetLevelResults() {
+      $('requiredExp').textContent = '—';
+      setMetric('currentProgress', '—', '%');
+      setMetric('stageCount', '—', '場');
+      setMetric('targetStaminaMax', '—', '體力');
+      setMetric('levelCurrentStaminaMax', '—', '體力');
+      setMetric('targetTeamCost', '—', 'Cost');
+      setMetric('levelCurrentTeamCost', '—', 'Cost');
+      $('totalStamina').textContent = '—';
+    }
+
+    function calculateLevel() {
+      clearMessages(levelFields);
+      const currentLevel = readNumber('currentLevel');
+      const currentExp = readNumber('currentExp');
+      const targetLevel = readNumber('targetLevel');
+      const stageExp = readNumber('stageExp');
+      const stageStamina = readNumber('stageStamina');
+      if ([currentLevel, currentExp, targetLevel, stageExp, stageStamina].some(value => !Number.isFinite(value))) {
+        resetLevelResults();
+        return;
+      }
+
+      let hasError = false;
+      if (!Number.isInteger(currentLevel) || currentLevel < 1 || currentLevel > 2000) {
+        setMessage('currentLevel', '請輸入 1 至 2000 的整數。');
+        hasError = true;
+      }
+      if (!Number.isInteger(targetLevel) || targetLevel < 1 || targetLevel > 2000) {
+        setMessage('targetLevel', '請輸入 1 至 2000 的整數。');
+        hasError = true;
+      }
+      if (currentExp < 0) {
+        setMessage('currentExp', '目前等級已累積 EXP 不可小於 0。');
+        hasError = true;
+      }
+      if (stageExp <= 0) {
+        setMessage('stageExp', '單場關卡獲得 EXP 必須大於 0。');
+        hasError = true;
+      }
+      if (stageStamina < 0) {
+        setMessage('stageStamina', '單場關卡消耗體力不可小於 0。');
+        hasError = true;
+      }
+
+      const current = levels[currentLevel - 1];
+      const target = levels[targetLevel - 1];
+      if (current && currentExp > current[0]) {
+        setMessage('currentExp', '不可高於目前等級升到下級所需 EXP。');
+        hasError = true;
+      }
+      if (Number.isInteger(currentLevel) && Number.isInteger(targetLevel) && targetLevel < currentLevel) {
+        setMessage('targetLevel', '目標等級不可低於目前等級。');
+        hasError = true;
+      }
+      if (hasError || !current || !target) {
+        resetLevelResults();
+        return;
+      }
+
+      const progress = currentLevel === 2000 ? 100 : Math.min(100, Math.max(0, currentExp / current[0] * 100));
+      const remainingExp = Math.max(0, target[1] - current[1] - currentExp);
+      const stageCount = remainingExp === 0 ? 0 : Math.ceil(remainingExp / stageExp);
+      const totalStamina = stageCount * stageStamina;
+
+      $('requiredExp').textContent = formatInteger(remainingExp);
+      setMetric('currentProgress', progress.toFixed(2), '%');
+      setMetric('stageCount', formatInteger(stageCount), '場');
+      setMetric('targetStaminaMax', formatInteger(target[2]), '體力');
+      setMetric('levelCurrentStaminaMax', formatInteger(current[2]), '體力');
+      setMetric('targetTeamCost', formatInteger(target[3]), 'Cost');
+      setMetric('levelCurrentTeamCost', formatInteger(current[3]), 'Cost');
+      $('totalStamina').textContent = formatInteger(totalStamina) + ' 體力';
+    }
+
+    function resetStaminaResult() {
+      $('recoveryTime').textContent = '—';
+      $('staminaFullAt').textContent = '—';
+    }
+
+    function calculateStamina() {
+      clearMessages(staminaFields);
+      const currentStamina = readNumber('currentStamina');
+      const currentStaminaMax = readNumber('currentStaminaMax');
+      if (!Number.isFinite(currentStamina) || !Number.isFinite(currentStaminaMax)) {
+        resetStaminaResult();
+        return;
+      }
+
+      let hasError = false;
+      if (currentStamina < 0) {
+        setMessage('currentStamina', '目前剩餘體力不可小於 0。');
+        hasError = true;
+      }
+      if (currentStaminaMax <= 0) {
+        setMessage('currentStaminaMax', '目前最大體力必須大於 0。');
+        hasError = true;
+      }
+      if (currentStamina > currentStaminaMax) {
+        setMessage('currentStamina', '目前剩餘體力不可高於目前最大體力。');
+        hasError = true;
+      }
+      if (hasError) {
+        resetStaminaResult();
+        return;
+      }
+
+      const missingStamina = Math.max(0, currentStaminaMax - currentStamina);
+      const fullAt = new Date(Date.now() + missingStamina * RECOVERY_MINUTES_PER_STAMINA * 60 * 1000);
+      $('recoveryTime').textContent = formatRecoveryTime(missingStamina);
+      $('staminaFullAt').textContent = formatMonthDayTime(fullAt);
+    }
+
+    function resetWarResults() {
+      $('warStageCount').textContent = '—';
+      $('warMeritPerBattle').textContent = '—';
+      $('warPointCost').textContent = '—';
+      $('warDayCount').textContent = '—';
+      $('warFreePoints').textContent = '—';
+      $('warNetPoints').textContent = '—';
+      $('warStoneCount').textContent = '—';
+      $('warCountdownEnd').textContent = '—';
+    }
+
+    function clearFieldValues(fieldIds) {
+      fieldIds.forEach(id => { $(id).value = ''; });
+    }
+
+    function resetLevelTool() {
+      cancelScheduledCalculation();
+      clearFieldValues(levelFields);
+      clearMessages(levelFields);
+      resetLevelResults();
+    }
+
+    function resetStaminaTool() {
+      cancelScheduledCalculation();
+      clearFieldValues(staminaFields);
+      clearMessages(staminaFields);
+      resetStaminaResult();
+    }
+
+    function resetWarTool() {
+      cancelScheduledCalculation();
+      $('warType').value = 'defense';
+      clearFieldValues(['warBonus', 'warMerit', 'warCountdownHours']);
+      clearMessages(warFields);
+      resetWarResults();
+    }
+
+    function calculateWar() {
+      clearMessages(warFields);
+      const warBonus = readNumber('warBonus');
+      const warMerit = readNumber('warMerit');
+      const warCountdownHours = readNumber('warCountdownHours');
+      if ([warBonus, warMerit, warCountdownHours].some(value => !Number.isFinite(value))) {
+        resetWarResults();
+        return;
+      }
+
+      let hasError = false;
+      if (warBonus < 0) {
+        setMessage('warBonus', '加成不可小於 0。');
+        hasError = true;
+      }
+      if (warMerit < 0) {
+        setMessage('warMerit', '目標功勳值不可小於 0。');
+        hasError = true;
+      }
+      if (warCountdownHours < 0) {
+        setMessage('warCountdownHours', '倒數時間不可小於 0。');
+        hasError = true;
+      }
+      if (hasError) {
+        resetWarResults();
+        return;
+      }
+
+      const config = $('warType').value === 'attack'
+        ? { baseMerit: 100, pointCost: 4 }
+        : { baseMerit: 62, pointCost: 2 };
+      const meritPerBattle = config.baseMerit * (2 + warBonus / 100);
+      const stageCount = warMerit === 0 ? 0 : Math.ceil(warMerit / meritPerBattle);
+      const totalPoints = stageCount * config.pointCost;
+      const now = new Date();
+      const countdownEnd = new Date(now.getTime() + warCountdownHours * 60 * 60 * 1000);
+      const dayCount = calendarDaysInclusive(now, countdownEnd);
+      const freePoints = dayCount * FREE_WAR_POINTS;
+      const netPoints = Math.max(0, totalPoints - freePoints);
+      const stoneCount = Math.ceil(netPoints / WAR_STONE_POINTS);
+
+      $('warStageCount').textContent = formatNumber(stageCount) + ' 場';
+      $('warMeritPerBattle').textContent = formatNumber(meritPerBattle);
+      $('warPointCost').textContent = formatNumber(totalPoints) + ' 點';
+      $('warDayCount').textContent = formatNumber(dayCount) + ' 天';
+      $('warFreePoints').textContent = formatNumber(freePoints) + ' 點';
+      $('warNetPoints').textContent = formatNumber(netPoints) + ' 點';
+      $('warStoneCount').textContent = formatNumber(stoneCount) + ' 顆';
+      $('warCountdownEnd').textContent = formatDateTime(countdownEnd);
+    }
+
+    function switchTool(tool) {
+      cancelScheduledCalculation();
+      if (activeTool === tool) {
+        scheduleCalculation(tool);
+        return;
+      }
+      activeTool = tool;
+      const isLevel = tool === 'level';
+      const isStamina = tool === 'stamina';
+      $('levelToolPanel').hidden = !isLevel;
+      $('staminaToolPanel').hidden = !isStamina;
+      $('warToolPanel').hidden = tool !== 'war';
+      $('levelTab').classList.toggle('active', isLevel);
+      $('levelTab').setAttribute('aria-selected', String(isLevel));
+      $('staminaTab').classList.toggle('active', isStamina);
+      $('staminaTab').setAttribute('aria-selected', String(isStamina));
+      $('warTab').classList.toggle('active', tool === 'war');
+      $('warTab').setAttribute('aria-selected', String(tool === 'war'));
+      $('resetLevel').hidden = !isLevel;
+      $('resetStamina').hidden = !isStamina;
+      $('resetWar').hidden = tool !== 'war';
+      scheduleCalculation(tool);
+    }
+
+    $('levelTab').addEventListener('click', () => switchTool('level'));
+    $('staminaTab').addEventListener('click', () => switchTool('stamina'));
+    $('warTab').addEventListener('click', () => switchTool('war'));
+    const calculateByTool = { level: calculateLevel, stamina: calculateStamina, war: calculateWar };
+    let activeTool = '';
+    let scheduledTool = '';
+    let scheduledFrame = 0;
+    function cancelScheduledCalculation() {
+      if (scheduledFrame) cancelAnimationFrame(scheduledFrame);
+      scheduledTool = '';
+      scheduledFrame = 0;
+    }
+    function scheduleCalculation(tool) {
+      scheduledTool = tool;
+      if (scheduledFrame) return;
+      scheduledFrame = requestAnimationFrame(() => {
+        const toolToCalculate = scheduledTool;
+        scheduledTool = '';
+        scheduledFrame = 0;
+        calculateByTool[toolToCalculate]();
+      });
+    }
+    levelFields.forEach(id => $(id).addEventListener('input', () => scheduleCalculation('level')));
+    staminaFields.forEach(id => $(id).addEventListener('input', () => scheduleCalculation('stamina')));
+    warFields.forEach(id => {
+      $(id).addEventListener('input', () => scheduleCalculation('war'));
+      $(id).addEventListener('change', () => scheduleCalculation('war'));
+    });
+    $('resetLevel').addEventListener('click', resetLevelTool);
+    $('resetStamina').addEventListener('click', resetStaminaTool);
+    $('resetWar').addEventListener('click', resetWarTool);
+    let themeSaveTimer = 0;
+    let themeFrame = 0;
+    function setTheme(theme) {
+      const isLight = theme === 'light';
+      const nextTheme = isLight ? 'light' : 'dark';
+      const root = document.documentElement;
+      root.classList.add('theme-switching');
+      root.dataset.theme = nextTheme;
+      $('themeToggle').textContent = isLight ? '切換深色模式' : '切換淺色模式';
+      $('themeToggle').setAttribute('aria-pressed', String(isLight));
+      $('themeToggle').setAttribute('aria-label', isLight ? '切換至深色模式' : '切換至淺色模式');
+      if (themeSaveTimer) clearTimeout(themeSaveTimer);
+      themeSaveTimer = setTimeout(() => {
+        try {
+          localStorage.setItem('tos-theme', nextTheme);
+        } catch (error) {}
+      }, 0);
+      if (themeFrame) cancelAnimationFrame(themeFrame);
+      themeFrame = requestAnimationFrame(() => {
+        root.classList.remove('theme-switching');
+        themeFrame = 0;
+      });
+    }
+
+    let savedTheme = null;
+    try {
+      savedTheme = localStorage.getItem('tos-theme');
+    } catch (error) {}
+    setTheme(savedTheme === 'light' ? 'light' : 'dark');
+    $('themeToggle').addEventListener('click', () => {
+      setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+    });
+    switchTool('level');
+  </script>
+</body>
+</html>
