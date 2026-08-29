@@ -407,6 +407,55 @@
       gap: 18px;
     }
 
+    .level-range {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .level-field {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .level-input {
+      height: 68px;
+      padding: 8px 12px;
+      font-size: 1.65rem;
+      font-weight: 850;
+      text-align: center;
+      letter-spacing: -0.02em;
+    }
+
+    .level-range-arrow {
+      flex: 0 0 auto;
+      margin-top: 22px;
+      color: var(--sky);
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    @media (max-width: 600px) {
+      .level-input { height: 60px; font-size: 1.4rem; }
+      .level-range { gap: 6px; }
+      .level-range-arrow { margin-top: 20px; font-size: 1.1rem; }
+    }
+
+    .field-group-label {
+      grid-column: 1 / -1;
+      margin: 6px 0 -6px;
+      color: var(--sky);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .field-group-label:first-child {
+      margin-top: 0;
+    }
+
     .input-column {
       display: flex;
       flex-direction: column;
@@ -524,8 +573,8 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      #levelToolPanel .field:nth-child(4),
-      #levelToolPanel .field:nth-child(5) {
+      #levelToolPanel .field:nth-child(5),
+      #levelToolPanel .field:nth-child(6) {
         grid-column: 1 / -1;
       }
 
@@ -651,8 +700,8 @@
               <div role="columnheader" style="text-align: right;">數值</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">最低所需召喚師等級</div>
-              <div class="aligned-result-value" id="teamCostLevelResult" role="cell">— <span class="unit">等</span></div>
+              <div class="aligned-result-label" role="rowheader">召喚師等級</div>
+              <div class="aligned-result-value" id="teamCostLevelResult" role="cell">—</div>
             </div>
           </div>
         </section>
@@ -663,21 +712,26 @@
           </div>
 
           <div class="field-grid">
-            <div class="field">
-              <label for="currentLevel">目前等級</label>
-              <input id="currentLevel" type="number" min="1" max="2000" step="1" inputmode="numeric">
-              <div class="field-message" id="currentLevelMessage"></div>
-            </div>
-            <div class="field">
-              <label for="targetLevel">目標等級</label>
-              <input id="targetLevel" type="number" min="1" max="2000" step="1" inputmode="numeric">
-              <div class="field-message" id="targetLevelMessage"></div>
+            <div class="field-group-label">目前與目標等級</div>
+            <div class="level-range">
+              <div class="field level-field">
+                <label for="currentLevel">目前等級</label>
+                <input id="currentLevel" class="level-input" type="number" min="1" max="2000" step="1" inputmode="numeric">
+                <div class="field-message" id="currentLevelMessage"></div>
+              </div>
+              <div class="level-range-arrow" aria-hidden="true">→</div>
+              <div class="field level-field">
+                <label for="targetLevel">目標等級</label>
+                <input id="targetLevel" class="level-input" type="number" min="1" max="2000" step="1" inputmode="numeric">
+                <div class="field-message" id="targetLevelMessage"></div>
+              </div>
             </div>
             <div class="field full">
               <label for="currentExp">目前等級已累積 EXP</label>
               <input id="currentExp" type="number" min="0" step="1" inputmode="numeric">
               <div class="field-message" id="currentExpMessage"></div>
             </div>
+            <div class="field-group-label">每場刷關資訊</div>
             <div class="field">
               <label for="stageExp">單場關卡獲得 EXP</label>
               <input id="stageExp" type="number" min="0" step="1" inputmode="numeric">
@@ -710,28 +764,28 @@
               <div role="columnheader" style="text-align: right;">數值</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">當前等級升級進度</div>
-              <div class="aligned-result-value" id="currentProgress" role="cell">— <span class="unit">%</span></div>
+              <div class="aligned-result-label" role="rowheader">升級進度</div>
+              <div class="aligned-result-value" id="currentProgress" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">預計所需刷關場次</div>
-              <div class="aligned-result-value" id="stageCount" role="cell">— <span class="unit">場</span></div>
+              <div class="aligned-result-label" role="rowheader">所需場次</div>
+              <div class="aligned-result-value" id="stageCount" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">目標等級體力上限</div>
-              <div class="aligned-result-value" id="targetStaminaMax" role="cell">— <span class="unit">體力</span></div>
+              <div class="aligned-result-label" role="rowheader">目標體力上限</div>
+              <div class="aligned-result-value" id="targetStaminaMax" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">目前等級體力上限</div>
-              <div class="aligned-result-value" id="levelCurrentStaminaMax" role="cell">— <span class="unit">體力</span></div>
+              <div class="aligned-result-label" role="rowheader">目前體力上限</div>
+              <div class="aligned-result-value" id="levelCurrentStaminaMax" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">目標等級隊伍空間 Cost</div>
-              <div class="aligned-result-value" id="targetTeamCost" role="cell">— <span class="unit">Cost</span></div>
+              <div class="aligned-result-label" role="rowheader">目標隊伍 Cost</div>
+              <div class="aligned-result-value" id="targetTeamCost" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">目前等級隊伍空間 Cost</div>
-              <div class="aligned-result-value" id="levelCurrentTeamCost" role="cell">— <span class="unit">Cost</span></div>
+              <div class="aligned-result-label" role="rowheader">目前隊伍 Cost</div>
+              <div class="aligned-result-value" id="levelCurrentTeamCost" role="cell">—</div>
             </div>
           </div>
 
@@ -825,7 +879,7 @@
 
         <section class="results" aria-live="polite">
           <article class="card primary-result">
-            <div class="result-label">預計所需場次</div>
+            <div class="result-label">所需場次</div>
             <div class="result-value" id="warStageCount">—</div>
           </article>
 
@@ -835,37 +889,29 @@
               <div role="columnheader" style="text-align: right;">數值</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">每場功勳</div>
+              <div class="aligned-result-label" role="rowheader">單場功勳</div>
               <div class="aligned-result-value" id="warMeritPerBattle" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">總消耗點數</div>
+              <div class="aligned-result-label" role="rowheader">總合點數</div>
               <div class="aligned-result-value" id="warPointCost" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">活動天數</div>
-              <div class="aligned-result-value" id="warDayCount" role="cell">—</div>
-            </div>
-            <div class="aligned-result-row" role="row">
               <div class="aligned-result-copy" role="rowheader">
-                <div class="aligned-result-label">預估免費點數</div>
+                <div class="aligned-result-label">預計免費點數</div>
                 <div class="metric-note">依目前倒數時間換算至活動結束的天數，每日 16 點。</div>
               </div>
               <div class="aligned-result-value" id="warFreePoints" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">扣除免費點數後</div>
-              <div class="aligned-result-value" id="warNetPoints" role="cell">—</div>
-            </div>
-            <div class="aligned-result-row" role="row">
               <div class="aligned-result-copy" role="rowheader">
-                <div class="aligned-result-label">魔法石使用量</div>
+                <div class="aligned-result-label">魔法石消耗量</div>
                 <div class="metric-note">扣除免費點數後，還需要使用魔法石恢復的數量</div>
               </div>
               <div class="aligned-result-value" id="warStoneCount" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">倒數結束時間</div>
+              <div class="aligned-result-label" role="rowheader">倒數截止時間</div>
               <div class="aligned-result-value" id="warCountdownEnd" role="cell">—</div>
             </div>
           </div>
@@ -910,10 +956,9 @@
     const warFields = ['warBonus', 'warMerit', 'warCountdownHours'];
     const FREE_WAR_POINTS = 16;
     const WAR_STONE_POINTS = 8;
-    const metricIds = ['currentProgress', 'stageCount', 'targetStaminaMax', 'levelCurrentStaminaMax', 'targetTeamCost', 'levelCurrentTeamCost', 'teamCostLevelResult'];
+    const metricIds = ['currentProgress', 'stageCount', 'targetStaminaMax', 'levelCurrentStaminaMax', 'targetTeamCost', 'levelCurrentTeamCost', 'teamCostLevelResult', 'totalStamina'];
 
     const nodeCache = new Map(Array.from(document.querySelectorAll('[id]'), element => [element.id, element]));
-    const metricUnitNodes = new Map(metricIds.map(id => [id, nodeCache.get(id).querySelector('.unit')]));
     const $ = id => nodeCache.get(id);
 
     function readNumber(id) {
@@ -983,12 +1028,9 @@
       if (input.classList.contains('invalid') !== invalid) input.classList.toggle('invalid', invalid);
     }
 
-    function setMetric(id, value, unit) {
+    function setMetric(id, value) {
       const valueNode = $(id);
-      const unitNode = metricUnitNodes.get(id);
-      const valueText = value + ' ';
-      if (valueNode.firstChild.textContent !== valueText) valueNode.firstChild.textContent = valueText;
-      if (unitNode.textContent !== unit) unitNode.textContent = unit;
+      if (valueNode.textContent !== value) valueNode.textContent = value;
     }
 
     function clearMessages(fieldIds) {
@@ -998,24 +1040,24 @@
     function resetLevelResults() {
       updateTeamCostLookup();
       $('requiredExp').textContent = '—';
-      setMetric('currentProgress', '—', '%');
-      setMetric('stageCount', '—', '場');
-      setMetric('targetStaminaMax', '—', '體力');
-      setMetric('levelCurrentStaminaMax', '—', '體力');
-      setMetric('targetTeamCost', '—', 'Cost');
-      setMetric('levelCurrentTeamCost', '—', 'Cost');
-      $('totalStamina').textContent = '—';
+      setMetric('currentProgress', '—');
+      setMetric('stageCount', '—');
+      setMetric('targetStaminaMax', '—');
+      setMetric('levelCurrentStaminaMax', '—');
+      setMetric('targetTeamCost', '—');
+      setMetric('levelCurrentTeamCost', '—');
+      setMetric('totalStamina', '—');
     }
 
     function updateTeamCostLookup() {
       const cost = readNumber('teamCostInput');
       if (!Number.isFinite(cost)) {
-        setMetric('teamCostLevelResult', '—', '等');
+        setMetric('teamCostLevelResult', '—');
         return;
       }
       if (cost < 0) {
         setMessage('teamCostInput', '隊伍空間 Cost 不可小於 0。');
-        setMetric('teamCostLevelResult', '—', '等');
+        setMetric('teamCostLevelResult', '—');
         return;
       }
       let foundLevel = 0;
@@ -1026,10 +1068,10 @@
         }
       }
       if (foundLevel) {
-        setMetric('teamCostLevelResult', formatInteger(foundLevel), '等');
+        setMetric('teamCostLevelResult', formatInteger(foundLevel));
       } else {
         setMessage('teamCostInput', '目前等級對照表無法達到此隊伍空間。');
-        setMetric('teamCostLevelResult', '—', '等');
+        setMetric('teamCostLevelResult', '—');
       }
     }
 
@@ -1089,13 +1131,13 @@
       const totalStamina = stageCount * stageStamina;
 
       $('requiredExp').textContent = formatInteger(remainingExp);
-      setMetric('currentProgress', progress.toFixed(2), '%');
-      setMetric('stageCount', formatInteger(stageCount), '場');
-      setMetric('targetStaminaMax', formatInteger(target[2]), '體力');
-      setMetric('levelCurrentStaminaMax', formatInteger(current[2]), '體力');
-      setMetric('targetTeamCost', formatInteger(target[3]), 'Cost');
-      setMetric('levelCurrentTeamCost', formatInteger(current[3]), 'Cost');
-      $('totalStamina').textContent = formatInteger(totalStamina) + ' 體力';
+      setMetric('currentProgress', progress.toFixed(2));
+      setMetric('stageCount', formatInteger(stageCount));
+      setMetric('targetStaminaMax', formatInteger(target[2]));
+      setMetric('levelCurrentStaminaMax', formatInteger(current[2]));
+      setMetric('targetTeamCost', formatInteger(target[3]));
+      setMetric('levelCurrentTeamCost', formatInteger(current[3]));
+      setMetric('totalStamina', formatInteger(totalStamina));
     }
 
     function resetStaminaResult() {
@@ -1140,9 +1182,7 @@
       $('warStageCount').textContent = '—';
       $('warMeritPerBattle').textContent = '—';
       $('warPointCost').textContent = '—';
-      $('warDayCount').textContent = '—';
       $('warFreePoints').textContent = '—';
-      $('warNetPoints').textContent = '—';
       $('warStoneCount').textContent = '—';
       $('warCountdownEnd').textContent = '—';
     }
@@ -1223,13 +1263,11 @@
       const netPoints = Math.max(0, totalPoints - freePoints);
       const stoneCount = Math.ceil(netPoints / WAR_STONE_POINTS);
 
-      $('warStageCount').textContent = formatNumber(stageCount) + ' 場';
+      $('warStageCount').textContent = formatNumber(stageCount);
       $('warMeritPerBattle').textContent = formatNumber(meritPerBattle);
-      $('warPointCost').textContent = formatNumber(totalPoints) + ' 點';
-      $('warDayCount').textContent = formatNumber(dayCount) + ' 天';
-      $('warFreePoints').textContent = formatNumber(freePoints) + ' 點';
-      $('warNetPoints').textContent = formatNumber(netPoints) + ' 點';
-      $('warStoneCount').textContent = formatNumber(stoneCount) + ' 顆';
+      $('warPointCost').textContent = formatNumber(totalPoints);
+      $('warFreePoints').textContent = formatNumber(freePoints);
+      $('warStoneCount').textContent = formatNumber(stoneCount);
       $('warCountdownEnd').textContent = formatDateTime(countdownEnd);
     }
 
