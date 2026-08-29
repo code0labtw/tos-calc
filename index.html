@@ -407,6 +407,13 @@
       gap: 18px;
     }
 
+    .input-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-width: 0;
+    }
+
     .tool-panel .input-card {
       border-top: 3px solid var(--sky);
     }
@@ -624,6 +631,32 @@
 
     <section class="tool-panel" id="levelToolPanel" role="tabpanel" aria-labelledby="levelTab">
       <section class="layout" aria-label="召喚師等級計算">
+        <div class="input-column">
+        <section class="card input-card">
+          <div class="card-header">
+            <h2 class="card-title">召喚師等級與隊伍空間參考對照</h2>
+          </div>
+
+          <div class="field-grid">
+            <div class="field full">
+              <label for="teamCostInput">隊伍空間 Cost</label>
+              <input id="teamCostInput" type="number" min="0" step="1" inputmode="numeric">
+              <div class="field-message" id="teamCostInputMessage"></div>
+            </div>
+          </div>
+
+          <div class="aligned-results-table" role="table" aria-label="隊伍空間對應等級結果">
+            <div class="aligned-result-row aligned-result-head" role="row">
+              <div role="columnheader">結果項目</div>
+              <div role="columnheader" style="text-align: right;">數值</div>
+            </div>
+            <div class="aligned-result-row" role="row">
+              <div class="aligned-result-label" role="rowheader">最低所需召喚師等級</div>
+              <div class="aligned-result-value" id="teamCostLevelResult" role="cell">— <span class="unit">等</span></div>
+            </div>
+          </div>
+        </section>
+
         <section class="card input-card">
           <div class="card-header">
             <h2 class="card-title">召喚師等級計算</h2>
@@ -657,6 +690,7 @@
             </div>
           </div>
         </section>
+        </div>
 
         <section class="results" aria-live="polite">
           <div class="result-highlights">
@@ -871,12 +905,12 @@
       hour12: false,
       hourCycle: 'h23'
     });
-    const levelFields = ['currentLevel', 'currentExp', 'targetLevel', 'stageExp', 'stageStamina'];
+    const levelFields = ['currentLevel', 'currentExp', 'targetLevel', 'stageExp', 'stageStamina', 'teamCostInput'];
     const staminaFields = ['currentStamina', 'currentStaminaMax'];
     const warFields = ['warBonus', 'warMerit', 'warCountdownHours'];
     const FREE_WAR_POINTS = 16;
     const WAR_STONE_POINTS = 8;
-    const metricIds = ['currentProgress', 'stageCount', 'targetStaminaMax', 'levelCurrentStaminaMax', 'targetTeamCost', 'levelCurrentTeamCost'];
+    const metricIds = ['currentProgress', 'stageCount', 'targetStaminaMax', 'levelCurrentStaminaMax', 'targetTeamCost', 'levelCurrentTeamCost', 'teamCostLevelResult'];
 
     const nodeCache = new Map(Array.from(document.querySelectorAll('[id]'), element => [element.id, element]));
     const metricUnitNodes = new Map(metricIds.map(id => [id, nodeCache.get(id).querySelector('.unit')]));
@@ -962,6 +996,7 @@
     }
 
     function resetLevelResults() {
+      updateTeamCostLookup();
       $('requiredExp').textContent = '—';
       setMetric('currentProgress', '—', '%');
       setMetric('stageCount', '—', '場');
@@ -972,8 +1007,35 @@
       $('totalStamina').textContent = '—';
     }
 
+    function updateTeamCostLookup() {
+      const cost = readNumber('teamCostInput');
+      if (!Number.isFinite(cost)) {
+        setMetric('teamCostLevelResult', '—', '等');
+        return;
+      }
+      if (cost < 0) {
+        setMessage('teamCostInput', '隊伍空間 Cost 不可小於 0。');
+        setMetric('teamCostLevelResult', '—', '等');
+        return;
+      }
+      let foundLevel = 0;
+      for (let i = 0; i < levels.length; i++) {
+        if (levels[i][3] >= cost) {
+          foundLevel = i + 1;
+          break;
+        }
+      }
+      if (foundLevel) {
+        setMetric('teamCostLevelResult', formatInteger(foundLevel), '等');
+      } else {
+        setMessage('teamCostInput', '目前等級對照表無法達到此隊伍空間。');
+        setMetric('teamCostLevelResult', '—', '等');
+      }
+    }
+
     function calculateLevel() {
       clearMessages(levelFields);
+      updateTeamCostLookup();
       const currentLevel = readNumber('currentLevel');
       const currentExp = readNumber('currentExp');
       const targetLevel = readNumber('targetLevel');
