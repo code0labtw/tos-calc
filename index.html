@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="supported-color-schemes" content="dark light">
   <meta name="description" content="神魔之塔召喚師等級、體力恢復與魔神戰功勳計算工具。">
   <title>神魔之塔｜計算工具</title>
   <style>
@@ -22,6 +24,8 @@
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+  transition: none !important;
+  animation: none !important;
 }
 
 body {
@@ -285,22 +289,51 @@ label {
   -webkit-tap-highlight-color: transparent;
 }
 
-.checkbox-label input[type="checkbox"] {
+.sr-checkbox {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.custom-checkbox {
   width: 20px;
   height: 20px;
-  min-height: 0;
-  flex: 0 0 auto;
-  accent-color: var(--sky);
+  flex: 0 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1.5px solid rgba(148, 163, 184, 0.4);
+  background: #303238;
+  color: #ffffff;
   cursor: pointer;
-  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-.checkbox-label input[type="checkbox"]:focus,
-.checkbox-label input[type="checkbox"]:focus-visible,
-.checkbox-label input[type="checkbox"]:active {
-  outline: none;
-  box-shadow: none;
+.custom-checkbox .check-icon {
+  width: 13px;
+  height: 13px;
+  display: none;
+}
+
+.sr-checkbox:checked + .custom-checkbox {
+  background: var(--sky);
+  border-color: var(--sky);
+  color: #ffffff;
+}
+
+.sr-checkbox:checked + .custom-checkbox .check-icon {
+  display: block;
 }
 
 .target-mode-tabs {
@@ -341,25 +374,7 @@ label {
   color: #ffffff;
 }
 
-.field-pair {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 12px;
-  row-gap: 7px;
-}
-
-.field-pair > .field {
-  display: contents;
-}
-
-.field-pair > .field:nth-child(1) > * { grid-column: 1; }
-.field-pair > .field:nth-child(2) > * { grid-column: 2; }
-.field-pair label { grid-row: 1; }
-.field-pair input { grid-row: 2; }
-.field-pair .field-message { grid-row: 3; }
-
-input, select {
+input:not([type="checkbox"]), select {
   width: 100%;
   min-height: 50px;
   border: 1px solid rgba(148, 163, 184, 0.24);
@@ -370,17 +385,16 @@ input, select {
   color: var(--text);
   font: inherit;
   font-variant-numeric: tabular-nums;
-  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
 }
 
-input:hover, select:hover { border-color: rgba(125, 211, 252, 0.45); }
-input:focus, select:focus {
+input:not([type="checkbox"]):hover, select:hover { border-color: rgba(125, 211, 252, 0.45); }
+input:not([type="checkbox"]):focus, select:focus {
   border-color: var(--sky);
   background: #383a40;
   box-shadow: 0 0 0 3px rgba(139, 141, 246, 0.12);
 }
 
-input.invalid, select.invalid {
+input:not([type="checkbox"]).invalid, select.invalid {
   border-color: var(--red);
   box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.13);
 }
@@ -592,11 +606,6 @@ input.invalid, select.invalid {
   .tool-tab { min-height: 64px; padding: 8px 4px; font-size: 0.92rem; }
   .tab-name { font-size: clamp(0.95rem, 4vw, 1.15rem); }
   .tool-panel .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .field-pair { grid-template-columns: 1fr; row-gap: 16px; }
-  .field-pair > .field { display: grid; gap: 7px; }
-  .field-pair label, .field-pair input, .field-pair .field-message { grid-column: 1; grid-row: auto; }
-  .field-pair > .field:nth-child(1) > * { grid-column: 1; }
-  .field-pair > .field:nth-child(2) > * { grid-column: 1; }
   .tool-panel .field.full { grid-column: 1 / -1; }
   .reset-button { min-height: 50px; font-size: 1.12rem; }
   .result-highlights { grid-template-columns: 1fr; gap: 10px; }
@@ -612,8 +621,6 @@ input.invalid, select.invalid {
   .stamina-result-label { font-size: 0.88rem; }
   .stamina-result-value { font-size: 1.08rem; }
 }
-
-html.theme-switching, html.theme-switching * { transition: none !important; }
 
 html[data-theme="light"] {
   --bg: #FAF9F6;
@@ -631,9 +638,9 @@ html[data-theme="light"] {
 html[data-theme="light"] body { background: #FAF9F6; }
 html[data-theme="light"] label { color: #334155; }
 html[data-theme="light"] .card { background: #f7f8fa; box-shadow: 0 18px 46px rgba(15, 23, 42, 0.1); }
-html[data-theme="light"] input, html[data-theme="light"] select { border-color: rgba(15, 23, 42, 0.18); background: #f7f8fa; color: #0f172a; }
-html[data-theme="light"] input:hover, html[data-theme="light"] select:hover { border-color: rgba(2, 132, 199, 0.48); }
-html[data-theme="light"] input:focus, html[data-theme="light"] select:focus { background: #FAF9F6; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18); }
+html[data-theme="light"] input:not([type="checkbox"]), html[data-theme="light"] select { border-color: rgba(15, 23, 42, 0.18); background: #f7f8fa; color: #0f172a; }
+html[data-theme="light"] input:not([type="checkbox"]):hover, html[data-theme="light"] select:hover { border-color: rgba(2, 132, 199, 0.48); }
+html[data-theme="light"] input:not([type="checkbox"]):focus, html[data-theme="light"] select:focus { background: #FAF9F6; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18); }
 html[data-theme="light"] .primary-result { border-color: rgba(2, 132, 199, 0.4); background: #e0f2fe; }
 html[data-theme="light"] .result-label { color: #075985; }
 html[data-theme="light"] .result-value { color: #0f172a; }
@@ -656,6 +663,8 @@ html[data-theme="light"] .stamina-result-label { color: #334155; }
 html[data-theme="light"] .stamina-result-value { color: #0f172a; }
 html[data-theme="light"] .war-type-tab { border-color: rgba(15, 23, 42, 0.14); background: #FAF9F6; color: #475569; }
 html[data-theme="light"] .war-type-tab.active { border-color: transparent; background: #6e70df; color: #ffffff; }
+html[data-theme="light"] .custom-checkbox { border-color: rgba(15, 23, 42, 0.28); background: #FAF9F6; color: #ffffff; }
+html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #6e70df; border-color: #6e70df; color: #ffffff; }
 
   </style>
 </head>
@@ -692,7 +701,6 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
       </button>
     </div>
 
-    <!-- 召喚師等級計算 Panel -->
     <section class="tool-panel" id="levelToolPanel" role="tabpanel" aria-labelledby="levelTab">
       <section class="layout" aria-label="召喚師等級計算">
         <div class="input-column">
@@ -753,27 +761,35 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
                 <div class="field-message" id="currentExpMessage"></div>
               </div>
               <div class="field-group-label">每場刷關資訊</div>
-              <div class="field-pair">
-                <div class="field" id="stageExpField">
-                  <label for="stageExp">單場關卡獲得 EXP</label>
-                  <input id="stageExp" type="number" min="0" step="1" inputmode="numeric">
-                  <div class="field-message" id="stageExpMessage"></div>
-                </div>
-                <div class="field" id="stageStaminaField">
-                  <label for="stageStamina">單場關卡消耗體力</label>
-                  <input id="stageStamina" type="number" min="0" step="1" inputmode="numeric">
-                  <div class="field-message" id="stageStaminaMessage"></div>
-                </div>
+              <div class="field" id="stageExpField">
+                <label for="stageExp">單場關卡獲得 EXP</label>
+                <input id="stageExp" type="number" min="0" step="1" inputmode="numeric">
+                <div class="field-message" id="stageExpMessage"></div>
+              </div>
+              <div class="field" id="stageStaminaField">
+                <label for="stageStamina">單場關卡消耗體力</label>
+                <input id="stageStamina" type="number" min="0" step="1" inputmode="numeric">
+                <div class="field-message" id="stageStaminaMessage"></div>
               </div>
               <div class="field full field-checkbox">
                 <label for="stageExpIsBoosted" class="checkbox-label">
-                  <input id="stageExpIsBoosted" type="checkbox">
+                  <input id="stageExpIsBoosted" type="checkbox" class="sr-checkbox">
+                  <span class="custom-checkbox" aria-hidden="true">
+                    <svg class="check-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3.5 8.5L6.5 11.5L12.5 4.5"/>
+                    </svg>
+                  </span>
                   <span>此單場 EXP 已包含經驗值瓶加成（1.5倍）</span>
                 </label>
               </div>
               <div class="field full field-checkbox">
                 <label for="useExpPotion" class="checkbox-label">
-                  <input id="useExpPotion" type="checkbox">
+                  <input id="useExpPotion" type="checkbox" class="sr-checkbox">
+                  <span class="custom-checkbox" aria-hidden="true">
+                    <svg class="check-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3.5 8.5L6.5 11.5L12.5 4.5"/>
+                    </svg>
+                  </span>
                   <span>使用經驗值瓶（瓶子用完後恢復無加成 EXP 計算）</span>
                 </label>
               </div>
@@ -835,7 +851,6 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
       </section>
     </section>
 
-    <!-- 體力恢復計算 Panel -->
     <section class="tool-panel" id="staminaToolPanel" role="tabpanel" aria-labelledby="staminaTab" hidden>
       <section class="layout" aria-label="體力恢復計算">
         <section class="card input-card">
@@ -875,7 +890,6 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
       </section>
     </section>
 
-    <!-- 魔神戰功勳計算 Panel -->
     <section class="tool-panel" id="warToolPanel" role="tabpanel" aria-labelledby="warTab" hidden>
       <section class="layout" aria-label="魔神戰功勳計算">
         <section class="card input-card">
@@ -1173,11 +1187,8 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
     $('targetModeStageTab').setAttribute('aria-selected', String(mode === 'stage'));
     $('targetLevelField').hidden = mode !== 'level';
     $('targetStageField').hidden = mode !== 'stage';
-    
-    // 當選擇「目標場次」時，不需要顯示/計算所需場次
     $('stageCountRow').hidden = (mode === 'stage');
     
-    // 更新進度與高亮項目標籤
     if (mode === 'stage') {
       $('progressLabel').textContent = '目標等級進度條';
       $('expHighlightLabel').textContent = '總共獲得 EXP';
@@ -1245,7 +1256,6 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
         carryOverStamina = (carryOverStamina + lvlRecoverCount * maxStamina) - lvlStaminaConsumed;
       }
 
-      // 升等瞬間免費回滿一次當前等級最大體力
       carryOverStamina += maxStamina;
     }
 
@@ -1329,7 +1339,6 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
         return;
       }
 
-      // 目標等級內的進度條百分比
       const expIntoTarget = Math.max(0, finalTotalExp - target[1]);
       const targetProgress = targetLevel === 2000 ? 100 : Math.min(100, (expIntoTarget / target[0]) * 100);
       const totalStaminaUsed = targetStageCount * stageStamina;
@@ -1345,7 +1354,6 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
         potionCount
       );
 
-      // 目標場次模式下：無需計算/顯示所需場次，高亮顯示總獲得 EXP 與總消耗體力
       $('stageCountRow').hidden = true;
       $('progressLabel').textContent = '目標等級進度條';
       $('expHighlightLabel').textContent = '總共獲得 EXP';
@@ -1359,7 +1367,6 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
       return;
     }
 
-    // 目標等級模式
     targetLevel = readNumber('targetLevel');
     if (!Number.isFinite(targetLevel)) {
       resetLevelResults();
@@ -1465,7 +1472,6 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
   }
 
   function resetLevelTool() {
-    cancelScheduledCalculation();
     clearFieldValues(levelFields);
     clearMessages(levelFields);
     $('stageExpIsBoosted').checked = false;
@@ -1482,14 +1488,12 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
   }
 
   function resetStaminaTool() {
-    cancelScheduledCalculation();
     clearFieldValues(staminaFields);
     clearMessages(staminaFields);
     resetStaminaResult();
   }
 
   function resetWarTool() {
-    cancelScheduledCalculation();
     setWarType('defense');
     clearFieldValues(['warBonus', 'warMerit', 'warCountdownHours']);
     clearMessages(warFields);
@@ -1555,9 +1559,8 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
   }
 
   function switchTool(tool) {
-    cancelScheduledCalculation();
     if (activeTool === tool) {
-      scheduleCalculation(tool);
+      if (calculateByTool[tool]) calculateByTool[tool]();
       return;
     }
     activeTool = tool;
@@ -1575,7 +1578,7 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
     $('resetLevel').hidden = !isLevel;
     $('resetStamina').hidden = !isStamina;
     $('resetWar').hidden = tool !== 'war';
-    scheduleCalculation(tool);
+    if (calculateByTool[tool]) calculateByTool[tool]();
   }
 
   $('levelTab').addEventListener('click', () => switchTool('level'));
@@ -1583,87 +1586,55 @@ html[data-theme="light"] .war-type-tab.active { border-color: transparent; backg
   $('warTab').addEventListener('click', () => switchTool('war'));
   $('warAttackTab').addEventListener('click', () => {
     setWarType('attack');
-    scheduleCalculation('war');
+    calculateWar();
   });
   $('warDefenseTab').addEventListener('click', () => {
     setWarType('defense');
-    scheduleCalculation('war');
+    calculateWar();
   });
 
   const calculateByTool = { level: calculateLevel, stamina: calculateStamina, war: calculateWar };
   let activeTool = '';
-  let scheduledTool = '';
-  let scheduledFrame = 0;
-
-  function cancelScheduledCalculation() {
-    if (scheduledFrame) cancelAnimationFrame(scheduledFrame);
-    scheduledTool = '';
-    scheduledFrame = 0;
-  }
-
-  function scheduleCalculation(tool) {
-    scheduledTool = tool;
-    if (scheduledFrame) return;
-    scheduledFrame = requestAnimationFrame(() => {
-      const toolToCalculate = scheduledTool;
-      scheduledTool = '';
-      scheduledFrame = 0;
-      if (calculateByTool[toolToCalculate]) calculateByTool[toolToCalculate]();
-    });
-  }
 
   levelFields.forEach(id => {
     const el = $(id);
-    if (el) el.addEventListener('input', () => scheduleCalculation('level'));
+    if (el) el.addEventListener('input', calculateLevel);
   });
-  $('stageExpIsBoosted').addEventListener('change', () => scheduleCalculation('level'));
+  $('stageExpIsBoosted').addEventListener('change', calculateLevel);
   $('useExpPotion').addEventListener('change', () => {
     toggleExpPotionField();
-    scheduleCalculation('level');
+    calculateLevel();
   });
   $('targetModeLevelTab').addEventListener('click', () => {
     setTargetMode('level');
-    scheduleCalculation('level');
+    calculateLevel();
   });
   $('targetModeStageTab').addEventListener('click', () => {
     setTargetMode('stage');
-    scheduleCalculation('level');
+    calculateLevel();
   });
   staminaFields.forEach(id => {
     const el = $(id);
-    if (el) el.addEventListener('input', () => scheduleCalculation('stamina'));
+    if (el) el.addEventListener('input', calculateStamina);
   });
   warFields.forEach(id => {
     const el = $(id);
-    if (el) el.addEventListener('input', () => scheduleCalculation('war'));
+    if (el) el.addEventListener('input', calculateWar);
   });
   $('resetLevel').addEventListener('click', resetLevelTool);
   $('resetStamina').addEventListener('click', resetStaminaTool);
   $('resetWar').addEventListener('click', resetWarTool);
 
-  let themeSaveTimer = 0;
-  let themeFrame = 0;
-
   function setTheme(theme) {
     const isLight = theme === 'light';
     const nextTheme = isLight ? 'light' : 'dark';
-    const root = document.documentElement;
-    root.classList.add('theme-switching');
-    root.dataset.theme = nextTheme;
+    document.documentElement.dataset.theme = nextTheme;
     $('themeToggle').textContent = isLight ? '深色模式' : '淺色模式';
     $('themeToggle').setAttribute('aria-pressed', String(isLight));
     $('themeToggle').setAttribute('aria-label', isLight ? '深色模式' : '淺色模式');
-    if (themeSaveTimer) clearTimeout(themeSaveTimer);
-    themeSaveTimer = setTimeout(() => {
-      try {
-        localStorage.setItem('tos-theme', nextTheme);
-      } catch (error) {}
-    }, 0);
-    if (themeFrame) cancelAnimationFrame(themeFrame);
-    themeFrame = requestAnimationFrame(() => {
-      root.classList.remove('theme-switching');
-      themeFrame = 0;
-    });
+    try {
+      localStorage.setItem('tos-theme', nextTheme);
+    } catch (error) {}
   }
 
   let savedTheme = null;
