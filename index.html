@@ -150,7 +150,7 @@ h1 {
 
 .reset-switch {
   width: 100%;
-  margin: 10px 0 16px;
+  margin: 0 0 18px;
 }
 
 .reset-button {
@@ -581,7 +581,7 @@ input:not([type="checkbox"]).invalid, select.invalid {
   .theme-toggle { width: auto; flex: 0 0 auto; min-height: 38px; padding: 6px 12px; font-size: 0.8rem; border-radius: 10px; }
   h1 { padding-left: 10px; font-size: clamp(1.2rem, 5.2vw, 1.55rem); white-space: nowrap; }
   .tool-switch { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 6px; border-radius: 16px; }
-  .reset-switch { margin: 8px 0 14px; }
+  .reset-switch { margin: 0 0 14px; }
   .tool-tab { min-height: 54px; padding: 8px 6px; font-size: 0.92rem; }
   .tab-name { font-size: 0.98rem; }
   .tool-panel .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -668,13 +668,13 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
 
     <section class="tool-panel" id="teamCostToolPanel" role="tabpanel" aria-labelledby="teamCostTab" hidden>
       <section class="card input-card">
+        <div class="card-header">
+          <h2 class="card-title">召喚師等級與隊伍空間參考對照</h2>
+        </div>
         <div class="reset-switch">
           <button class="reset-button" id="resetTeamCost" type="button" aria-label="清空隊伍空間對照欄位">
             <span>輸入欄全部清空</span>
           </button>
-        </div>
-        <div class="card-header">
-          <h2 class="card-title">召喚師等級與隊伍空間參考對照</h2>
         </div>
         <div class="field-grid">
           <div class="field full">
@@ -700,13 +700,13 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
       <section class="layout" aria-label="召喚師等級計算">
         <div class="input-column">
           <section class="card input-card">
+            <div class="card-header">
+              <h2 class="card-title">召喚師等級計算</h2>
+            </div>
             <div class="reset-switch">
               <button class="reset-button" id="resetLevel" type="button" aria-label="清空召喚師等級計算欄位">
                 <span>輸入欄全部清空</span>
               </button>
-            </div>
-            <div class="card-header">
-              <h2 class="card-title">召喚師等級計算</h2>
             </div>
             <div class="field-grid">
               <div class="field-group-label">目前與目標等級</div>
@@ -820,13 +820,13 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     <section class="tool-panel" id="staminaToolPanel" role="tabpanel" aria-labelledby="staminaTab" hidden>
       <section class="layout" aria-label="體力恢復計算">
         <section class="card input-card">
+          <div class="card-header">
+            <h2 class="card-title">目前體力狀態</h2>
+          </div>
           <div class="reset-switch">
             <button class="reset-button" id="resetStamina" type="button" aria-label="清空體力恢復計算欄位">
               <span>輸入欄全部清空</span>
             </button>
-          </div>
-          <div class="card-header">
-            <h2 class="card-title">目前體力狀態</h2>
           </div>
           <div class="field-grid">
             <div class="field">
@@ -864,13 +864,13 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     <section class="tool-panel" id="warToolPanel" role="tabpanel" aria-labelledby="warTab" hidden>
       <section class="layout" aria-label="魔神戰功勳計算">
         <section class="card input-card">
+          <div class="card-header">
+            <h2 class="card-title">魔神戰功勳計算</h2>
+          </div>
           <div class="reset-switch">
             <button class="reset-button" id="resetWar" type="button" aria-label="清空魔神戰功勳計算欄位">
               <span>輸入欄全部清空</span>
             </button>
-          </div>
-          <div class="card-header">
-            <h2 class="card-title">魔神戰功勳計算</h2>
           </div>
           <div class="field-grid">
             <div class="field full">
