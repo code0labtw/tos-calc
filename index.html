@@ -97,7 +97,7 @@ h1 {
 
 .tool-switch {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
   padding: 6px;
   margin: 0;
@@ -225,7 +225,7 @@ h1 {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .card-title {
@@ -237,12 +237,13 @@ h1 {
 .field-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  align-items: start;
+  gap: 10px;
 }
 
 .field {
   display: grid;
-  gap: 7px;
+  gap: 5px;
 }
 
 .field.full { grid-column: 1 / -1; }
@@ -250,7 +251,7 @@ h1 {
 .field-grid .field > label:not(.checkbox-label):not(.group-label) {
   display: flex;
   align-items: flex-end;
-  min-height: 2.8em;
+  min-height: 2.2em;
 }
 
 label {
@@ -273,9 +274,19 @@ label {
   margin-top: 0;
 }
 
-.field-checkbox {
+.field-checkbox-group {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.checkbox-hint {
+  margin: 0;
+  padding-left: 30px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.5;
 }
 
 .checkbox-label {
@@ -402,9 +413,11 @@ input:not([type="checkbox"]).invalid, select.invalid {
 }
 
 .field-message {
-  min-height: 18px;
+  min-height: 1.15em;
+  line-height: 1.15;
   color: var(--red);
   font-size: 0.76rem;
+  overflow-wrap: anywhere;
 }
 
 .results {
@@ -567,12 +580,15 @@ input:not([type="checkbox"]).invalid, select.invalid {
   .hero { margin-bottom: 14px; gap: 8px; align-items: center; justify-content: space-between; }
   .theme-toggle { width: auto; flex: 0 0 auto; min-height: 38px; padding: 6px 12px; font-size: 0.8rem; border-radius: 10px; }
   h1 { padding-left: 10px; font-size: clamp(1.2rem, 5.2vw, 1.55rem); white-space: nowrap; }
-  .tool-switch { gap: 5px; padding: 5px; border-radius: 14px; }
+  .tool-switch { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 6px; border-radius: 16px; }
   .reset-switch { margin: 8px 0 14px; }
-  .tool-tab { min-height: 64px; padding: 8px 4px; font-size: 0.92rem; }
-  .tab-name { font-size: clamp(0.95rem, 4vw, 1.15rem); }
+  .tool-tab { min-height: 54px; padding: 8px 6px; font-size: 0.92rem; }
+  .tab-name { font-size: 0.98rem; }
   .tool-panel .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .tool-panel .field.full { grid-column: 1 / -1; }
+  .input-card { padding: 16px; }
+  .card-header { margin-bottom: 12px; }
+  #levelToolPanel .field-grid, #warToolPanel .field-grid { gap: 6px; }
   .reset-button { min-height: 50px; font-size: 1.12rem; }
   .aligned-result-row { grid-template-columns: minmax(0, 1fr) minmax(116px, 0.9fr); gap: 10px; padding: 12px 13px; }
   .aligned-result-head { padding: 10px 13px; }
@@ -639,6 +655,9 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
       <button class="tool-tab active" id="levelTab" type="button" role="tab" aria-selected="true" aria-controls="levelToolPanel">
         <span class="tab-name">召喚師等級</span>
       </button>
+      <button class="tool-tab" id="teamCostTab" type="button" role="tab" aria-selected="false" aria-controls="teamCostToolPanel">
+        <span class="tab-name">隊伍空間</span>
+      </button>
       <button class="tool-tab" id="staminaTab" type="button" role="tab" aria-selected="false" aria-controls="staminaToolPanel">
         <span class="tab-name">體力恢復</span>
       </button>
@@ -647,45 +666,45 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
       </button>
     </div>
 
-    <div class="reset-switch" role="group" aria-label="清空目前計算工具欄位">
-      <button class="reset-button" id="resetLevel" type="button" aria-label="清空召喚師等級計算欄位">
-        <span>輸入欄全部清空</span>
-      </button>
-      <button class="reset-button" id="resetStamina" type="button" aria-label="清空體力恢復計算欄位" hidden>
-        <span>輸入欄全部清空</span>
-      </button>
-      <button class="reset-button" id="resetWar" type="button" aria-label="清空魔神戰功勳計算欄位" hidden>
-        <span>輸入欄全部清空</span>
-      </button>
-    </div>
+    <section class="tool-panel" id="teamCostToolPanel" role="tabpanel" aria-labelledby="teamCostTab" hidden>
+      <section class="card input-card">
+        <div class="reset-switch">
+          <button class="reset-button" id="resetTeamCost" type="button" aria-label="清空隊伍空間對照欄位">
+            <span>輸入欄全部清空</span>
+          </button>
+        </div>
+        <div class="card-header">
+          <h2 class="card-title">召喚師等級與隊伍空間參考對照</h2>
+        </div>
+        <div class="field-grid">
+          <div class="field full">
+            <label for="teamCostInput">隊伍空間 Cost</label>
+            <input id="teamCostInput" type="number" min="0" step="1" inputmode="numeric">
+            <div class="field-message" id="teamCostInputMessage"></div>
+          </div>
+        </div>
+        <div class="aligned-results-table" role="table" aria-label="隊伍空間對應等級結果">
+          <div class="aligned-result-row aligned-result-head" role="row">
+            <div role="columnheader">項目</div>
+            <div role="columnheader" style="text-align: right;"></div>
+          </div>
+          <div class="aligned-result-row" role="row">
+            <div class="aligned-result-label" role="rowheader">召喚師等級</div>
+            <div class="aligned-result-value" id="teamCostLevelResult" role="cell">—</div>
+          </div>
+        </div>
+      </section>
+    </section>
 
     <section class="tool-panel" id="levelToolPanel" role="tabpanel" aria-labelledby="levelTab">
       <section class="layout" aria-label="召喚師等級計算">
         <div class="input-column">
           <section class="card input-card">
-            <div class="card-header">
-              <h2 class="card-title">召喚師等級與隊伍空間參考對照</h2>
+            <div class="reset-switch">
+              <button class="reset-button" id="resetLevel" type="button" aria-label="清空召喚師等級計算欄位">
+                <span>輸入欄全部清空</span>
+              </button>
             </div>
-            <div class="field-grid">
-              <div class="field full">
-                <label for="teamCostInput">隊伍空間 Cost</label>
-                <input id="teamCostInput" type="number" min="0" step="1" inputmode="numeric">
-                <div class="field-message" id="teamCostInputMessage"></div>
-              </div>
-            </div>
-            <div class="aligned-results-table" role="table" aria-label="隊伍空間對應等級結果">
-              <div class="aligned-result-row aligned-result-head" role="row">
-                <div role="columnheader">結果項目</div>
-                <div role="columnheader" style="text-align: right;">數值</div>
-              </div>
-              <div class="aligned-result-row" role="row">
-                <div class="aligned-result-label" role="rowheader">召喚師等級</div>
-                <div class="aligned-result-value" id="teamCostLevelResult" role="cell">—</div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card input-card">
             <div class="card-header">
               <h2 class="card-title">召喚師等級計算</h2>
             </div>
@@ -720,16 +739,16 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
               </div>
               <div class="field-group-label">每場刷關資訊</div>
               <div class="field" id="stageExpField">
-                <label for="stageExp">單場關卡獲得 EXP</label>
+                <label for="stageExp">每場經驗</label>
                 <input id="stageExp" type="number" min="0" step="1" inputmode="numeric">
                 <div class="field-message" id="stageExpMessage"></div>
               </div>
               <div class="field" id="stageStaminaField">
-                <label for="stageStamina">單場關卡消耗體力</label>
+                <label for="stageStamina">每場體力</label>
                 <input id="stageStamina" type="number" min="0" step="1" inputmode="numeric">
                 <div class="field-message" id="stageStaminaMessage"></div>
               </div>
-              <div class="field full field-checkbox">
+              <div class="field full field-checkbox-group">
                 <label for="useExpPotion" class="checkbox-label">
                   <input id="useExpPotion" type="checkbox" class="sr-checkbox">
                   <span class="custom-checkbox" aria-hidden="true">
@@ -737,14 +756,28 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
                       <path d="M3.5 8.5L6.5 11.5L12.5 4.5"/>
                     </svg>
                   </span>
-                  <span>使用經驗值瓶（此單場 EXP 已包含經驗值瓶加成 1.5 倍，瓶子用完後恢復無加成 EXP 計算）</span>
+                  <span>已使用經驗值瓶</span>
                 </label>
+                <p class="checkbox-hint">上方填寫的「每場經驗」，是使用經驗瓶後加成的經驗</p>
               </div>
               <div class="field full" id="expPotionCountField" hidden>
                 <label for="expPotionCount">持有經驗值瓶數量（必填）</label>
                 <input id="expPotionCount" type="number" min="1" step="1" inputmode="numeric" placeholder="請輸入經驗值瓶數量">
                 <div class="field-message" id="expPotionCountMessage"></div>
               </div>
+              <div class="field full field-checkbox-group">
+                <label for="noExpPotion" class="checkbox-label">
+                  <input id="noExpPotion" type="checkbox" class="sr-checkbox">
+                  <span class="custom-checkbox" aria-hidden="true">
+                    <svg class="check-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3.5 8.5L6.5 11.5L12.5 4.5"/>
+                    </svg>
+                  </span>
+                  <span>未使用經驗瓶</span>
+                </label>
+                <p class="checkbox-hint">上方填寫的「每場經驗」，是沒有使用經驗瓶加成的經驗</p>
+              </div>
+              <div class="field-message" id="expPotionChoiceMessage"></div>
             </div>
           </section>
         </div>
@@ -752,8 +785,8 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
         <section class="results" aria-live="polite">
           <div class="aligned-results-table" role="table" aria-label="召喚師等級計算結果">
             <div class="aligned-result-row aligned-result-head" role="row">
-              <div role="columnheader">結果項目</div>
-              <div role="columnheader" style="text-align: right;">數值</div>
+              <div role="columnheader">項目</div>
+              <div role="columnheader" style="text-align: right;"></div>
             </div>
             <div class="aligned-result-row" id="progressRow" role="row">
               <div class="aligned-result-label" id="progressLabel" role="rowheader">升級進度</div>
@@ -768,10 +801,7 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
               <div class="aligned-result-value" id="stageCount" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
-              <div class="aligned-result-copy" role="rowheader">
-                <div class="aligned-result-label">需回體次數（約）</div>
-                <div class="metric-note">逐級以當前體力上限計算，並扣除每次升等時免費回滿之體力</div>
-              </div>
+              <div class="aligned-result-label" role="rowheader">預估回體次數</div>
               <div class="aligned-result-value" id="staminaRecoverCount" role="cell">—</div>
             </div>
             <div class="aligned-result-row" role="row">
@@ -790,6 +820,11 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     <section class="tool-panel" id="staminaToolPanel" role="tabpanel" aria-labelledby="staminaTab" hidden>
       <section class="layout" aria-label="體力恢復計算">
         <section class="card input-card">
+          <div class="reset-switch">
+            <button class="reset-button" id="resetStamina" type="button" aria-label="清空體力恢復計算欄位">
+              <span>輸入欄全部清空</span>
+            </button>
+          </div>
           <div class="card-header">
             <h2 class="card-title">目前體力狀態</h2>
           </div>
@@ -810,8 +845,8 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
         <section class="results" aria-live="polite">
           <div class="stamina-results-table" role="table" aria-label="體力恢復計算結果">
             <div class="stamina-result-row stamina-result-head" role="row">
-              <div role="columnheader">結果項目</div>
-              <div role="columnheader" style="text-align: right;">數值</div>
+              <div role="columnheader">項目</div>
+              <div role="columnheader" style="text-align: right;"></div>
             </div>
             <div class="stamina-result-row" role="row">
               <div class="stamina-result-label" role="rowheader">恢復時間</div>
@@ -829,6 +864,11 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     <section class="tool-panel" id="warToolPanel" role="tabpanel" aria-labelledby="warTab" hidden>
       <section class="layout" aria-label="魔神戰功勳計算">
         <section class="card input-card">
+          <div class="reset-switch">
+            <button class="reset-button" id="resetWar" type="button" aria-label="清空魔神戰功勳計算欄位">
+              <span>輸入欄全部清空</span>
+            </button>
+          </div>
           <div class="card-header">
             <h2 class="card-title">魔神戰功勳計算</h2>
           </div>
@@ -849,7 +889,6 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
                 <option value="attack">進攻</option>
                 <option value="defense" selected>防守</option>
               </select>
-              <div class="field-message" id="warTypeMessage"></div>
             </div>
             <div class="field">
               <label for="warBonus">加成（%）</label>
@@ -872,8 +911,8 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
         <section class="results" aria-live="polite">
           <div class="aligned-results-table" role="table" aria-label="魔神戰功勳計算結果">
             <div class="aligned-result-row aligned-result-head" role="row">
-              <div role="columnheader">結果項目</div>
-              <div role="columnheader" style="text-align: right;">數值</div>
+              <div role="columnheader">項目</div>
+              <div role="columnheader" style="text-align: right;"></div>
             </div>
             <div class="aligned-result-row" role="row">
               <div class="aligned-result-label" role="rowheader">所需場次</div>
@@ -896,7 +935,7 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
             </div>
             <div class="aligned-result-row" role="row">
               <div class="aligned-result-copy" role="rowheader">
-                <div class="aligned-result-label">需吃石次數（約）</div>
+                <div class="aligned-result-label">需吃石次數</div>
                 <div class="metric-note">每顆魔法石回復 8 點</div>
               </div>
               <div class="aligned-result-value" id="warStoneCount" role="cell">—</div>
@@ -949,7 +988,8 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     hourCycle: 'h23'
   });
 
-  const levelFields = ['currentLevel', 'currentExp', 'targetLevel', 'targetStageCount', 'stageExp', 'stageStamina', 'teamCostInput', 'expPotionCount'];
+  const levelFields = ['currentLevel', 'currentExp', 'targetLevel', 'targetStageCount', 'stageExp', 'stageStamina', 'expPotionCount', 'expPotionChoice'];
+  const teamCostFields = ['teamCostInput'];
   const staminaFields = ['currentStamina', 'currentStaminaMax'];
   const warFields = ['warBonus', 'warMerit', 'warCountdownHours'];
   const FREE_WAR_POINTS = 16;
@@ -1045,7 +1085,6 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
   }
 
   function resetLevelResults() {
-    updateTeamCostLookup();
     setMetric('currentProgress', '—');
     setMetric('resolvedTargetLevel', '—');
     setMetric('stageCount', '—');
@@ -1096,7 +1135,12 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     return potionStages * boostedExp + normalStages * baseExp;
   }
 
-  function updateTeamCostLookup() {
+  function resetTeamCostResult() {
+    setMetric('teamCostLevelResult', '—');
+  }
+
+  function calculateTeamCost() {
+    clearMessages(teamCostFields);
     const cost = readNumber('teamCostInput');
     if (!Number.isFinite(cost)) {
       setMetric('teamCostLevelResult', '—');
@@ -1125,7 +1169,7 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     $('targetLevelField').hidden = mode !== 'level';
     $('targetStageField').hidden = mode !== 'stage';
     $('stageCountRow').hidden = (mode === 'stage');
-    
+
     if (mode === 'stage') {
       $('progressLabel').textContent = '目標等級進度條';
     } else {
@@ -1199,13 +1243,13 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
 
   function calculateLevel() {
     clearMessages(levelFields);
-    updateTeamCostLookup();
     const currentLevel = readNumber('currentLevel');
     const currentExp = readNumber('currentExp');
     const stageExp = readNumber('stageExp');
     const stageStamina = readNumber('stageStamina');
 
     const usePotion = $('useExpPotion').checked;
+    const noPotion = $('noExpPotion').checked;
     const potionCount = usePotion ? readNumber('expPotionCount') : NaN;
 
     if ([currentLevel, currentExp, stageExp, stageStamina].some(value => !Number.isFinite(value))) {
@@ -1223,11 +1267,15 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
       hasError = true;
     }
     if (stageExp <= 0) {
-      setMessage('stageExp', '單場關卡獲得 EXP 必須大於 0。');
+      setMessage('stageExp', '每場經驗必須大於 0。');
       hasError = true;
     }
     if (stageStamina < 0) {
-      setMessage('stageStamina', '單場關卡消耗體力不可小於 0。');
+      setMessage('stageStamina', '每場體力不可小於 0。');
+      hasError = true;
+    }
+    if (!usePotion && !noPotion) {
+      setMessage('expPotionChoice', '請勾選「已使用經驗值瓶」或「未使用經驗瓶」，確認每場經驗是否已包含加成。');
       hasError = true;
     }
     if (usePotion) {
@@ -1266,7 +1314,7 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
       const gainedExp = totalExpFromStages(targetStageCount, baseExp, boostedExp, usePotion, potionCount);
       const finalTotalExp = currentTotalExp + gainedExp;
       targetLevel = Math.max(currentLevel, levelIndexForTotalExp(finalTotalExp));
-      
+
       const target = levels[targetLevel - 1];
       if (!target) {
         resetLevelResults();
@@ -1401,6 +1449,7 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     clearFieldValues(levelFields);
     clearMessages(levelFields);
     $('useExpPotion').checked = false;
+    $('noExpPotion').checked = false;
     toggleExpPotionField();
     setTargetMode('level');
     resetLevelResults();
@@ -1418,6 +1467,19 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
       }
       $('expPotionCount').focus();
     }
+  }
+
+  function setExpPotionChoice(usePotion) {
+    $('useExpPotion').checked = usePotion === true;
+    $('noExpPotion').checked = usePotion === false;
+    setMessage('expPotionChoice', '');
+    toggleExpPotionField();
+  }
+
+  function resetTeamCostTool() {
+    clearFieldValues(teamCostFields);
+    clearMessages(teamCostFields);
+    resetTeamCostResult();
   }
 
   function resetStaminaTool() {
@@ -1498,23 +1560,26 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     }
     activeTool = tool;
     const isLevel = tool === 'level';
+    const isTeamCost = tool === 'teamCost';
     const isStamina = tool === 'stamina';
+    const isWar = tool === 'war';
     $('levelToolPanel').hidden = !isLevel;
+    $('teamCostToolPanel').hidden = !isTeamCost;
     $('staminaToolPanel').hidden = !isStamina;
-    $('warToolPanel').hidden = tool !== 'war';
+    $('warToolPanel').hidden = !isWar;
     $('levelTab').classList.toggle('active', isLevel);
     $('levelTab').setAttribute('aria-selected', String(isLevel));
+    $('teamCostTab').classList.toggle('active', isTeamCost);
+    $('teamCostTab').setAttribute('aria-selected', String(isTeamCost));
     $('staminaTab').classList.toggle('active', isStamina);
     $('staminaTab').setAttribute('aria-selected', String(isStamina));
-    $('warTab').classList.toggle('active', tool === 'war');
-    $('warTab').setAttribute('aria-selected', String(tool === 'war'));
-    $('resetLevel').hidden = !isLevel;
-    $('resetStamina').hidden = !isStamina;
-    $('resetWar').hidden = tool !== 'war';
+    $('warTab').classList.toggle('active', isWar);
+    $('warTab').setAttribute('aria-selected', String(isWar));
     if (calculateByTool[tool]) calculateByTool[tool]();
   }
 
   $('levelTab').addEventListener('click', () => switchTool('level'));
+  $('teamCostTab').addEventListener('click', () => switchTool('teamCost'));
   $('staminaTab').addEventListener('click', () => switchTool('stamina'));
   $('warTab').addEventListener('click', () => switchTool('war'));
   $('warAttackTab').addEventListener('click', () => {
@@ -1526,7 +1591,7 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     calculateWar();
   });
 
-  const calculateByTool = { level: calculateLevel, stamina: calculateStamina, war: calculateWar };
+  const calculateByTool = { level: calculateLevel, teamCost: calculateTeamCost, stamina: calculateStamina, war: calculateWar };
   let activeTool = '';
 
   levelFields.forEach(id => {
@@ -1534,7 +1599,12 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     if (el) el.addEventListener('input', calculateLevel);
   });
   $('useExpPotion').addEventListener('change', () => {
-    toggleExpPotionField();
+    if ($('useExpPotion').checked) setExpPotionChoice(true);
+    else toggleExpPotionField();
+    calculateLevel();
+  });
+  $('noExpPotion').addEventListener('change', () => {
+    if ($('noExpPotion').checked) setExpPotionChoice(false);
     calculateLevel();
   });
   $('targetModeLevelTab').addEventListener('click', () => {
@@ -1545,6 +1615,10 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     setTargetMode('stage');
     calculateLevel();
   });
+  teamCostFields.forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener('input', calculateTeamCost);
+  });
   staminaFields.forEach(id => {
     const el = $(id);
     if (el) el.addEventListener('input', calculateStamina);
@@ -1554,6 +1628,7 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     if (el) el.addEventListener('input', calculateWar);
   });
   $('resetLevel').addEventListener('click', resetLevelTool);
+  $('resetTeamCost').addEventListener('click', resetTeamCostTool);
   $('resetStamina').addEventListener('click', resetStaminaTool);
   $('resetWar').addEventListener('click', resetWarTool);
 
