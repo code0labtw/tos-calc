@@ -413,7 +413,7 @@ input:not([type="checkbox"]).invalid, select.invalid {
 }
 
 .field-message {
-  min-height: 1.15em;
+  min-height: 0;
   line-height: 1.15;
   color: var(--red);
   font-size: 0.76rem;
@@ -1356,7 +1356,7 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
       return;
     }
     if (targetLevel < currentLevel) {
-      setMessage('targetLevel', '目標等級不可低於目前等級。');
+      $('targetLevel').classList.add('invalid');
       resetLevelResults();
       return;
     }
