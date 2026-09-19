@@ -425,7 +425,7 @@ input:not([type="checkbox"]).invalid, select.invalid {
   gap: 12px;
 }
 
-.aligned-results-table {
+.result-table {
   display: grid;
   gap: 1px;
   overflow: hidden;
@@ -434,7 +434,7 @@ input:not([type="checkbox"]).invalid, select.invalid {
   background: var(--line);
 }
 
-.aligned-result-row {
+.result-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(160px, 0.9fr);
   align-items: center;
@@ -443,8 +443,8 @@ input:not([type="checkbox"]).invalid, select.invalid {
   background: #36393f;
 }
 
-.aligned-result-row:nth-child(odd) { background: #3e4147; }
-.aligned-result-head {
+.result-row:nth-child(odd) { background: #3e4147; }
+.result-head {
   background: #4a4d55 !important;
   color: #ececff;
   font-size: 0.76rem;
@@ -453,15 +453,15 @@ input:not([type="checkbox"]).invalid, select.invalid {
   text-transform: uppercase;
 }
 
-.aligned-result-label {
+.result-label {
   color: #e2e3e6;
   font-size: 0.86rem;
   font-weight: 700;
 }
 
-.aligned-result-copy { min-width: 0; }
+.result-copy { min-width: 0; }
 
-.aligned-result-value {
+.result-value {
   min-width: 0;
   color: var(--text);
   text-align: right;
@@ -472,56 +472,13 @@ input:not([type="checkbox"]).invalid, select.invalid {
   overflow-wrap: anywhere;
 }
 
+.result-value--lg { font-size: clamp(1.1rem, 2.5vw, 1.55rem); }
+
 .metric-note {
   min-height: 24px;
   margin-top: 3px;
   color: #8fa8bf;
   font-size: 0.76rem;
-}
-
-.stamina-results-table {
-  display: grid;
-  gap: 1px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--line);
-}
-
-.stamina-result-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.9fr);
-  align-items: center;
-  gap: 20px;
-  padding: 16px 18px;
-  background: #36393f;
-}
-
-.stamina-result-row:nth-child(odd) { background: #3e4147; }
-.stamina-result-head {
-  background: #4a4d55 !important;
-  color: #ececff;
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.stamina-result-label {
-  color: #e2e3e6;
-  font-size: 0.86rem;
-  font-weight: 700;
-}
-
-.stamina-result-value {
-  min-width: 0;
-  color: var(--text);
-  text-align: right;
-  font-size: clamp(1.1rem, 2.5vw, 1.55rem);
-  font-weight: 820;
-  line-height: 1.25;
-  font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
 }
 
 .war-type-tabs {
@@ -590,14 +547,10 @@ input:not([type="checkbox"]).invalid, select.invalid {
   .card-header { margin-bottom: 12px; }
   #levelToolPanel .field-grid, #warToolPanel .field-grid { gap: 6px; }
   .reset-button { min-height: 50px; font-size: 1.12rem; }
-  .aligned-result-row { grid-template-columns: minmax(0, 1fr) minmax(116px, 0.9fr); gap: 10px; padding: 12px 13px; }
-  .aligned-result-head { padding: 10px 13px; }
-  .aligned-result-label { font-size: 0.88rem; }
-  .aligned-result-value { font-size: 1.08rem; }
-  .stamina-result-row { grid-template-columns: minmax(0, 1fr) minmax(116px, 0.9fr); gap: 10px; padding: 13px; }
-  .stamina-result-head { padding: 10px 13px; }
-  .stamina-result-label { font-size: 0.88rem; }
-  .stamina-result-value { font-size: 1.08rem; }
+  .result-row { grid-template-columns: minmax(0, 1fr) minmax(116px, 0.9fr); gap: 10px; padding: 12px 13px; }
+  .result-head { padding: 10px 13px; }
+  .result-label { font-size: 0.88rem; }
+  .result-value { font-size: 1.08rem; }
 }
 
 html[data-theme="light"] {
@@ -626,16 +579,11 @@ html[data-theme="light"] .target-mode-tab { border-color: rgba(15, 23, 42, 0.14)
 html[data-theme="light"] .target-mode-tab.active { border-color: transparent; background: #6e70df; color: #ffffff; }
 html[data-theme="light"] .reset-button { border-color: rgba(2, 132, 199, 0.18); box-shadow: none; }
 html[data-theme="light"] .tool-panel .input-card { border-top-color: #6e70df; }
-html[data-theme="light"] .aligned-result-row { background: #f7f8fa; }
-html[data-theme="light"] .aligned-result-row:nth-child(odd) { background: #FAF9F6; }
-html[data-theme="light"] .aligned-result-head { background: #e0f2fe !important; color: #075985; }
-html[data-theme="light"] .aligned-result-label { color: #334155; }
-html[data-theme="light"] .aligned-result-value { color: #0f172a; }
-html[data-theme="light"] .stamina-result-row { background: #f7f8fa; }
-html[data-theme="light"] .stamina-result-row:nth-child(odd) { background: #FAF9F6; }
-html[data-theme="light"] .stamina-result-head { background: #e0f2fe !important; color: #075985; }
-html[data-theme="light"] .stamina-result-label { color: #334155; }
-html[data-theme="light"] .stamina-result-value { color: #0f172a; }
+html[data-theme="light"] .result-row { background: #f7f8fa; }
+html[data-theme="light"] .result-row:nth-child(odd) { background: #FAF9F6; }
+html[data-theme="light"] .result-head { background: #e0f2fe !important; color: #075985; }
+html[data-theme="light"] .result-label { color: #334155; }
+html[data-theme="light"] .result-value { color: #0f172a; }
 html[data-theme="light"] .war-type-tab { border-color: rgba(15, 23, 42, 0.14); background: #FAF9F6; color: #475569; }
 html[data-theme="light"] .war-type-tab.active { border-color: transparent; background: #6e70df; color: #ffffff; }
 html[data-theme="light"] .custom-checkbox { border-color: rgba(15, 23, 42, 0.28); background: #FAF9F6; color: #ffffff; }
@@ -683,14 +631,14 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
             <div class="field-message" id="teamCostInputMessage"></div>
           </div>
         </div>
-        <div class="aligned-results-table" role="table" aria-label="隊伍空間對應等級結果">
-          <div class="aligned-result-row aligned-result-head" role="row">
+        <div class="result-table" role="table" aria-label="隊伍空間對應等級結果">
+          <div class="result-row result-head" role="row">
             <div role="columnheader">項目</div>
             <div role="columnheader" style="text-align: right;"></div>
           </div>
-          <div class="aligned-result-row" role="row">
-            <div class="aligned-result-label" role="rowheader">召喚師等級</div>
-            <div class="aligned-result-value" id="teamCostLevelResult" role="cell">—</div>
+          <div class="result-row" role="row">
+            <div class="result-label" role="rowheader">召喚師等級</div>
+            <div class="result-value" id="teamCostLevelResult" role="cell">—</div>
           </div>
         </div>
       </section>
@@ -783,34 +731,34 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
         </div>
 
         <section class="results" aria-live="polite">
-          <div class="aligned-results-table" role="table" aria-label="召喚師等級計算結果">
-            <div class="aligned-result-row aligned-result-head" role="row">
+          <div class="result-table" role="table" aria-label="召喚師等級計算結果">
+            <div class="result-row result-head" role="row">
               <div role="columnheader">項目</div>
               <div role="columnheader" style="text-align: right;"></div>
             </div>
-            <div class="aligned-result-row" id="progressRow" role="row">
-              <div class="aligned-result-label" id="progressLabel" role="rowheader">升級進度</div>
-              <div class="aligned-result-value" id="currentProgress" role="cell">—</div>
+            <div class="result-row" id="progressRow" role="row">
+              <div class="result-label" id="progressLabel" role="rowheader">升級進度</div>
+              <div class="result-value" id="currentProgress" role="cell">—</div>
             </div>
-            <div class="aligned-result-row" id="resolvedTargetLevelRow" role="row">
-              <div class="aligned-result-label" role="rowheader">目標等級</div>
-              <div class="aligned-result-value" id="resolvedTargetLevel" role="cell">—</div>
+            <div class="result-row" id="resolvedTargetLevelRow" role="row">
+              <div class="result-label" role="rowheader">目標等級</div>
+              <div class="result-value" id="resolvedTargetLevel" role="cell">—</div>
             </div>
-            <div class="aligned-result-row" id="stageCountRow" role="row">
-              <div class="aligned-result-label" role="rowheader">所需場次</div>
-              <div class="aligned-result-value" id="stageCount" role="cell">—</div>
+            <div class="result-row" id="stageCountRow" role="row">
+              <div class="result-label" role="rowheader">所需場次</div>
+              <div class="result-value" id="stageCount" role="cell">—</div>
             </div>
-            <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">預估回體次數</div>
-              <div class="aligned-result-value" id="staminaRecoverCount" role="cell">—</div>
+            <div class="result-row" role="row">
+              <div class="result-label" role="rowheader">預估回體次數</div>
+              <div class="result-value" id="staminaRecoverCount" role="cell">—</div>
             </div>
-            <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">目標體力上限</div>
-              <div class="aligned-result-value" id="targetStaminaMax" role="cell">—</div>
+            <div class="result-row" role="row">
+              <div class="result-label" role="rowheader">目標體力上限</div>
+              <div class="result-value" id="targetStaminaMax" role="cell">—</div>
             </div>
-            <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">目標隊伍 Cost</div>
-              <div class="aligned-result-value" id="targetTeamCost" role="cell">—</div>
+            <div class="result-row" role="row">
+              <div class="result-label" role="rowheader">目標隊伍 Cost</div>
+              <div class="result-value" id="targetTeamCost" role="cell">—</div>
             </div>
           </div>
         </section>
@@ -843,18 +791,18 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
         </section>
 
         <section class="results" aria-live="polite">
-          <div class="stamina-results-table" role="table" aria-label="體力恢復計算結果">
-            <div class="stamina-result-row stamina-result-head" role="row">
+          <div class="result-table" role="table" aria-label="體力恢復計算結果">
+            <div class="result-row result-head" role="row">
               <div role="columnheader">項目</div>
               <div role="columnheader" style="text-align: right;"></div>
             </div>
-            <div class="stamina-result-row" role="row">
-              <div class="stamina-result-label" role="rowheader">恢復時間</div>
-              <div class="stamina-result-value" id="recoveryTime" role="cell">—</div>
+            <div class="result-row" role="row">
+              <div class="result-label" role="rowheader">恢復時間</div>
+              <div class="result-value result-value--lg" id="recoveryTime" role="cell">—</div>
             </div>
-            <div class="stamina-result-row" role="row">
-              <div class="stamina-result-label" role="rowheader">預估回滿時間</div>
-              <div class="stamina-result-value" id="staminaFullAt" role="cell">—</div>
+            <div class="result-row" role="row">
+              <div class="result-label" role="rowheader">預估回滿時間</div>
+              <div class="result-value result-value--lg" id="staminaFullAt" role="cell">—</div>
             </div>
           </div>
         </section>
@@ -909,40 +857,40 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
         </section>
 
         <section class="results" aria-live="polite">
-          <div class="aligned-results-table" role="table" aria-label="魔神戰功勳計算結果">
-            <div class="aligned-result-row aligned-result-head" role="row">
+          <div class="result-table" role="table" aria-label="魔神戰功勳計算結果">
+            <div class="result-row result-head" role="row">
               <div role="columnheader">項目</div>
               <div role="columnheader" style="text-align: right;"></div>
             </div>
-            <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">所需場次</div>
-              <div class="aligned-result-value" id="warStageCount" role="cell">—</div>
+            <div class="result-row" role="row">
+              <div class="result-label" role="rowheader">所需場次</div>
+              <div class="result-value" id="warStageCount" role="cell">—</div>
             </div>
-            <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">單場功勳（含加成）</div>
-              <div class="aligned-result-value" id="warMeritPerBattle" role="cell">—</div>
+            <div class="result-row" role="row">
+              <div class="result-label" role="rowheader">單場功勳（含加成）</div>
+              <div class="result-value" id="warMeritPerBattle" role="cell">—</div>
             </div>
-            <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">總共消耗點數</div>
-              <div class="aligned-result-value" id="warPointCost" role="cell">—</div>
+            <div class="result-row" role="row">
+              <div class="result-label" role="rowheader">總共消耗點數</div>
+              <div class="result-value" id="warPointCost" role="cell">—</div>
             </div>
-            <div class="aligned-result-row" role="row">
-              <div class="aligned-result-copy" role="rowheader">
-                <div class="aligned-result-label">自然回復點數</div>
+            <div class="result-row" role="row">
+              <div class="result-copy" role="rowheader">
+                <div class="result-label">自然回復點數</div>
                 <div class="metric-note">跨日給予每日 16 點</div>
               </div>
-              <div class="aligned-result-value" id="warFreePoints" role="cell">—</div>
+              <div class="result-value" id="warFreePoints" role="cell">—</div>
             </div>
-            <div class="aligned-result-row" role="row">
-              <div class="aligned-result-copy" role="rowheader">
-                <div class="aligned-result-label">需吃石次數</div>
+            <div class="result-row" role="row">
+              <div class="result-copy" role="rowheader">
+                <div class="result-label">需吃石次數</div>
                 <div class="metric-note">每顆魔法石回復 8 點</div>
               </div>
-              <div class="aligned-result-value" id="warStoneCount" role="cell">—</div>
+              <div class="result-value" id="warStoneCount" role="cell">—</div>
             </div>
-            <div class="aligned-result-row" role="row">
-              <div class="aligned-result-label" role="rowheader">預計結束時間</div>
-              <div class="aligned-result-value" id="warCountdownEnd" role="cell">—</div>
+            <div class="result-row" role="row">
+              <div class="result-label" role="rowheader">預計結束時間</div>
+              <div class="result-value" id="warCountdownEnd" role="cell">—</div>
             </div>
           </div>
         </section>
@@ -1084,13 +1032,12 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
     fieldIds.forEach(id => setMessage(id, ''));
   }
 
+  function resetMetrics(ids) {
+    ids.forEach(id => setMetric(id, '—'));
+  }
+
   function resetLevelResults() {
-    setMetric('currentProgress', '—');
-    setMetric('resolvedTargetLevel', '—');
-    setMetric('stageCount', '—');
-    setMetric('staminaRecoverCount', '—');
-    setMetric('targetStaminaMax', '—');
-    setMetric('targetTeamCost', '—');
+    resetMetrics(['currentProgress', 'resolvedTargetLevel', 'stageCount', 'staminaRecoverCount', 'targetStaminaMax', 'targetTeamCost']);
   }
 
   function findLevelForTeamCost(cost) {
@@ -1136,7 +1083,7 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
   }
 
   function resetTeamCostResult() {
-    setMetric('teamCostLevelResult', '—');
+    resetMetrics(['teamCostLevelResult']);
   }
 
   function calculateTeamCost() {
@@ -1392,8 +1339,7 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
   }
 
   function resetStaminaResult() {
-    $('recoveryTime').textContent = '—';
-    $('staminaFullAt').textContent = '—';
+    resetMetrics(['recoveryTime', 'staminaFullAt']);
   }
 
   function calculateStamina() {
@@ -1430,12 +1376,7 @@ html[data-theme="light"] .sr-checkbox:checked + .custom-checkbox { background: #
   }
 
   function resetWarResults() {
-    $('warStageCount').textContent = '—';
-    $('warMeritPerBattle').textContent = '—';
-    $('warPointCost').textContent = '—';
-    $('warFreePoints').textContent = '—';
-    $('warStoneCount').textContent = '—';
-    $('warCountdownEnd').textContent = '—';
+    resetMetrics(['warStageCount', 'warMeritPerBattle', 'warPointCost', 'warFreePoints', 'warStoneCount', 'warCountdownEnd']);
   }
 
   function clearFieldValues(fieldIds) {
