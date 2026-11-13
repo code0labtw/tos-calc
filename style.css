@@ -87,6 +87,12 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+button,
+.choice-card {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -169,11 +175,6 @@ input[type="number"] {
   cursor: pointer;
 }
 
-.action-btn:hover {
-  background: var(--btn-hover);
-  color: var(--ink);
-}
-
 .action-btn:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
@@ -221,10 +222,6 @@ input[type="number"] {
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-}
-
-.mobile-tab:hover {
-  color: var(--ink);
 }
 
 .mobile-tab.active,
@@ -343,10 +340,6 @@ input[type="number"] {
   font: inherit;
   text-align: center;
   cursor: pointer;
-}
-
-.seg-btn:hover {
-  color: var(--ink);
 }
 
 .seg-btn.active {
@@ -468,10 +461,6 @@ input[type="number"] {
   border: 1px solid var(--well-border);
   background: var(--well);
   cursor: pointer;
-}
-
-.choice-card:hover {
-  background: var(--well-hover);
 }
 
 .choice-card.is-selected {
@@ -810,11 +799,6 @@ input[type="number"] {
     cursor: pointer;
   }
 
-  .rail-tab:hover {
-    background: var(--rail-hover);
-    color: var(--ink);
-  }
-
   .rail-tab.active {
     border-color: var(--rail-active-border);
     background: var(--card);
@@ -860,5 +844,27 @@ input[type="number"] {
 
   .result-row-value {
     font-size: 1.25rem;
+  }
+}
+
+/* Hover only for mouse pointers */
+@media (hover: hover) and (pointer: fine) {
+  .action-btn:hover {
+    background: var(--btn-hover);
+    color: var(--ink);
+  }
+
+  .mobile-tab:not(.active):hover,
+  .seg-btn:not(.active):hover {
+    color: var(--ink);
+  }
+
+  .choice-card:not(.is-selected):hover {
+    background: var(--well-hover);
+  }
+
+  .rail-tab:not(.active):hover {
+    background: var(--rail-hover);
+    color: var(--ink);
   }
 }
