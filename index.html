@@ -9,7 +9,7 @@
 </head>
 <body>
   <main class="shell">
-    <header><h1>神魔之塔計算工具</h1><button class="reset-button" id="theme" type="button">切換深淺</button></header>
+    <header><h1>神魔之塔計算工具</h1><button class="reset-button" id="resetAll" type="button">全部清空</button><button class="reset-button" id="theme" type="button">切換深淺</button></header>
 
     <div class="tool-switch" role="tablist" aria-label="選擇計算工具">
       <button class="tool-tab active" id="levelTab" type="button" role="tab" aria-selected="true" aria-controls="levelToolPanel">
@@ -29,11 +29,6 @@
     <section class="tool-panel" id="teamCostToolPanel" role="tabpanel" aria-labelledby="teamCostTab" hidden>
       <section class="card input-card">
           <h2>召喚師等級與隊伍空間參考對照</h2>
-        <div class="reset-switch">
-          <button class="reset-button" id="resetTeamCost" type="button" aria-label="清空隊伍空間對照欄位">
-            全部清空
-          </button>
-        </div>
         <div class="field-grid">
           <div class="field full">
             <label for="teamCostInput">隊伍空間 Cost</label>
@@ -55,11 +50,6 @@
         <div class="input-column">
           <section class="card input-card">
           <h2>召喚師等級計算</h2>
-            <div class="reset-switch">
-              <button class="reset-button" id="resetLevel" type="button" aria-label="清空召喚師等級計算欄位">
-                全部清空
-              </button>
-            </div>
             <div class="field-grid">
               <div class="field-group-label">目前與目標等級</div>
               <div class="field full">
@@ -159,11 +149,6 @@
       <section class="layout" aria-label="體力恢復計算">
         <section class="card input-card">
           <h2>目前體力狀態</h2>
-          <div class="reset-switch">
-            <button class="reset-button" id="resetStamina" type="button" aria-label="清空體力恢復計算欄位">
-              全部清空
-            </button>
-          </div>
           <div class="field-grid">
             <div class="field">
               <label for="currentStamina">目前剩餘體力</label>
@@ -197,11 +182,6 @@
       <section class="layout" aria-label="魔神戰功勳計算">
         <section class="card input-card">
           <h2>魔神戰功勳計算</h2>
-          <div class="reset-switch">
-            <button class="reset-button" id="resetWar" type="button" aria-label="清空魔神戰功勳計算欄位">
-              全部清空
-            </button>
-          </div>
           <div class="field-grid">
             <div class="field full">
               <label class="group-label">戰鬥類型</label>

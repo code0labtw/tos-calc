@@ -642,10 +642,7 @@
     const el = $(id);
     if (el) el.addEventListener('input', calculateWar);
   });
-  $('resetLevel').addEventListener('click', resetLevelTool);
-  $('resetTeamCost').addEventListener('click', resetTeamCostTool);
-  $('resetStamina').addEventListener('click', resetStaminaTool);
-  $('resetWar').addEventListener('click', resetWarTool);
+  $('resetAll').addEventListener('click', () => [resetLevelTool, resetTeamCostTool, resetStaminaTool, resetWarTool].forEach(f => f()));
 
   switchTool('level');
   
