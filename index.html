@@ -9,7 +9,7 @@
 </head>
 <body>
   <main class="shell">
-    <h1>神魔之塔計算工具</h1>
+    <header><h1>神魔之塔計算工具</h1><button class="reset-button" id="theme" type="button">切換深淺</button></header>
 
     <div class="tool-switch" role="tablist" aria-label="選擇計算工具">
       <button class="tool-tab active" id="levelTab" type="button" role="tab" aria-selected="true" aria-controls="levelToolPanel">
@@ -31,13 +31,13 @@
           <h2>召喚師等級與隊伍空間參考對照</h2>
         <div class="reset-switch">
           <button class="reset-button" id="resetTeamCost" type="button" aria-label="清空隊伍空間對照欄位">
-            輸入欄全部清空
+            全部清空
           </button>
         </div>
         <div class="field-grid">
           <div class="field full">
             <label for="teamCostInput">隊伍空間 Cost</label>
-            <input id="teamCostInput" type="number" min="0" step="1" inputmode="numeric">
+            <input id="teamCostInput" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
             <div class="field-message" id="teamCostInputMessage"></div>
           </div>
         </div>
@@ -57,7 +57,7 @@
           <h2>召喚師等級計算</h2>
             <div class="reset-switch">
               <button class="reset-button" id="resetLevel" type="button" aria-label="清空召喚師等級計算欄位">
-                輸入欄全部清空
+                全部清空
               </button>
             </div>
             <div class="field-grid">
@@ -71,33 +71,33 @@
               </div>
               <div class="field" id="currentLevelField">
                 <label for="currentLevel">目前等級</label>
-                <input id="currentLevel" type="number" min="1" max="2000" step="1" inputmode="numeric">
+                <input id="currentLevel" type="number" placeholder=" " min="1" max="2000" step="1" inputmode="numeric">
                 <div class="field-message" id="currentLevelMessage"></div>
               </div>
               <div class="field" id="targetLevelField">
                 <label for="targetLevel">目標等級</label>
-                <input id="targetLevel" type="number" min="1" max="2000" step="1" inputmode="numeric">
+                <input id="targetLevel" type="number" placeholder=" " min="1" max="2000" step="1" inputmode="numeric">
                 <div class="field-message" id="targetLevelMessage"></div>
               </div>
               <div class="field" id="targetStageField" hidden>
                 <label for="targetStageCount">目標場次</label>
-                <input id="targetStageCount" type="number" min="0" step="1" inputmode="numeric">
+                <input id="targetStageCount" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
                 <div class="field-message" id="targetStageCountMessage"></div>
               </div>
               <div class="field full">
                 <label for="currentExp">目前等級已累積 EXP</label>
-                <input id="currentExp" type="number" min="0" step="1" inputmode="numeric">
+                <input id="currentExp" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
                 <div class="field-message" id="currentExpMessage"></div>
               </div>
               <div class="field-group-label">每場刷關資訊</div>
               <div class="field" id="stageExpField">
                 <label for="stageExp">每場經驗</label>
-                <input id="stageExp" type="number" min="0" step="1" inputmode="numeric">
+                <input id="stageExp" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
                 <div class="field-message" id="stageExpMessage"></div>
               </div>
               <div class="field" id="stageStaminaField">
                 <label for="stageStamina">每場體力</label>
-                <input id="stageStamina" type="number" min="0" step="1" inputmode="numeric">
+                <input id="stageStamina" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
                 <div class="field-message" id="stageStaminaMessage"></div>
               </div>
               <div class="field full field-checkbox-group">
@@ -161,18 +161,18 @@
           <h2>目前體力狀態</h2>
           <div class="reset-switch">
             <button class="reset-button" id="resetStamina" type="button" aria-label="清空體力恢復計算欄位">
-              輸入欄全部清空
+              全部清空
             </button>
           </div>
           <div class="field-grid">
             <div class="field">
               <label for="currentStamina">目前剩餘體力</label>
-              <input id="currentStamina" type="number" min="0" step="1" inputmode="numeric">
+              <input id="currentStamina" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
               <div class="field-message" id="currentStaminaMessage"></div>
             </div>
             <div class="field">
               <label for="currentStaminaMax">目前最大體力</label>
-              <input id="currentStaminaMax" type="number" min="1" step="1" inputmode="numeric">
+              <input id="currentStaminaMax" type="number" placeholder=" " min="1" step="1" inputmode="numeric">
               <div class="field-message" id="currentStaminaMaxMessage"></div>
             </div>
           </div>
@@ -199,7 +199,7 @@
           <h2>魔神戰功勳計算</h2>
           <div class="reset-switch">
             <button class="reset-button" id="resetWar" type="button" aria-label="清空魔神戰功勳計算欄位">
-              輸入欄全部清空
+              全部清空
             </button>
           </div>
           <div class="field-grid">
@@ -222,17 +222,17 @@
             </div>
             <div class="field">
               <label for="warBonus">加成（%）</label>
-              <input id="warBonus" type="number" min="0" step="0.01" inputmode="decimal">
+              <input id="warBonus" type="number" placeholder=" " min="0" step="0.01" inputmode="decimal">
               <div class="field-message" id="warBonusMessage"></div>
             </div>
             <div class="field">
               <label for="warMerit">目標功勳值</label>
-              <input id="warMerit" type="number" min="0" step="1" inputmode="numeric">
+              <input id="warMerit" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
               <div class="field-message" id="warMeritMessage"></div>
             </div>
             <div class="field full">
               <label for="warCountdownHours">距離結束剩餘時間（小時）</label>
-              <input id="warCountdownHours" type="number" min="0" step="0.1" inputmode="decimal">
+              <input id="warCountdownHours" type="number" placeholder=" " min="0" step="0.1" inputmode="decimal">
               <div class="field-message" id="warCountdownHoursMessage"></div>
             </div>
           </div>
@@ -277,5 +277,9 @@
   </main>
 
   <script type="module" src="app.js"></script>
+  <script>
+    let dark = matchMedia('(prefers-color-scheme:dark)').matches;
+    document.getElementById('theme').onclick = () => document.documentElement.style.colorScheme = (dark = !dark) ? 'dark' : 'light';
+  </script>
 </body>
 </html>
