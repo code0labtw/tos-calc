@@ -1,265 +1,395 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="神魔之塔召喚師等級、體力恢復與魔神戰功勳計算工具。">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="神魔之塔召喚師等級、體力恢復與魔神戰功勳計算工具。" />
   <title>神魔之塔計算工具</title>
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Noto+Sans+TC:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css?v=5" />
 </head>
 <body>
-  <main class="shell">
-    <header><h1>神魔之塔計算工具</h1><button class="reset-button" id="resetAll" type="button">全部清空</button><button class="reset-button" id="theme" type="button">切換深淺</button></header>
-
-    <div class="tool-switch" role="tablist" aria-label="選擇計算工具">
-      <button class="tool-tab active" id="levelTab" type="button" role="tab" aria-selected="true" aria-controls="levelToolPanel">
-        召喚師等級
-      </button>
-      <button class="tool-tab" id="teamCostTab" type="button" role="tab" aria-selected="false" aria-controls="teamCostToolPanel">
-        隊伍空間
-      </button>
-      <button class="tool-tab" id="staminaTab" type="button" role="tab" aria-selected="false" aria-controls="staminaToolPanel">
-        體力恢復
-      </button>
-      <button class="tool-tab" id="warTab" type="button" role="tab" aria-selected="false" aria-controls="warToolPanel">
-        魔神戰功勳
-      </button>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="title">神魔之塔計算工具</h1>
+      <div class="actions">
+        <button id="resetAll" type="button" class="action-btn">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+          <span>全部清空</span>
+        </button>
+        <button id="theme" type="button" class="action-btn">
+          <svg id="moonIcon" class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+          <svg id="sunIcon" class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" /><path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" /><path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+          <span>切換深淺</span>
+        </button>
+      </div>
     </div>
+  </header>
 
-    <section class="tool-panel" id="teamCostToolPanel" role="tabpanel" aria-labelledby="teamCostTab" hidden>
-      <section class="card input-card">
-          <h2>召喚師等級與隊伍空間參考對照</h2>
-        <div class="field-grid">
-          <div class="field full">
-            <label for="teamCostInput">隊伍空間 Cost</label>
-            <input id="teamCostInput" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
-            <div class="field-message" id="teamCostInputMessage"></div>
-          </div>
-        </div>
-        <div class="result-table" role="table" aria-label="隊伍空間對應等級結果">
-          <div class="result-row" role="row">
-            <div class="result-label" role="rowheader">召喚師等級</div>
-            <div class="result-value" id="teamCostLevelResult" role="cell">—</div>
-          </div>
-        </div>
-      </section>
-    </section>
+  <div class="shell">
+    <!-- Mobile & Tablet Horizontal Tool Tabs -->
+    <nav class="mobile-tabs" role="tablist" aria-label="選擇計算工具">
+      <button class="mobile-tab active" type="button" role="tab" aria-selected="true" aria-controls="levelToolPanel" data-tool="level">召喚師等級</button>
+      <button class="mobile-tab" type="button" role="tab" aria-selected="false" aria-controls="teamCostToolPanel" data-tool="teamCost">隊伍空間</button>
+      <button class="mobile-tab" type="button" role="tab" aria-selected="false" aria-controls="staminaToolPanel" data-tool="stamina">體力恢復</button>
+      <button class="mobile-tab" type="button" role="tab" aria-selected="false" aria-controls="warToolPanel" data-tool="war">魔神戰功勳</button>
+    </nav>
 
-    <section class="tool-panel" id="levelToolPanel" role="tabpanel" aria-labelledby="levelTab">
-      <section class="layout" aria-label="召喚師等級計算">
-        <div class="input-column">
-          <section class="card input-card">
-          <h2>召喚師等級計算</h2>
-            <div class="field-grid">
-              <div class="field-group-label">目前與目標等級</div>
-              <div class="field full">
-                <label class="group-label">目標設定方式</label>
-                <div class="target-mode-tabs" role="tablist" aria-label="選擇目標設定方式">
-                  <button class="target-mode-tab active" id="targetModeLevelTab" type="button" role="tab" aria-selected="true">目標等級</button>
-                  <button class="target-mode-tab" id="targetModeStageTab" type="button" role="tab" aria-selected="false">目標場次</button>
+    <div class="workspace-grid">
+      <!-- Desktop Left Navigation Rail -->
+      <nav class="rail-tabs" role="tablist" aria-label="選擇計算工具">
+        <button class="rail-tab active" type="button" role="tab" aria-selected="true" aria-controls="levelToolPanel" data-tool="level">
+          <span class="rail-indicator" aria-hidden="true"></span>
+          <span>召喚師等級</span>
+        </button>
+        <button class="rail-tab" type="button" role="tab" aria-selected="false" aria-controls="teamCostToolPanel" data-tool="teamCost">
+          <span class="rail-indicator" aria-hidden="true"></span>
+          <span>隊伍空間</span>
+        </button>
+        <button class="rail-tab" type="button" role="tab" aria-selected="false" aria-controls="staminaToolPanel" data-tool="stamina">
+          <span class="rail-indicator" aria-hidden="true"></span>
+          <span>體力恢復</span>
+        </button>
+        <button class="rail-tab" type="button" role="tab" aria-selected="false" aria-controls="warToolPanel" data-tool="war">
+          <span class="rail-indicator" aria-hidden="true"></span>
+          <span>魔神戰功勳</span>
+        </button>
+      </nav>
+
+      <main class="panels">
+        <!-- Tool 1: 召喚師等級 -->
+        <section class="tool-panel" id="levelToolPanel" role="tabpanel">
+          <div class="workbench" aria-label="召喚師等級計算">
+            <section class="card input-card" aria-label="召喚師等級計算">
+              <h2 class="card-title">召喚師等級計算</h2>
+
+              <div class="section-block">
+                <div class="section-rule">
+                  <span class="section-rule-text">目前與目標等級</span>
+                  <span class="section-rule-line" aria-hidden="true"></span>
+                </div>
+
+                <div class="group-wrap">
+                  <div class="group-label">目標設定方式</div>
+                  <div class="segmented" role="tablist" aria-label="選擇目標設定方式">
+                    <button id="targetModeLevelTab" class="seg-btn active" type="button" role="tab" aria-selected="true">
+                      <span class="seg-label">目標等級</span>
+                    </button>
+                    <button id="targetModeStageTab" class="seg-btn" type="button" role="tab" aria-selected="false">
+                      <span class="seg-label">目標場次</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="field-grid-2">
+                  <div class="field-item">
+                    <div class="field-well">
+                      <label class="field-label" for="currentLevel">目前等級</label>
+                      <input id="currentLevel" class="field-input font-num" type="number" placeholder=" " min="1" max="2000" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="field-message" id="currentLevelMessage"></div>
+                  </div>
+
+                  <div class="field-item" id="targetLevelField">
+                    <div class="field-well">
+                      <label class="field-label" for="targetLevel">目標等級</label>
+                      <input id="targetLevel" class="field-input font-num" type="number" placeholder=" " min="1" max="2000" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="field-message" id="targetLevelMessage"></div>
+                  </div>
+
+                  <div class="field-item" id="targetStageField" hidden>
+                    <div class="field-well">
+                      <label class="field-label" for="targetStageCount">目標場次</label>
+                      <input id="targetStageCount" class="field-input font-num" type="number" placeholder=" " min="0" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="field-message" id="targetStageCountMessage"></div>
+                  </div>
+
+                  <div class="field-item span-2">
+                    <div class="field-well">
+                      <label class="field-label" for="currentExp">目前等級已累積 EXP</label>
+                      <input id="currentExp" class="field-input font-num" type="number" placeholder=" " min="0" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="field-message" id="currentExpMessage"></div>
+                  </div>
                 </div>
               </div>
-              <div class="field" id="currentLevelField">
-                <label for="currentLevel">目前等級</label>
-                <input id="currentLevel" type="number" placeholder=" " min="1" max="2000" step="1" inputmode="numeric">
-                <div class="field-message" id="currentLevelMessage"></div>
-              </div>
-              <div class="field" id="targetLevelField">
-                <label for="targetLevel">目標等級</label>
-                <input id="targetLevel" type="number" placeholder=" " min="1" max="2000" step="1" inputmode="numeric">
-                <div class="field-message" id="targetLevelMessage"></div>
-              </div>
-              <div class="field" id="targetStageField" hidden>
-                <label for="targetStageCount">目標場次</label>
-                <input id="targetStageCount" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
-                <div class="field-message" id="targetStageCountMessage"></div>
-              </div>
-              <div class="field full">
-                <label for="currentExp">目前等級已累積 EXP</label>
-                <input id="currentExp" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
-                <div class="field-message" id="currentExpMessage"></div>
-              </div>
-              <div class="field-group-label">每場刷關資訊</div>
-              <div class="field" id="stageExpField">
-                <label for="stageExp">每場經驗</label>
-                <input id="stageExp" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
-                <div class="field-message" id="stageExpMessage"></div>
-              </div>
-              <div class="field" id="stageStaminaField">
-                <label for="stageStamina">每場體力</label>
-                <input id="stageStamina" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
-                <div class="field-message" id="stageStaminaMessage"></div>
-              </div>
-              <div class="field full field-checkbox-group">
-                <label for="useExpPotion" class="checkbox-label">
-                  <input id="useExpPotion" type="checkbox">
-                  <span>已使用經驗值瓶</span>
-                </label>
-                <p class="checkbox-hint">上方填寫的「每場經驗」，是使用經驗瓶後加成的經驗</p>
-              </div>
-              <div class="field full" id="expPotionCountField" hidden>
-                <label for="expPotionCount">持有經驗值瓶數量（必填）</label>
-                <input id="expPotionCount" type="number" min="1" step="1" inputmode="numeric" placeholder="請輸入經驗值瓶數量">
-                <div class="field-message" id="expPotionCountMessage"></div>
-              </div>
-              <div class="field full field-checkbox-group">
-                <label for="noExpPotion" class="checkbox-label">
-                  <input id="noExpPotion" type="checkbox">
-                  <span>未使用經驗瓶</span>
-                </label>
-                <p class="checkbox-hint">上方填寫的「每場經驗」，是沒有使用經驗瓶加成的經驗</p>
-              </div>
-              <div class="field-message" id="expPotionChoiceMessage"></div>
-            </div>
-          </section>
-        </div>
 
-        <section class="results" aria-live="polite">
-          <div class="result-table" role="table" aria-label="召喚師等級計算結果">
-            <div class="result-row" id="progressRow" role="row">
-              <div class="result-label" id="progressLabel" role="rowheader">升級進度</div>
-              <div class="result-value" id="currentProgress" role="cell">—</div>
-            </div>
-            <div class="result-row" id="resolvedTargetLevelRow" role="row">
-              <div class="result-label" role="rowheader">目標等級</div>
-              <div class="result-value" id="resolvedTargetLevel" role="cell">—</div>
-            </div>
-            <div class="result-row" id="stageCountRow" role="row">
-              <div class="result-label" role="rowheader">所需場次</div>
-              <div class="result-value" id="stageCount" role="cell">—</div>
-            </div>
-            <div class="result-row" role="row">
-              <div class="result-label" role="rowheader">預估回體次數</div>
-              <div class="result-value" id="staminaRecoverCount" role="cell">—</div>
-            </div>
-            <div class="result-row" role="row">
-              <div class="result-label" role="rowheader">目標體力上限</div>
-              <div class="result-value" id="targetStaminaMax" role="cell">—</div>
-            </div>
-            <div class="result-row" role="row">
-              <div class="result-label" role="rowheader">目標隊伍 Cost</div>
-              <div class="result-value" id="targetTeamCost" role="cell">—</div>
-            </div>
-          </div>
-        </section>
-      </section>
-    </section>
+              <div class="section-block">
+                <div class="section-rule">
+                  <span class="section-rule-text">每場刷關資訊</span>
+                  <span class="section-rule-line" aria-hidden="true"></span>
+                </div>
 
-    <section class="tool-panel" id="staminaToolPanel" role="tabpanel" aria-labelledby="staminaTab" hidden>
-      <section class="layout" aria-label="體力恢復計算">
-        <section class="card input-card">
-          <h2>目前體力狀態</h2>
-          <div class="field-grid">
-            <div class="field">
-              <label for="currentStamina">目前剩餘體力</label>
-              <input id="currentStamina" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
-              <div class="field-message" id="currentStaminaMessage"></div>
-            </div>
-            <div class="field">
-              <label for="currentStaminaMax">目前最大體力</label>
-              <input id="currentStaminaMax" type="number" placeholder=" " min="1" step="1" inputmode="numeric">
-              <div class="field-message" id="currentStaminaMaxMessage"></div>
-            </div>
+                <div class="field-grid-2">
+                  <div class="field-item">
+                    <div class="field-well">
+                      <label class="field-label" for="stageExp">每場經驗</label>
+                      <input id="stageExp" class="field-input font-num" type="number" placeholder=" " min="0" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="field-message" id="stageExpMessage"></div>
+                  </div>
+
+                  <div class="field-item">
+                    <div class="field-well">
+                      <label class="field-label" for="stageStamina">每場體力</label>
+                      <input id="stageStamina" class="field-input font-num" type="number" placeholder=" " min="0" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="field-message" id="stageStaminaMessage"></div>
+                  </div>
+                </div>
+
+                <div class="potion-wrap">
+                  <div class="choice-grid">
+                    <label class="choice-card" id="useExpPotionCard" for="useExpPotion">
+                      <input id="useExpPotion" type="checkbox" />
+                      <span class="choice-copy">
+                        <span class="choice-title">已使用經驗值瓶</span>
+                        <span class="choice-hint">上方填寫的「每場經驗」，是使用經驗瓶後加成的經驗</span>
+                      </span>
+                    </label>
+
+                    <label class="choice-card" id="noExpPotionCard" for="noExpPotion">
+                      <input id="noExpPotion" type="checkbox" />
+                      <span class="choice-copy">
+                        <span class="choice-title">未使用經驗瓶</span>
+                        <span class="choice-hint">上方填寫的「每場經驗」，是沒有使用經驗瓶加成的經驗</span>
+                      </span>
+                    </label>
+                  </div>
+
+                  <div class="field-item" id="expPotionCountField" hidden>
+                    <div class="field-well">
+                      <label class="field-label" for="expPotionCount">持有經驗值瓶數量（必填）</label>
+                      <input id="expPotionCount" class="field-input font-num" type="number" min="1" step="1" inputmode="numeric" placeholder="請輸入經驗值瓶數量" />
+                    </div>
+                    <div class="field-message" id="expPotionCountMessage"></div>
+                  </div>
+
+                  <div class="field-message" id="expPotionChoiceMessage"></div>
+                </div>
+              </div>
+            </section>
+
+            <aside class="card result-card" aria-label="召喚師等級計算結果" aria-live="polite">
+              <div class="result-hero">
+                <div class="hero-pair">
+                  <div class="hero-cell">
+                    <div class="hero-label" id="heroMetricLabel">所需場次</div>
+                    <div class="hero-value hero-value--accent font-num" id="heroMetricValue">—</div>
+                  </div>
+                  <div class="hero-cell hero-cell--right">
+                    <div class="hero-label">預估回體次數</div>
+                    <div class="hero-value font-num" id="staminaRecoverCount">—</div>
+                  </div>
+                </div>
+
+                <div class="progress-block">
+                  <div class="progress-head">
+                    <span class="progress-label" id="progressLabel">升級進度</span>
+                    <span class="progress-pct font-num" id="currentProgress">—</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="result-rows">
+                <div class="result-row" id="resolvedTargetLevelRow">
+                  <div class="result-row-label">目標等級</div>
+                  <div class="result-row-value font-num" id="resolvedTargetLevel">—</div>
+                </div>
+                <div class="result-row">
+                  <div class="result-row-label">目標體力上限</div>
+                  <div class="result-row-value font-num" id="targetStaminaMax">—</div>
+                </div>
+                <div class="result-row">
+                  <div class="result-row-label">目標隊伍 Cost</div>
+                  <div class="result-row-value font-num" id="targetTeamCost">—</div>
+                </div>
+              </div>
+            </aside>
           </div>
         </section>
 
-        <section class="results" aria-live="polite">
-          <div class="result-table" role="table" aria-label="體力恢復計算結果">
-            <div class="result-row" role="row">
-              <div class="result-label" role="rowheader">恢復時間</div>
-              <div class="result-value result-value--lg" id="recoveryTime" role="cell">—</div>
-            </div>
-            <div class="result-row" role="row">
-              <div class="result-label" role="rowheader">預估回滿時間</div>
-              <div class="result-value result-value--lg" id="staminaFullAt" role="cell">—</div>
-            </div>
-          </div>
-        </section>
-      </section>
-    </section>
-
-    <section class="tool-panel" id="warToolPanel" role="tabpanel" aria-labelledby="warTab" hidden>
-      <section class="layout" aria-label="魔神戰功勳計算">
-        <section class="card input-card">
-          <h2>魔神戰功勳計算</h2>
-          <div class="field-grid">
-            <div class="field full">
-              <label class="group-label">戰鬥類型</label>
-              <div class="war-type-tabs" role="tablist" aria-label="選擇魔神戰戰鬥類型">
-                <button class="war-type-tab" id="warAttackTab" type="button" role="tab" aria-selected="false">
-                  <span class="war-type-name">進攻</span>
-                  <span class="war-type-meta">100 功勳／場・4 點</span>
-                </button>
-                <button class="war-type-tab active" id="warDefenseTab" type="button" role="tab" aria-selected="true">
-                  <span class="war-type-name">防守</span>
-                  <span class="war-type-meta">62 功勳／場・2 點</span>
-                </button>
+        <!-- Tool 2: 隊伍空間 -->
+        <section class="tool-panel" id="teamCostToolPanel" role="tabpanel" hidden>
+          <div class="workbench" aria-label="召喚師等級與隊伍空間參考對照">
+            <section class="card input-card">
+              <h2 class="card-title">召喚師等級與隊伍空間參考對照</h2>
+              <div class="section-block-sm">
+                <div class="field-item">
+                  <div class="field-well">
+                    <label class="field-label" for="teamCostInput">隊伍空間 Cost</label>
+                    <input id="teamCostInput" class="field-input font-num" type="number" placeholder=" " min="0" step="1" inputmode="numeric" />
+                  </div>
+                  <div class="field-message" id="teamCostInputMessage"></div>
+                </div>
               </div>
-              <select id="warType" hidden aria-hidden="true" tabindex="-1">
-                <option value="attack">進攻</option>
-                <option value="defense" selected>防守</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="warBonus">加成（%）</label>
-              <input id="warBonus" type="number" placeholder=" " min="0" step="0.01" inputmode="decimal">
-              <div class="field-message" id="warBonusMessage"></div>
-            </div>
-            <div class="field">
-              <label for="warMerit">目標功勳值</label>
-              <input id="warMerit" type="number" placeholder=" " min="0" step="1" inputmode="numeric">
-              <div class="field-message" id="warMeritMessage"></div>
-            </div>
-            <div class="field full">
-              <label for="warCountdownHours">距離結束剩餘時間（小時）</label>
-              <input id="warCountdownHours" type="number" placeholder=" " min="0" step="0.1" inputmode="decimal">
-              <div class="field-message" id="warCountdownHoursMessage"></div>
-            </div>
+            </section>
+
+            <aside class="card result-card" aria-label="隊伍空間對應等級結果" aria-live="polite">
+              <div class="result-hero">
+                <div class="hero-label">召喚師等級</div>
+                <div class="hero-value hero-value--accent font-num" id="teamCostLevelResult">—</div>
+              </div>
+            </aside>
           </div>
         </section>
 
-        <section class="results" aria-live="polite">
-          <div class="result-table" role="table" aria-label="魔神戰功勳計算結果">
-            <div class="result-row" role="row">
-              <div class="result-label" role="rowheader">所需場次</div>
-              <div class="result-value" id="warStageCount" role="cell">—</div>
-            </div>
-            <div class="result-row" role="row">
-              <div class="result-label" role="rowheader">單場功勳（含加成）</div>
-              <div class="result-value" id="warMeritPerBattle" role="cell">—</div>
-            </div>
-            <div class="result-row" role="row">
-              <div class="result-label" role="rowheader">總共消耗點數</div>
-              <div class="result-value" id="warPointCost" role="cell">—</div>
-            </div>
-            <div class="result-row" role="row">
-              <div class="result-copy" role="rowheader">
-                <div class="result-label">自然回復點數</div>
-                <div class="metric-note">跨日給予每日 16 點</div>
+        <!-- Tool 3: 體力恢復 -->
+        <section class="tool-panel" id="staminaToolPanel" role="tabpanel" hidden>
+          <div class="workbench" aria-label="體力恢復計算">
+            <section class="card input-card">
+              <h2 class="card-title">目前體力狀態</h2>
+              <div class="section-block-sm">
+                <div class="field-grid-2">
+                  <div class="field-item">
+                    <div class="field-well">
+                      <label class="field-label" for="currentStamina">目前剩餘體力</label>
+                      <input id="currentStamina" class="field-input font-num" type="number" placeholder=" " min="0" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="field-message" id="currentStaminaMessage"></div>
+                  </div>
+                  <div class="field-item">
+                    <div class="field-well">
+                      <label class="field-label" for="currentStaminaMax">目前最大體力</label>
+                      <input id="currentStaminaMax" class="field-input font-num" type="number" placeholder=" " min="1" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="field-message" id="currentStaminaMaxMessage"></div>
+                  </div>
+                </div>
               </div>
-              <div class="result-value" id="warFreePoints" role="cell">—</div>
-            </div>
-            <div class="result-row" role="row">
-              <div class="result-copy" role="rowheader">
-                <div class="result-label">需吃石次數</div>
-                <div class="metric-note">每顆魔法石回復 8 點</div>
+            </section>
+
+            <aside class="card result-card" aria-label="體力恢復計算結果" aria-live="polite">
+              <div class="hero-stack">
+                <div class="result-hero">
+                  <div class="hero-label">恢復時間</div>
+                  <div class="hero-value hero-value--accent font-num" id="recoveryTime">—</div>
+                </div>
+                <div class="result-hero">
+                  <div class="hero-label">預估回滿時間</div>
+                  <div class="hero-value font-num" id="staminaFullAt">—</div>
+                </div>
               </div>
-              <div class="result-value" id="warStoneCount" role="cell">—</div>
-            </div>
-            <div class="result-row" role="row">
-              <div class="result-label" role="rowheader">預計結束時間</div>
-              <div class="result-value" id="warCountdownEnd" role="cell">—</div>
-            </div>
+            </aside>
           </div>
         </section>
-      </section>
-    </section>
-  </main>
+
+        <!-- Tool 4: 魔神戰功勳 -->
+        <section class="tool-panel" id="warToolPanel" role="tabpanel" hidden>
+          <div class="workbench" aria-label="魔神戰功勳計算">
+            <section class="card input-card">
+              <h2 class="card-title">魔神戰功勳計算</h2>
+              <div class="section-block-sm space-y-lg">
+                <div>
+                  <div class="group-label">戰鬥類型</div>
+                  <div class="segmented" role="tablist" aria-label="選擇魔神戰戰鬥類型">
+                    <button id="warAttackTab" class="seg-btn" type="button" role="tab" aria-selected="false">
+                      <span class="seg-label">進攻</span>
+                      <span class="seg-meta">100 功勳／場・4 點</span>
+                    </button>
+                    <button id="warDefenseTab" class="seg-btn active" type="button" role="tab" aria-selected="true">
+                      <span class="seg-label">防守</span>
+                      <span class="seg-meta">62 功勳／場・2 點</span>
+                    </button>
+                  </div>
+                  <select id="warType" hidden aria-hidden="true" tabindex="-1">
+                    <option value="attack">進攻</option>
+                    <option value="defense" selected>防守</option>
+                  </select>
+                </div>
+
+                <div class="hairline-divider" aria-hidden="true"></div>
+
+                <div class="field-grid-2">
+                  <div class="field-item">
+                    <div class="field-well">
+                      <label class="field-label" for="warBonus">加成（%）</label>
+                      <input id="warBonus" class="field-input font-num" type="number" placeholder=" " min="0" step="0.01" inputmode="decimal" />
+                    </div>
+                    <div class="field-message" id="warBonusMessage"></div>
+                  </div>
+                  <div class="field-item">
+                    <div class="field-well">
+                      <label class="field-label" for="warMerit">目標功勳值</label>
+                      <input id="warMerit" class="field-input font-num" type="number" placeholder=" " min="0" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="field-message" id="warMeritMessage"></div>
+                  </div>
+                  <div class="field-item span-2">
+                    <div class="field-well">
+                      <label class="field-label" for="warCountdownHours">距離結束剩餘時間（小時）</label>
+                      <input id="warCountdownHours" class="field-input font-num" type="number" placeholder=" " min="0" step="0.1" inputmode="decimal" />
+                    </div>
+                    <div class="field-message" id="warCountdownHoursMessage"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <aside class="card result-card" aria-label="魔神戰功勳計算結果" aria-live="polite">
+              <div class="result-hero">
+                <div class="hero-pair">
+                  <div class="hero-cell">
+                    <div class="hero-label">需吃石次數</div>
+                    <div class="hero-value hero-value--accent font-num" id="warStoneCount">—</div>
+                    <div class="hero-note">每顆魔法石回復 8 點</div>
+                  </div>
+                  <div class="hero-cell hero-cell--right">
+                    <div class="hero-label">所需場次</div>
+                    <div class="hero-value font-num" id="warStageCount">—</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="result-rows">
+                <div class="result-row">
+                  <div class="result-row-label">單場功勳（含加成）</div>
+                  <div class="result-row-value font-num" id="warMeritPerBattle">—</div>
+                </div>
+                <div class="result-row">
+                  <div class="result-row-label">總共消耗點數</div>
+                  <div class="result-row-value font-num" id="warPointCost">—</div>
+                </div>
+                <div class="result-row">
+                  <div>
+                    <div class="result-row-label">自然回復點數</div>
+                    <div class="result-row-note">跨日給予每日 16 點</div>
+                  </div>
+                  <div class="result-row-value font-num" id="warFreePoints">—</div>
+                </div>
+                <div class="result-row">
+                  <div class="result-row-label">預計結束時間</div>
+                  <div class="result-row-value font-num" id="warCountdownEnd">—</div>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
 
   <script type="module" src="app.js"></script>
-  <script>
-    let dark = matchMedia('(prefers-color-scheme:dark)').matches;
-    document.getElementById('theme').onclick = () => document.documentElement.style.colorScheme = (dark = !dark) ? 'dark' : 'light';
-  </script>
 </body>
 </html>
