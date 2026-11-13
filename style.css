@@ -18,7 +18,7 @@
   --rail-hover: rgba(220, 224, 234, 0.7);
   --rail-active-border: #C9D0DF;
   --tabs-bg: #DDE1EC;
-  --tab-active-border: #C9D0DF;
+  --tab-active-border: #BAC3D6;
   --seg-bg: #E3E6EF;
   --seg-active: #F4F6FA;
   --choice-selected-bg: #E5E7F5;
@@ -60,7 +60,7 @@
   --rail-hover: #151924;
   --rail-active-border: #2D354A;
   --tabs-bg: #151924;
-  --tab-active-border: #3B4563;
+  --tab-active-border: #4B5675;
   --seg-bg: #1B202E;
   --seg-active: #2A3248;
   --choice-selected-bg: #1E2340;
@@ -227,7 +227,8 @@ input[type="number"] {
   color: var(--ink);
 }
 
-.mobile-tab.active {
+.mobile-tab.active,
+.mobile-tab[aria-selected="true"] {
   border-color: var(--tab-active-border);
   background: var(--seg-active);
   color: var(--accent);
